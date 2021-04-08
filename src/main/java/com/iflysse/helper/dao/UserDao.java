@@ -77,7 +77,7 @@ public interface UserDao {
 			+ "mail=#{mail}, "
 			+ "phone=#{phone}, "
 			+ "gender=#{gender} "
-			+ "where id=#{userid}")
+			+ "where id=#{id}")
 	public void update_user_info (User user);
 	/**
 	 * 更新用户的密码

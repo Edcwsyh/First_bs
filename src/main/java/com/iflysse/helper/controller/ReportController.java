@@ -93,13 +93,6 @@ public class ReportController {
 		return "submitReportList";
 	}
 	
-	@RequestMapping("/goto_report_add")
-	public String goto_report_add() {
-	
-		return "userReportAdd";
-	}
-	
-	
 	/**
 	 * @api {get} /TeacherHelper/report/user_report_list 获取某一用户的所有周报
 	 * @apiVersion 1.0.0

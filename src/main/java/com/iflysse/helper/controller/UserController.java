@@ -74,8 +74,8 @@ public class UserController {
 			return "error/400";
 		}
 		userDao.update_user_info(user);
-		request.setAttribute("result", new Result<Boolean>(ResultCode.SUCCESS, true) );
-		return "redirect:/user_info?id=" + user.getId();
+		request.setAttribute("result", new Result<Boolean>(ResultCode.SUCCESS, null) );
+		return "redirect:/user/user_info?id=" + user.getId();
 	}
 	
 	/**
@@ -121,13 +121,14 @@ public class UserController {
 			request.setAttribute("result", new Result<Boolean>(ResultCode.ERROR_USER_SAME_OLD_NEW_PASSWORD, null) );
 		}
 		else {
+			loggedUser.setPassword(newPassword);
 			userDao.update_user_password(loggedUser);
 			request.setAttribute("result", new Result<Boolean>(ResultCode.SUCCESS, null) );
 			//修改成功重新登录
 			session.invalidate();
 			return "redirect:/login/login";
 		}
-		return "updatePassword";
+		return "userUpdatePassword";
 	}
 	
 	/**
