@@ -27,14 +27,19 @@ public class ReportController {
 	 * 通过id获取指定报告
 	 * @return
 	 */
-	private Result<Report> get_report_by_id(Integer userId, Integer reportId) {
+	private Result<Report> get_report_by_id(User requestUser, Integer reportId) {
 		Report dbReport = reportDao.get_report_by_id( reportId );
 		if ( dbReport == null ) {
 			return new Result<Report>(ResultCode.ERROR_REPORT_NOT_FOUNT, null);
-		} else if( userId != dbReport.getId() ) {
+		} else if( requestUser.getId() != dbReport.getAuthor() && requestUser.getPermission() == Constant.USER_PERMISSION_NORMAL ) {
 			return new Result<Report>(ResultCode.ERROR_PERMISSION, null);
 		}
 		return new Result<Report>(ResultCode.SUCCESS, dbReport);
+	}
+	
+	@RequestMapping("/goto_report_add")
+	public String goto_report_add() {
+		return "reportAdd";
 	}
 
 	/**
@@ -175,7 +180,7 @@ public class ReportController {
 	public String report_info(HttpServletRequest request, HttpSession session, Integer reportId) {
 		User requestUser = (User) session.getAttribute("loggedUser");
 		//通过封装的方法获取数据库中的周报
-		Result<Report> result = get_report_by_id(requestUser.getId(), reportId);
+		Result<Report> result = get_report_by_id(requestUser, reportId);
 		request.setAttribute("result", result);
 		switch( result.getResultCode() ) {
 			case ERROR_REPORT_NOT_FOUNT : return "error/404";
@@ -248,7 +253,7 @@ public class ReportController {
 		User requestUser = (User) session.getAttribute("requestUser");
 		Report dbReport = reportDao.get_report_by_id( reportId );
 		//通过封装的方法获取数据库中的周报
-		Result<Report> result = get_report_by_id(requestUser.getId(), reportId);
+		Result<Report> result = get_report_by_id(requestUser, reportId);
 		request.setAttribute("result", result);
 		switch( result.getResultCode() ) {
 			case ERROR_REPORT_NOT_FOUNT : return "error/404";

@@ -51,7 +51,7 @@ public interface UserDao {
 	public User get_user_by_id(int id);
 	
 	/**
-	 * 通过 id || 邮箱  || 电话 查询用户
+	 * 通过 用户名 || 邮箱  || 电话 查询用户
 	 * @param user
 	 * @return
 	 */

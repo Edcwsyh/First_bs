@@ -27,6 +27,7 @@ public class TermController {
 	
 	@PostConstruct
 	private void termBuff_init() {
+		System.out.println("学期对象初始化");
 		termBuffer = termDao.get_current_term();
 	}
 	

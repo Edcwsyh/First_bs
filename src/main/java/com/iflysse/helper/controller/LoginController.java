@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.iflysse.helper.bean.User;
 import com.iflysse.helper.dao.UserDao;
+import com.iflysse.helper.service.UserServer;
 import com.iflysse.helper.tools.Constant;
 import com.iflysse.helper.tools.Result;
 import com.iflysse.helper.tools.ResultCode;
@@ -21,7 +22,7 @@ import com.iflysse.helper.tools.ResultCode;
 public class LoginController {
 	
 	@Autowired
-	private UserDao userDao;
+	private UserServer userServer;
 	
 	/**
 	 * @api {post} /TeacherHelper/login/login_check 检测用户
@@ -54,38 +55,17 @@ public class LoginController {
 	 */
 	@ResponseBody
 	@RequestMapping("/login_check")
-	public Result<Boolean> login_check(@RequestParam Integer field, @RequestParam String value) {
-		System.out.println(value);
-		if(value == null) {
-			return new Result<Boolean>(ResultCode.ERROR_PARAM, null);
+	public Result<Void> login_check(@RequestParam Byte field, @RequestParam String value) {
+		User dbUser = userServer.get_user(field, value);
+		if (dbUser != null) {
+			return new Result<Void>(ResultCode.SUCCESS, null);
 		}
-		//检测要检测的字段类型
-		switch(field.intValue()) {
-			//用户名
-			case Constant.FIELD_TYPE_USERNAME : 
-				if(userDao.get_user_by_username(value) != null) {
-					return new Result<Boolean>(ResultCode.ERROR_USER_EXIST, null);
-				}
-				break;
-			
-			//邮箱
-			case Constant.FIELD_TYPE_MAIL : 
-				if(userDao.get_user_by_mail(value) != null) {
-					return new Result<Boolean>(ResultCode.ERROR_MAIL_EXIST, null);
-				}
-				break;
-			
-			//电话号码
-			case Constant.FIELD_TYPE_PHONE : 
-				if(userDao.get_user_by_phone(value) != null) {
-					return new Result<Boolean>(ResultCode.ERROR_PHONE_EXIST, null);
-				}
-				break;
-			
-			default :
-				return new Result<Boolean>(ResultCode.ERROR_PARAM, null);
+		switch ( field.intValue() ) {
+			case Constant.FIELD_TYPE_USERNAME : return new Result<Void>(ResultCode.ERROR_USER_EXIST, null);
+			case Constant.FIELD_TYPE_MAIL : return new Result<Void>(ResultCode.ERROR_USER_EXIST, null);
+			case Constant.FIELD_TYPE_PHONE : return new Result<Void>(ResultCode.ERROR_PHONE_EXIST, null);
+			default : return new Result<Void>(ResultCode.ERROR_PARAM, null);
 		}
-		return new Result<Boolean>(ResultCode.SUCCESS, null);
 	}
 	
 	/**
@@ -131,7 +111,7 @@ public class LoginController {
 		if(user.getUsername() == null || user.getPassword() == null) {
 			request.setAttribute("result", new Result<Boolean>(ResultCode.ERROR_PARAM, null));
 		}
-		User dbUser  = userDao.get_user_by_username(user.getUsername());
+		User dbUser  = userServer.get_user(Constant.FIELD_TYPE_USERNAME, user.getUsername() );
 		//判断该用户是否存在
 		if(dbUser == null) { 
 			request.setAttribute("result", new Result<Boolean>(ResultCode.ERROR_USER_NOT_FOUND, null));
@@ -174,12 +154,12 @@ public class LoginController {
 	 * 		"value" : "supper man"
 	 * 		}
 	 */
-	@RequestMapping("/retrieve_password")
-	public Result<Boolean> retrieve_password(HttpServletRequest request) {
-		
-		return new Result<Boolean>(ResultCode.SUCCESS, true);
-	}
-	
+//	@RequestMapping("/retrieve_password")
+//	public Result<Boolean> retrieve_password(HttpServletRequest request) {
+//		
+//		return new Result<Boolean>(ResultCode.SUCCESS, true);
+//	}
+//	
 	
 	/**
 	 * @api {get} /TeacherHelper/login/goto_login 跳转至登录页面
@@ -215,10 +195,10 @@ public class LoginController {
 	 * @apiDescription 接口说明.
 	 * 该接口没有参数，也没有返回数据,仅进行页面切换
 	 */
-	@RequestMapping("/goto_forgot")
-	public String goto_forgot() {
-		return "";
-	}
+//	@RequestMapping("/goto_forgot")
+//	public String goto_forgot() {
+//		return "";
+//	}
 	
 	@RequestMapping("/goto_index")
 	public String goto_index() {

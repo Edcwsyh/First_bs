@@ -1,7 +1,5 @@
 package com.iflysse.helper.controller;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,16 +7,20 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.iflysse.helper.bean.User;
-import com.iflysse.helper.dao.UserDao;
+import com.iflysse.helper.service.UserServer;
 import com.iflysse.helper.tools.Result;
-import com.iflysse.helper.tools.ResultCode;
 
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
 	
 	@Autowired
-	private UserDao userDao;
+	private UserServer userServer;
+	
+	@RequestMapping("/goto_user_add")
+	public String goto_user_add(HttpServletRequest request) {
+		return "userAdd";
+	}
 
 	/**
 	 * @api {post} /admin/user_list 获取用户列表
@@ -61,11 +63,93 @@ public class AdminController {
 	 *      	}
 	 *     }
 	 */
+	@RequestMapping("/user_list")
 	public String user_list(HttpServletRequest request) {
-		request.setAttribute(
-				"result", 
-				new Result< List<User> >(ResultCode.SUCCESS, userDao.get_user_list() ) );
+		request.setAttribute("result",  userServer.user_list() );
 		return "userList";
+	}
+	
+	/**
+	 * @api {post} /admin/user_all_info 获取用户的所有信息
+	 * @apiVersion 1.0.0
+	 * @apiGroup Admin
+	 * @apiName 获取用户列表
+	 * @apiSuccess {Boolean} Success true表示请求成功，false表示请求失败
+	 * @apiSuccess {number} code 错误代码
+	 * @apiSuccess {string} message 错误信息
+	 * @apiSuccess {Object} data 返回的数据
+	 * @apiSuccessExample {json} 请求成功例子:
+	 *     {
+	 *     	"Success" : true,
+	 *      "code" : 20000,
+	 *      "message" : "请求成功",
+	 *      "data" : 
+	 *      	{
+	 *      		{
+	 *      		"id" : 8977
+	 * 				"username":"supper man",
+	 * 				"password":"1234567",
+	 * 				"realname":"张三",
+	 * 				"mail":"123456@gmail.com",
+	 * 				"phone":"13960241683",
+	 * 				"gender":1,
+	 * 				"permission":1,
+	 * 				"state" : 1
+	 *      		}
+	 *      	}
+	 *     }
+	 */
+	@RequestMapping("/user_all_info")
+	public String user_all_info(HttpServletRequest request, Integer userId) {
+		Result<User> result = userServer.user_all_info(userId);
+		request.setAttribute("result", result);
+		switch( result.getResultCode() ) {
+			case SUCCESS : return "userAllInfo";
+			case ERROR_USER_NOT_FOUND : return "error/404";
+			default : return "error/500";
+		}
+	}
+	
+	/**
+	 * @api {post} /admin/user_all_info 获取用户的所有信息
+	 * @apiVersion 1.0.0
+	 * @apiGroup Admin
+	 * @apiName 获取用户列表
+	 * @apiSuccess {Boolean} Success true表示请求成功，false表示请求失败
+	 * @apiSuccess {number} code 错误代码
+	 * @apiSuccess {string} message 错误信息
+	 * @apiSuccess {Object} data 返回的数据
+	 * @apiSuccessExample {json} 请求成功例子:
+	 *     {
+	 *     	"Success" : true,
+	 *      "code" : 20000,
+	 *      "message" : "请求成功",
+	 *      "data" : 
+	 *      	{
+	 *      		{
+	 *      		"id" : 8977
+	 * 				"username":"supper man",
+	 * 				"password":"1234567",
+	 * 				"realname":"张三",
+	 * 				"mail":"123456@gmail.com",
+	 * 				"phone":"13960241683",
+	 * 				"gender":1,
+	 * 				"permission":1,
+	 * 				"state" : 1
+	 *      		}
+	 *      	}
+	 *     }
+	 */
+	@RequestMapping("/user_update")
+	public String user_update(HttpServletRequest request, User user) {
+		Result<Void> result = userServer.user_update_all_info(user);
+		request.setAttribute("result", result);
+		switch( result.getResultCode() ) {
+			case SUCCESS : return "userAllInfo";
+			case ERROR_PARAM : return "error/400";
+			case ERROR_USER_NOT_FOUND : return "error/404";
+			default : return "error/500";
+		}
 	}
 	
 	/**
@@ -109,16 +193,13 @@ public class AdminController {
 	 */
 	@RequestMapping("/user_add")
 	public String user_register(HttpServletRequest request, User user) {
-		if(user == null) {
-			request.setAttribute("result", new Result<Boolean>(ResultCode.ERROR_PARAM, null));
-			return "error/400";
+		Result<Void> result = userServer.user_update_all_info(user);
+		request.setAttribute("result", result);
+		switch( result.getResultCode() ) {
+			case SUCCESS : return "userAllInfo";
+			case ERROR_PARAM : return "error/400";
+			case ERROR_USER_EXIST : return "error/409";
+			default : return "error/500";
 		}
-		if(userDao.get_user_by_ump(user) != null) {
-			request.setAttribute("result", new Result<Boolean>(ResultCode.ERROR_USER_EXIST, null));
-			return  "error/409";
-		}
-		userDao.insert_user(user);
-		request.setAttribute("result", new Result<Boolean>(ResultCode.ERROR_PARAM, null));
-		return "redirect:/userList";
 	}
 }

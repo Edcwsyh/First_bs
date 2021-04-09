@@ -19,9 +19,9 @@ public class InterceptorConfig implements WebMvcConfigurer {
         .excludePathPatterns("/js/**");
         
         registry.addInterceptor( new AdminInterceptor() )
-        .addPathPatterns("admin/**")
-        .addPathPatterns("term/**")
-        .excludePathPatterns("term/term_list") //获取学期列表
-        .excludePathPatterns("term/term_current"); //获取当前学期
+        .addPathPatterns("/admin/**")
+        .addPathPatterns("/term/**")
+        .excludePathPatterns("/term/term_list") //获取学期列表
+        .excludePathPatterns("/term/term_current"); //获取当前学期
     }
 }

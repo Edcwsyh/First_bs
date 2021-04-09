@@ -15,7 +15,6 @@ public class LoginInterceptor implements HandlerInterceptor {
 			response.sendRedirect("/TeacherHelper/login/login");
 			return false;
 		}
-		
 		return true;
 	}
 

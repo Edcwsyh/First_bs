@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.iflysse.helper.bean.User;
 import com.iflysse.helper.dao.UserDao;
+import com.iflysse.helper.service.UserServer;
 import com.iflysse.helper.tools.Constant;
 import com.iflysse.helper.tools.Result;
 import com.iflysse.helper.tools.ResultCode;
@@ -20,6 +21,9 @@ public class UserController {
 	
 	@Autowired
 	private UserDao userDao;
+	
+	@Autowired
+	private UserServer userServer;
 	
 	@RequestMapping("/goto_user_update_password")
 	public String goto_user_update_password(HttpServletRequest request) {
@@ -69,13 +73,14 @@ public class UserController {
 	@RequestMapping("/user_update")
 	public String user_update(HttpServletRequest request, User user) {
 		//检测除ID和密码外的字段是否为空
-		if( user.check( Constant.CHECK_ALL ^ Constant.CHECK_ID ^ Constant.CHECK_PASSWORD ) != 0 ) {
-			request.setAttribute("result",new Result<Boolean>(ResultCode.ERROR_PARAM, null) );
-			return "error/400";
+		Result<Void> result = userServer.user_update_info(user);
+		request.setAttribute("result",  result);
+		switch( result.getResultCode() ) {
+			case SUCCESS : return "redirect:/user/user_info?id=" + user.getId();
+			case ERROR_PARAM : return "error/400";
+			default : return "error/500";
 		}
-		userDao.update_user_info(user);
-		request.setAttribute("result", new Result<Boolean>(ResultCode.SUCCESS, null) );
-		return "redirect:/user/user_info?id=" + user.getId();
+		
 	}
 	
 	/**
@@ -110,20 +115,20 @@ public class UserController {
 		String newPassword = request.getParameter("newPassword");
 		//判断前端参数是否为空
 		if(oldPassword == null || newPassword == null) {
-			request.setAttribute("result", new Result<Boolean>(ResultCode.ERROR_PARAM, null) );
+			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_PARAM, null) );
 		}
 		//校验用户密码
 		else if ( !oldPassword.equals( loggedUser.getPassword() ) ) {
-			request.setAttribute("result", new Result<Boolean>(ResultCode.ERROR_USER_PASSWORD, null) );
+			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_USER_PASSWORD, null) );
 		}
 		//检测新密码是否与旧密码一致
 		else if ( oldPassword.equals( newPassword ) ) {
-			request.setAttribute("result", new Result<Boolean>(ResultCode.ERROR_USER_SAME_OLD_NEW_PASSWORD, null) );
+			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_USER_SAME_OLD_NEW_PASSWORD, null) );
 		}
 		else {
 			loggedUser.setPassword(newPassword);
-			userDao.update_user_password(loggedUser);
-			request.setAttribute("result", new Result<Boolean>(ResultCode.SUCCESS, null) );
+			userServer.user_update_password(loggedUser);
+			request.setAttribute("result", new Result<Void>(ResultCode.SUCCESS, null) );
 			//修改成功重新登录
 			session.invalidate();
 			return "redirect:/login/login";

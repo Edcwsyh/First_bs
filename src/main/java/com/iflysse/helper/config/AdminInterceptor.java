@@ -18,11 +18,10 @@ public class AdminInterceptor implements HandlerInterceptor {
 			throws Exception {
 		User user = (User) request.getSession().getAttribute("loggedUser");
 		if(  user.getPermission() != Constant.USER_PERMISSION_ADMIN ) {
-			request.setAttribute("result", new Result<Boolean>( ResultCode.ERROR_PERMISSION,null) );
+			request.setAttribute("result", new Result<Boolean>( ResultCode.ERROR_PERMISSION, null) );
 			request.getRequestDispatcher("/WEB-INF/jsp/error/403.jsp").forward(request, response);
 			return false;
 		}
-		
 		return true;
 	}
 

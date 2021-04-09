@@ -32,8 +32,8 @@ public interface ReportDao {
 	/*
 	 * 新增一条周报数据
 	 */
-	@Insert("insert into t_report(author, content, isSubmit)"
-			+ " value(#{author}, #{content}, #{isSubmit})")
+	@Insert("insert into t_report(author, title, content, isSubmit)"
+			+ " value(#{author}, #{title}, #{content}, #{isSubmit})")
 	public void insert_report (Report report);
 	
 	/*
@@ -49,9 +49,9 @@ public interface ReportDao {
 	public void delete_report_user(Integer userId);
 	
 	/*
-	 * 更改某周报内容和提交状态
+	 * 更改某周报标题内容和提交状态
 	 */
-	@Update("update t_report set content=#{content}, isSubmit=#{isSubmit} where id=#{id}")
+	@Update("update t_report set title=#{title}, content=#{content}, isSubmit=#{isSubmit} where id=#{id}")
 	public void update_report(Report report);
 	
 	/*
