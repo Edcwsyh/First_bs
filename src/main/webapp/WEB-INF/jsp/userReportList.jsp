@@ -32,8 +32,8 @@
                 <li><a href="${pageContext.request.contextPath}/login/goto_index"><span class="glyphicon glyphicon-home"></span>&nbsp;&nbsp;首页</a></li>
                 <li><a href=""><span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp;用户管理</a></li>
                 <li><a href="content.html"><span class="glyphicon glyphicon-list-alt"></span>&nbsp;&nbsp;课表管理</a></li>
-                <li class="active"><a href=""><span class="glyphicon glyphicon-tags"></span>&nbsp;&nbsp;周报管理</a></li>
-                <li><a href=""><span class="glyphicon glyphicon-tags"></span>&nbsp;&nbsp;学期管理</a></li>
+                <li class="active"><a href=""><span class="glyphicon glyphicon-tags"></span>&nbsp;&nbsp;我的周报</a></li>
+                <li><a href="${pageContext.request.contextPath}/term/term_list"><span class="glyphicon glyphicon-tags"></span>&nbsp;&nbsp;学期管理</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
@@ -84,8 +84,8 @@
 	    </tr>
 	    </thead>
 	    <tbody>
-	    <tr>
-	    	<c:forEach items="${result.data }" var="report">
+	    <c:forEach items="${result.data }" var="report">
+	    <tr>	    	
 	        <th scope="row">${report.titel}</th>
 	        <td>${report.author }</td>
 	        <td>${report.time }</td>
@@ -100,9 +100,9 @@
 	                    <li><a href="#">全局置顶</a></li>
 	                </ul>
 	            </div>
-	        </td>
-	        </c:forEach>
-	    </tr>	  	    
+	        </td>	        
+	    </tr>
+	    </c:forEach>	  	    
 	    </tbody>
 	</table>
 	<nav class="pull-right">

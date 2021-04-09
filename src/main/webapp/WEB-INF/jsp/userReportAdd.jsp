@@ -31,8 +31,8 @@
             <ul class="nav navbar-nav">
                 <li><a href="${pageContext.request.contextPath}/login/goto_index"><span class="glyphicon glyphicon-home"></span>&nbsp;&nbsp;首页</a></li>
                 <li><a href=""><span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp;用户管理</a></li>
-                <li><a href="content.html"><span class="glyphicon glyphicon-list-alt"></span>&nbsp;&nbsp;课表管理</a></li>
-                <li class="active"><a href=""><span class="glyphicon glyphicon-tags"></span>&nbsp;&nbsp;周报管理</a></li>
+                <li><a href=""><span class="glyphicon glyphicon-list-alt"></span>&nbsp;&nbsp;课表管理</a></li>
+                <li class="active"><a href=""><span class="glyphicon glyphicon-tags"></span>&nbsp;&nbsp;我的周报</a></li>
                 <li><a href=""><span class="glyphicon glyphicon-tags"></span>&nbsp;&nbsp;学期管理</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
@@ -76,18 +76,22 @@
                 </li>
             </ul>
             <form action="${pageContext.request.contextPath}/report/report_add" class="mar_t15">
+            	<input type="hidden" name="author" value="${loggedUser.id}"> 
                 <div class="form-group">
-                    <label for="title">标题</label>
-                    <input type="text" id="title" class="form-control" placeholder="请输入周报标题">
+                    <label for="titel">标题</label>
+                    <input type="text" id="titel" name="titel" class="form-control" placeholder="请输入周报标题">
                 </div>
                 <div class="form-group">
                     <label for="content">周报内容</label>
-                    <textarea id="content" class="form-control" rows="15" cols="10" placeholder="请输入周报正文部分"></textarea>
+                    <textarea id="content" name="content" class="form-control" rows="15" cols="10" placeholder="请输入周报正文部分"></textarea>
                 </div>
-                <div class="checkbox">
-                    <label>
-                        <input type="checkbox">全局置顶
-                    </label>
+                <div class="">
+			    	<label class="radio-inline">
+			     		<input type="radio" name="isSubmit" value="1" > 提交
+			      	</label>
+			     	 <label class="radio-inline">
+			      		<input type="radio" name="isSubmit" value="0" > 不提交
+			     	 </label>			    
                     <button type="submit" class="btn btn-default pull-right">新增周报</button>
                 </div>
             </form>
