@@ -49,8 +49,8 @@ public class Report {
 		this.author = author;
 	}
 
-	public Timestamp getTime() {
-		return time;
+	public String getTime() {
+		return time.toLocaleString();
 	}
 
 	public void setTime(Timestamp time) {
