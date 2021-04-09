@@ -33,10 +33,10 @@ public interface SubjectDao {
 	/*
 	 * 新增一条科目信息
 	 */
-	@Insert("insert into t_term(name, teacher, type, ta, klass, timeTotal, "
-			+ "timeTheory, timePractice, term)"
-			+ " value(#{name}, #{teacher},#{type}, #{ta}, #{klass}, #{timeTotal},"
-			+ "#{timeTheory}, #{timePractice}, #{term})")
+//	@Insert("insert into t_term(name, teacher, type, ta, klass, timeTotal, "
+//			+ "timeTheory, timePractice, term)"
+//			+ " value(#{name}, #{teacher},#{type}, #{ta}, #{klass}, #{timeTotal},"
+//			+ "#{timeTheory}, #{timePractice}, #{term})")
 	public void insert_subject (Subject subject);
 	
 	//删除某一科目

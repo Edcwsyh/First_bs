@@ -155,24 +155,30 @@ public class Subject {
 	 */
 	public int check(int checkField) {
 		int result = 0;
-//		if( (checkField & Constant.CHECK_ID) != 0 && id == null ) {
-//			result |= Constant.CHECK_ID;
-//		}
-//		if( (checkField & Constant.CHECK_USERNAME) != 0 && username == null ) {
-//			result |= Constant.CHECK_USERNAME;
-//		}
-//		if( (checkField & Constant.CHECK_PASSWORD) != 0 && password == null ) {
-//			result |= Constant.CHECK_PASSWORD;
-//		}
-//		if( (checkField & Constant.CHECK_REALNAME) != 0 && realName == null ) {
-//			result |= Constant.CHECK_REALNAME;
-//		}
-//		if( (checkField & Constant.CHECK_PHONE) != 0 && phone == null ) {
-//			result |= Constant.CHECK_PHONE;
-//		}
-//		if( (checkField & Constant.CHECK_MAIL) != 0 && mail == null ) {
-//			result |= Constant.CHECK_MAIL;
-//		}
+		if( (checkField & Constant.CHECK_ID) != 0 && id == null ) {
+			System.out.println("id为空");
+			result |= Constant.CHECK_ID;
+		}
+		if( (checkField & Constant.CHECK_NAME) != 0 && name == null ) {
+			System.out.println("名称为空");
+			result |= Constant.CHECK_NAME;
+		}
+		if( (checkField & Constant.CHECK_TYPE) != 0 && type == null ) {
+			System.out.println("类型为空");
+			result |= Constant.CHECK_TYPE;
+		}
+		if( (checkField & Constant.CHECK_TEACHER) != 0 && teacher == null ) {
+			System.out.println("教师为空");
+			result |= Constant.CHECK_TEACHER;
+		}
+		if( (checkField & Constant.CHECK_TERM) != 0 && term == null ) {
+			System.out.println("学期为空");
+			result |= Constant.CHECK_TERM;
+		}
+		if( (checkField & Constant.CHECK_TIME) != 0 && timePractice == null  && timeTheory == null && timeTotal == null) {
+			System.out.println("时间为空");
+			result |= Constant.CHECK_TIME;
+		}
 		return result;
 	}
 

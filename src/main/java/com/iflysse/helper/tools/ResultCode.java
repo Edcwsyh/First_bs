@@ -53,6 +53,9 @@ public enum ResultCode{
 	ERROR_SUBJECT_DELETE(false, 22001, "科目删除失败"),
 	ERROR_SUBJECT_NOT_FOUND(false, 22002, "科目不存在"),
 	
+	/**
+	 * 请求失败 - 当前学期已激活
+	 */
 	ERROR_TERM_ACTIVATE(false, 23000, "当前学期已激活"),
 	ERROR_TERM_NOT_FOUND(false, 23001, "未找到学期"),
 	ERROR_TERM_NOT_DATA(false, 23002, "不存在任何学期数据"),
@@ -73,7 +76,12 @@ public enum ResultCode{
 	/**
 	 * 请求失败 - 权限不足
 	 */
-	ERROR_PERMISSION(false, 21100, "权限不足");
+	ERROR_PERMISSION(false, 21100, "权限不足"),
+	
+	/**
+	 * 请求失败 - 服务器发送错误
+	 */
+	ERROR_SERVER(false, 99999, "服务器发送错误!");
 	
 	private boolean success;
 	private Integer code;

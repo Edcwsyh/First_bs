@@ -32,8 +32,8 @@ public interface ReportDao {
 	/*
 	 * 新增一条周报数据
 	 */
-	@Insert("insert into t_report(author, title, content, isSubmit, time)"
-			+ " value(#{author}, #{title}, #{content}, #{isSubmit}), #{time}")
+	@Insert("insert into t_report(author, title, content, isSubmit)"
+			+ " value(#{author}, #{title}, #{content}, #{isSubmit})")
 	public void insert_report (Report report);
 	
 	/*

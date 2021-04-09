@@ -9,7 +9,7 @@ import com.iflysse.helper.tools.Constant;
 public class Report {
 	private Integer id;
 	private Integer author;
-	private String titel;
+	private String title;
 	private String content;
 	private Timestamp time;
 	private Boolean isSubmit;
@@ -65,19 +65,19 @@ public class Report {
 		this.isSubmit = isSubmit;
 	}
 	
-	public String getTitel() {
-		return titel;
+	public String getTitle() {
+		return title;
 	}
 
-	public void setTitel(String titel) {
-		this.titel = titel;
+	public void setTitle(String title) {
+		this.title = title;
 	}
 	
 	
 	
 	@Override
 	public String toString() {
-		return "Report [id=" + id + ", author=" + author + ", titel=" + titel + ", content=" + content + ", time="
+		return "Report [id=" + id + ", author=" + author + ", title=" + title + ", content=" + content + ", time="
 				+ time + ", isSubmit=" + isSubmit + "]";
 	}
 
@@ -85,7 +85,7 @@ public class Report {
 	 * 用于检测对象中的某些属性是否为空, 检测参数应使用Constant中提供的check常量(CHECK_*)
 	 * 若有多个检测字段则应使用"按位或(异或)运算"来传递参数, 列入检测id和状态是否为空 : Constant.CHECK_ID | Constant.CHECK_STATE
 	 * 若所检测的字段为空则返回的结果对应参数, 例如id和状态都为空, 则返回值为 : Constant.CHECK_ID | Constant.CHECK_STATE
-	 * 该函数可检测属性 : CHECK_ID, CHECK_AUTHOR, CHECK_TITEL, CHECK_SUBMIT, CHECK_ALL(所有属性)
+	 * 该函数可检测属性 : CHECK_ID, CHECK_AUTHOR, CHECK_title, CHECK_SUBMIT, CHECK_ALL(所有属性)
 	 * @param checkField
 	 * @return
 	 */
@@ -97,8 +97,8 @@ public class Report {
 		if( (checkField & Constant.CHECK_AUTHOR) != 0 && author == null ) {
 			result |= Constant.CHECK_AUTHOR;
 		}
-		if( (checkField & Constant.CHECK_TITEL) != 0 && titel == null ) {
-			result |= Constant.CHECK_TITEL;
+		if( (checkField & Constant.CHECK_TITLE) != 0 && title == null ) {
+			result |= Constant.CHECK_TITLE;
 		}
 		if( (checkField & Constant.CHECK_SUBMIT) != 0 && isSubmit == null ) {
 			result |= Constant.CHECK_SUBMIT;

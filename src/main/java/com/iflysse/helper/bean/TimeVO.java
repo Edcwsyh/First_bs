@@ -7,16 +7,25 @@ public class TimeVO extends TimeBase{
 	private Byte interval;
 	private String addWeek;
 	private String deleteWeek;
+	private Byte week;
+	private Byte howTime;
 
-	public TimeVO(Integer id, Integer subject, Integer timeQuantum, String classroom, String weeks, Byte starWeek,
-			Byte endWeek, Byte interval, String addWeek, String deleteWeek) {
-		super(id, subject, timeQuantum, classroom);
+	public TimeVO(Integer id, Integer subject, String classroom, String weeks, Byte starWeek,
+			Byte endWeek, Byte interval, String addWeek, String deleteWeek, Byte week, Byte howTime) {
+		super(id, subject, classroom);
 		this.weeks = weeks;
 		this.starWeek = starWeek;
 		this.endWeek = endWeek;
 		this.interval = interval;
 		this.addWeek = addWeek;
 		this.deleteWeek = deleteWeek;
+		this.week = week;
+		this.howTime = howTime;
+	}
+	
+	public TimeVO(Time time) {
+		super(time.getId(), time.getSubject(), time.getClassroom() );
+		weeks = time.getWeeks();
 	}
 
 	public Byte getStarWeek() {
@@ -67,6 +76,20 @@ public class TimeVO extends TimeBase{
 		this.deleteWeek = deleteWeek;
 	}
 
-	
+	public Byte getWeek() {
+		return week;
+	}
+
+	public void setWeek(Byte week) {
+		this.week = week;
+	}
+
+	public Byte getHowTime() {
+		return howTime;
+	}
+
+	public void setHowTime(Byte howTime) {
+		this.howTime = howTime;
+	}
 	
 }

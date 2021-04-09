@@ -14,6 +14,7 @@ import com.iflysse.helper.bean.User;
 import com.iflysse.helper.dao.SubjectDao;
 import com.iflysse.helper.dao.TermDao;
 import com.iflysse.helper.dao.UserDao;
+import com.iflysse.helper.tools.Cache;
 import com.iflysse.helper.tools.Constant;
 import com.iflysse.helper.tools.Result;
 import com.iflysse.helper.tools.ResultCode;
@@ -41,13 +42,13 @@ public class SubjectController {
 	 * @apiSuccess {string} message 错误信息
 	 * @apiParam {string} name 该科目的名称
 	 * @apiParam {number} type 该科目的课程类型, 0表示方向课, 1表示理论课
+	 * @apiParam {number} teacher 该科目的教师id, 即登录用户的id
 	 * @apiParam {string} ta 该科目的助教
 	 * @apiParam {string} klass 该科目的班级
-	 * @apiParam {number} subjectTimeTotal 该科目的总课时
-	 * @apiParam {number} subjectTimeTheory 该科目的理论课时
-	 * @apiParam {number} subjectTimePractice 该科目的实践课时
-	 * @apiParam {number} id 科目名
-	 * @apiParam {number} userId 用户ID
+	 * @apiParam {number} timeTotal 该科目的总课时
+	 * @apiParam {number} timeTheory 该科目的理论课时
+	 * @apiParam {number} timePractice 该科目的实践课时
+	 * @apiParam {number} term 学期的id, 默认当前学期
 	 * 	@apiSuccessExample {json} 请求成功例子:
 	 * 	{
 	 *     	"success" : true,
@@ -59,24 +60,36 @@ public class SubjectController {
 	 * 	{
 	 * 		"name":"如何对金钱失去兴趣",
 	 * 		"type":0,
+	 * 		"teacher" 1,
 	 * 		"ta":"马云",
 	 * 		"klass":"内卷学1班",
-	 * 		"subjectTimeTotal":"66",
-	 * 		"subjectTimeTheory":"33",
-	 * 		"subjectTimePractice":"33"
-	 * 		"userId": 776622
+	 * 		"timeTotal":"66",
+	 * 		"timeTheory":"33",
+	 * 		"timePractice":"33"
 	 * 	}
 	 */
 	@RequestMapping("/subject_add")
 	public String subject_add(HttpServletRequest request, Subject newSubject) {
-		if(newSubject == null) {
-			request.setAttribute("result", new Result<Boolean>(ResultCode.ERROR_PARAM, null) );
-		}else if(newSubject.check(1) != 0 ) {
-			request.setAttribute("result", new Result<Boolean>(ResultCode.ERROR_PARAM, null) );
+		if (newSubject.getTerm() == null) {
+			newSubject.setTerm( Cache.termBuffer.getId() );
+		}
+		if(newSubject.check( Constant.CHECK_ALL ^ Constant.CHECK_TERM ^ Constant.CHECK_ID ) != 0 ) {
+			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_PARAM, null) );
+			System.out.println(ResultCode.ERROR_PARAM.getMessage());
+			return "error/400";
 		}
 		subjectDao.insert_subject(newSubject);
-		request.setAttribute("result", new Result<Boolean>(ResultCode.SUCCESS, null) );
-		return "subjectInfo";
+		System.out.println(newSubject.getId());
+		
+		try {
+			Cache.subjectQueue.put(newSubject);
+			
+		} catch (InterruptedException e) {
+			System.out.println ("subject队列发生异常 : " + e.toString() );
+			request.setAttribute("result", new Result<Void>(ResultCode.SUCCESS, null ) );
+		}
+		request.setAttribute("result", new Result<Void>(ResultCode.ERROR_SERVER, null ) );
+		return "error/500";
 	}
 	
 	/**
@@ -115,9 +128,7 @@ public class SubjectController {
 	 */
 	@RequestMapping("/subject_update")
 	public String subject_update(HttpServletRequest request,Subject subject) {
-		if(subject == null) {
-			request.setAttribute("result", new Result<Subject>(ResultCode.ERROR_PARAM, null) );
-		}else if( subject.check(1) != 0 ) {
+		if( subject.check( Constant.CHECK_ALL ) != 0 ) {
 			request.setAttribute("result", new Result<Subject>(ResultCode.ERROR_PARAM, null) );
 		}
 		subjectDao.update_subject(subject);
@@ -231,20 +242,12 @@ public class SubjectController {
 	 * 	}
 	 */
 	@RequestMapping("/subject_list")
-	public String subject_list(HttpServletRequest request, HttpSession session) {
+	public String subject_list(HttpServletRequest request, HttpSession session, Integer userId, Integer termId) {
 		User requestUser = (User) session.getAttribute("loggedUser");
-		Integer termId = (Integer) request.getAttribute("termId");
-		Integer userId = (Integer) request.getAttribute("userId");
 		
-		//判断用户id是否为空
-		if (userId == null) {
-			request.setAttribute( "result", new Result< List<Subject> >( ResultCode.ERROR_PARAM, null ) );
-			return "error/400";
-		}
 		//判断用户请求的是否为自己的科目表, 若不是则需验证用户权限
 		if (requestUser.getId() != userId ) {
-			if(requestUser.getPermission() == Constant.USER_PERMISSION_NORMAL || 
-			   requestUser.getPermission() == Constant.USER_PERMISSION_UNKNOW) {
+			if(requestUser.getPermission() == Constant.USER_PERMISSION_NORMAL ) {
 				request.setAttribute( "result", new Result< List<Subject> >( ResultCode.ERROR_PERMISSION, null ) );
 				return "error/403";
 			}
@@ -257,7 +260,7 @@ public class SubjectController {
 		
 		//验证传入的学期id
 		if(termId == null) {
-			termId = TermController.termBuffer.getId();
+			termId = Cache.termBuffer.getId();
 		}else if( termDao.get_term_by_id(termId) == null ) {
 			request.setAttribute( "result", new Result< List<Subject> >( ResultCode.ERROR_TERM_NOT_FOUND, null ) );
 			return "error/404";
@@ -274,16 +277,16 @@ public class SubjectController {
 	}
 	
 	/**
-	 * @api {get} /subject/goto_create 跳转至用户信息页面
+	 * @api {get} /subject/goto_create 跳转至新增课表页面
 	 * @apiVersion 1.0.0
 	 * @apiGroup Page
 	 * @apiName 跳转至科目创建页面
 	 * @apiDescription 接口说明.
 	 * 该接口没有参数，也没有返回数据,仅进行页面切换
 	 */
-	@RequestMapping("/goto_create")
-	public String goto_create() {
-		return "";
+	@RequestMapping("/goto_subject_add")
+	public String goto_subject_add() {
+		return "subjectAdd";
 	}
 	
 }

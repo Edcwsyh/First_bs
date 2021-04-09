@@ -1,5 +1,6 @@
 package com.iflysse.helper.controller;
 
+import java.sql.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.iflysse.helper.bean.Term;
 import com.iflysse.helper.dao.TermDao;
+import com.iflysse.helper.tools.Cache;
+import com.iflysse.helper.tools.Constant;
 import com.iflysse.helper.tools.Result;
 import com.iflysse.helper.tools.ResultCode;
 
@@ -21,14 +24,6 @@ public class TermController {
 	
 	@Autowired
 	private TermDao termDao;
-	
-	//用于缓存当前学期的对象
-	public static Term termBuffer = null;
-	
-	@PostConstruct
-	private void termBuff_init() {
-		termBuffer = termDao.get_current_term();
-	}
 	
 	/**
 	 * @api {get} /term/term_current 获取当前学期信息
@@ -61,7 +56,7 @@ public class TermController {
 	@ResponseBody
 	@RequestMapping("/term_current")
 	public Result<Term> term_current(HttpServletRequest request) {
-		return new Result<Term>(ResultCode.SUCCESS, termBuffer);
+		return new Result<Term>(ResultCode.SUCCESS, Cache.termBuffer);
 	}
 	
 	/**
@@ -98,7 +93,7 @@ public class TermController {
 	}
 	
 	/**
-	 * @api {get} /term/term_create 创建一个新的学期
+	 * @api {get} /TeacherHelper/term/term_add 创建一个新的学期
 	 * @apiVersion 1.0.0
 	 * @apiGroup Term
 	 * @apiName 创建一个新的学期
@@ -129,26 +124,68 @@ public class TermController {
 	 * @apiDescription 接口说明.
 	 * 该接口只允许管理员调用
 	 */
-	@RequestMapping("/term_create")
-	public Result<Boolean> term_create(HttpServletRequest request, Term newTerm) {
-		if(newTerm == null) {
-			return new Result<Boolean>(ResultCode.ERROR_PARAM, null);
-		}
-		else if(newTerm.getName() == null) {
-			return new Result<Boolean>(ResultCode.ERROR_PARAM, null);
+	@RequestMapping("/term_add")
+	public String term_add(HttpServletRequest request, Term newTerm) {
+		if(newTerm.check( Constant.CHECK_ALL ) != 0) {
+			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_PARAM, null) ); 
 		}
 		//判断新增的是否是激活的学期
 		if(newTerm.getIsCurrent() ) {
 			//关闭原激活学期,并更改当前缓存学期
-			termDao.update_term_state(termBuffer.getId(), false); 
-			termBuffer = newTerm;
+			termDao.update_term_state(Cache.termBuffer.getId(), false); 
+			Cache.termBuffer = newTerm;
 		}
 		termDao.insert_term(newTerm);
-		return new Result<Boolean>(ResultCode.SUCCESS, null);
+		request.setAttribute("result", new Result<Void>(ResultCode.SUCCESS, null) ); 
+		return "termList";
 	}
 	
 	/**
-	 * @api {get} /term/term_activate 激活某一学期
+	 * @api {get} /TeacherHelper/term/term_add 创建一个新的学期
+	 * @apiVersion 1.0.0
+	 * @apiGroup Term
+	 * @apiName 创建一个新的学期
+	 * @apiSuccess {Boolean} Success true表示请求成功，false表示请求失败
+	 * @apiSuccess {number} code 错误代码
+	 * @apiSuccess {string} message 错误信息
+	 * @apiSuccess {Object} data 返回的数据，该接口不返回任何数据
+	 * @apiParam {string} name 学期名
+	 * @apiParam {number} weeks 周数
+	 * @apiParam {Date} startTime 学期开始时间
+	 * @apiParam {number} state 学期状态，1表示激活，0表示不激活，若指定为激活，将设置新学期为当前学期
+	 * @apiVersion 1.0.0
+	 * @apiSuccessExample {json} 请求成功示例:
+	 * 	{
+	 *     	"Success" : true,
+	 *      "code" : 20000,
+	 *      "message" : "请求成功",
+	 *      "data" : "null"
+	 *	}
+	 * @apiParamExample {json} 请求示例:
+	 * 	{	
+	 *		"data":
+	 * 			{
+	 * 				"termName" : "2099年上半年秋季第12345学期",
+	 * 				"weeks" : 20,
+	 * 				"startTime" : 2019-02-01,
+	 * 				"state" : 1
+	 * 			}
+	 * 	}
+	 * @apiDescription 接口说明.
+	 * 该接口只允许管理员调用
+	 */
+	@RequestMapping("/term_update")
+	public String term_update(HttpServletRequest request, Term term) {
+		if(term.check( Constant.CHECK_ALL ) != 0) {
+			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_PARAM, null) ); 
+		}
+		termDao.update_term(term);
+		request.setAttribute("result", new Result<Void>(ResultCode.SUCCESS, null) ); 
+		return "termList";
+	}
+	
+	/**
+	 * @api {get} /TeacherHelper/term/term_activate 激活某一学期
 	 * @apiVersion 1.0.0
 	 * @apiGroup Term
 	 * @apiName 激活某一学期
@@ -177,9 +214,22 @@ public class TermController {
 	 * 该接口只允许管理员调用,
 	 * 该接口调用成功后，原先激活的学期将失效
 	 */
+	@ResponseBody
 	@RequestMapping("/term_activate")
-	public Result<Term> term_activate(HttpServletRequest request, Integer termId) {
-		return new Result<Term>(ResultCode.ERROR_PARAM, null);
+	public Result<Void> term_activate(HttpServletRequest request, Integer termId) {
+		System.out.print("接口调用");
+		if(termId == Cache.termBuffer.getId() ) {
+			return new Result<Void>(ResultCode.ERROR_TERM_ACTIVATE, null);
+		}
+		Term term = termDao.get_term_by_id(termId);
+		if(term == null) {
+			return new Result<Void>(ResultCode.ERROR_TERM_NOT_FOUND, null);
+		} else {
+			termDao.update_term_state(term.getId(), true);
+			termDao.update_term_state(Cache.termBuffer.getId(), false);
+			Cache.termBuffer = term;
+			return new Result<Void>(ResultCode.SUCCESS, null);
+		}
 	}
 	
 }

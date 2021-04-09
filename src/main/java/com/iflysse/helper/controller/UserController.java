@@ -1,5 +1,6 @@
 package com.iflysse.helper.controller;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -270,7 +271,6 @@ public class UserController {
 		request.setAttribute("result", new Result<User>(ResultCode.SUCCESS, user) );
 		return "userInfo";
 	}
-	
 	
 	/**
 	 * @api {post} /TeacherHelper/user/user_lock 锁定用户

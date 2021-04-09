@@ -5,14 +5,12 @@ import com.iflysse.helper.controller.TermController;
 public class TimeBase {
 	protected Integer id;
 	protected Integer subject;
-	protected Integer timeQuantum;
 	protected String classroom;
 	
-	public TimeBase(Integer id, Integer subject, Integer timeQuantum, String classroom) {
+	public TimeBase(Integer id, Integer subject, String classroom) {
 		super();
 		this.id = id;
 		this.subject = subject;
-		this.timeQuantum = timeQuantum;
 		this.classroom = classroom;
 	}
 
@@ -30,14 +28,6 @@ public class TimeBase {
 
 	public void setSubject(Integer subject) {
 		this.subject = subject;
-	}
-
-	public Integer getTimeQuantum() {
-		return timeQuantum;
-	}
-
-	public void setTimeQuantum(Integer timeQuantum) {
-		this.timeQuantum = timeQuantum;
 	}
 
 	public String getClassroom() {

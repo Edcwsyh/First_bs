@@ -10,6 +10,10 @@ public interface Constant {
 	 * 学期id-当前
 	 */
 	int TERM_ID_CURRENT = -1;
+	/**
+	 * 学期id-当前
+	 */
+	byte TERM_DEFAULT_WEEKS = 20;
 	
 	/**
 	 * 用户状态-正常
@@ -74,67 +78,75 @@ public interface Constant {
 	/**
 	 * 检测-id
 	 */
-	int CHECK_ID = 0B1;
-	/**
-	 * 检测-周报作者
-	 */
-	int CHECK_AUTHOR = 0B10;
-	/**
-	 * 检测-周报内容
-	 */
-	int CHECK_CONTENT = 0B100;
-	/**
-	 * 检测-周报提交状态
-	 */
-	int CHECK_SUBMIT = 0B1000;
-	/**
-	 * 检测-周报标题
-	 */
-	int CHECK_TITEL = 0B10000;
-	/**
-	 * 检测-用户名
-	 */
-	int CHECK_USERNAME = 0B1;
-	/**
-	 * 检测-用户密码
-	 */
-	int CHECK_PASSWORD = 0B10;
-	/**
-	 * 检测-用户真实姓名
-	 */
-	int CHECK_REALNAME = 0B100;
-	/**
-	 * 检测-用户手机
-	 */
-	int CHECK_PHONE = 0B1000;
-	/**
-	 * 检测-用户邮箱
-	 */
-	int CHECK_MAIL = 0B10000;
-	/**
-	 * 检测-学期
-	 */
-	int CHECK_TERM = 0B1;
-	/**
-	 * 检测-讲师
-	 */
-	int CHECK_TEACHER = 0B10;
+	int CHECK_ID = 1 << 31;
 	/**
 	 * 检测-名称
 	 */
-	int CHECK_NAME = 0B100;
-	/**
-	 * 检测-类型
-	 */
-	int CHECK_TYPE = 0B1000;
-	/**
-	 * 检测-班级
-	 */
-	int CHECK_CLASS = 0B10000;
+	int CHECK_NAME = 1 << 30;
 	/**
 	 * 检测-时间
 	 */
-	int CHECK_TIME= 0B100000;
+	int CHECK_TIME= 1 << 29;
+	/**
+	 * 检测-周数
+	 */
+	int CHECK_WEEKS= 1 << 28;
+	/**
+	 * 检测-周报作者
+	 */
+	int CHECK_AUTHOR = 1 << 1;
+	/**
+	 * 检测-周报内容
+	 */
+	int CHECK_CONTENT = 1 << 2;
+	/**
+	 * 检测-周报提交状态
+	 */
+	int CHECK_SUBMIT = 1 << 3;
+	/**
+	 * 检测-周报标题
+	 */
+	int CHECK_TITLE = 1 << 4;
+	/**
+	 * 检测-用户名
+	 */
+	int CHECK_USERNAME = 1 << 1;
+	/**
+	 * 检测-用户密码
+	 */
+	int CHECK_PASSWORD = 1 << 2;
+	/**
+	 * 检测-用户真实姓名
+	 */
+	int CHECK_REALNAME = 1 << 3;
+	/**
+	 * 检测-用户手机
+	 */
+	int CHECK_PHONE = 1 << 4;
+	/**
+	 * 检测-用户邮箱
+	 */
+	int CHECK_MAIL = 1 << 5;
+	/**
+	 * 检测-学期
+	 */
+	int CHECK_TERM = 1 << 1;
+	/**
+	 * 检测-讲师
+	 */
+	int CHECK_TEACHER = 1 << 2;
+	/**
+	 * 检测-类型
+	 */
+	int CHECK_TYPE = 1 << 3;
+	/**
+	 * 检测-班级
+	 */
+	int CHECK_CLASS = 1 << 4;
+	/**
+	 * 检测-当前学期
+	 */
+	int CHECK_CURRENT = 1;
 	/**
 	 * 检测-所有字段
 	 */

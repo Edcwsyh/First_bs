@@ -1,22 +1,23 @@
 package com.iflysse.helper.bean;
 
 import com.iflysse.helper.controller.TermController;
+import com.iflysse.helper.tools.Cache;
 
 public class Time extends TimeBase{
 
 	private Integer weeks;
+	private Byte timeQuantum;
 
 	public Time(Integer id, Integer subject, Integer timeQuantum, String classroom, Integer weeks) {
-		super(id, subject, timeQuantum, classroom);
+		super(id, subject, classroom);
 		this.weeks = weeks;
 	}
 	
 	public Time(TimeVO timeVO) {
-		super(timeVO.getId(), timeVO.getSubject(), timeVO.getTimeQuantum(), timeVO.getClassroom() );
+		super(timeVO.getId(), timeVO.getSubject(), timeVO.getClassroom() );
 		Byte startWeek = timeVO.getStarWeek();
-		Byte endWeek = TermController.termBuffer.getWeeks();
+		Byte endWeek = Cache.termBuffer.getWeeks();
 		endWeek = endWeek <= timeVO.getEndWeek() ? endWeek : timeVO.getEndWeek();
-		String buf;
 		do {
 			this.weeks |= 1 << (startWeek - 1);
 		} while (startWeek < endWeek );
@@ -24,6 +25,8 @@ public class Time extends TimeBase{
 		addWeeks( timeVO.getAddWeek() );
 		//删除weeks中的已存在周
 		deleteWeeks( timeVO.getDeleteWeek() );
+		//设置上课时间
+		setTimeQuantum(timeVO.getWeek(), timeVO.getHowTime());
 	}
 	
 	public void addWeeks(String weekStr) {
@@ -75,7 +78,7 @@ public class Time extends TimeBase{
 	public String getWeeks() {
 		StringBuilder result = new StringBuilder();
 		int startWeek = 0;
-		for( int index = 0 ; index < TermController.termBuffer.getWeeks(); ++index) {
+		for( int index = 0 ; index < Cache.termBuffer.getWeeks(); ++index) {
 			if ( (weeks & (1 << index)) != 0 ) {
 				startWeek = startWeek == 0 ? index : startWeek;
 			} else {
@@ -88,5 +91,21 @@ public class Time extends TimeBase{
 		}
 		return result.toString();
 	}
+
+	public Byte getTimeQuantum() {
+		return timeQuantum;
+	}
+
+	public void setTimeQuantum(Byte week, Byte howTime) {
+		timeQuantum = week;
+		timeQuantum = (byte) (timeQuantum * 10 + howTime);
+	}
 	
+	public Byte getWeek() {
+		return (byte) (timeQuantum / 10);
+	}
+	
+	public Byte getHowTime() {
+		return (byte) (timeQuantum % 10);
+	}
 }
