@@ -125,8 +125,9 @@ public class LoginController {
 			request.setAttribute("result", new Result<Boolean>(ResultCode.SUCCESS, null));
 			session.setAttribute("loggedUser", dbUser);
 			return "redirect:/login/goto_index";
+		} else {
+			request.setAttribute("result", new Result<Boolean>(ResultCode.ERROR_USER_PASSWORD, null));
 		}
-		request.setAttribute("result", new Result<Boolean>(ResultCode.ERROR_USER_PASSWORD, null));
 		return "login";
 	}
 	

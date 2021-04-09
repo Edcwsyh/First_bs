@@ -1,6 +1,8 @@
 package com.iflysse.helper.bean;
 
-import java.security.Timestamp;
+
+
+import java.sql.Timestamp;
 
 import com.iflysse.helper.tools.Constant;
 
