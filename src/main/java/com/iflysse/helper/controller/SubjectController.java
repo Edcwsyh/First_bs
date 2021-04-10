@@ -79,14 +79,6 @@ public class SubjectController {
 		}
 		subjectDao.insert_subject(newSubject);
 		System.out.println(newSubject.getId());
-		
-		try {
-			Integer cacheIndex = CacheController.indexQueue.take();
-			CacheController.subjectCache.set(cacheIndex, newSubject);
-		} catch (InterruptedException e) {
-			System.out.println ("subject队列发生异常 : " + e.toString() );
-			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_SERVER, null ) );
-		}
 		request.setAttribute("result", new Result<Void>(ResultCode.SUCCESS, null ) );
 		return "error/500";
 	}

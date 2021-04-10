@@ -69,15 +69,7 @@ public class TimeController {
 		Calendar calendar = Calendar.getInstance(), calendarTemp = Calendar.getInstance();
 		boolean flag = true;
 		calendar.setTime( CacheController.termBuffer.getStartTime() );
-		Subject subject = null;
-		try {
-			subject = CacheController.subjectQueue.take();
-		} catch (InterruptedException e) {
-			// TODO 自动生成的 catch 块
-			System.out.println("subject队列出队发生错误 : " + e.toString() );
-			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_SERVER, null) ); 
-			return "error/500";
-		}
+		Subject subject = ;
 		for(TimeVO timeVO: timeVOList) {
 			timeList.add( new Time(timeVO) );
 		}
