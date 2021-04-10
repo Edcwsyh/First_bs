@@ -32,8 +32,8 @@
                 <li><a href="${pageContext.request.contextPath}/login/goto_index"><span class="glyphicon glyphicon-home"></span>&nbsp;&nbsp;首页</a></li>
                 <li><a href=""><span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp;用户管理</a></li>
                 <li><a href="content.html"><span class="glyphicon glyphicon-list-alt"></span>&nbsp;&nbsp;课表管理</a></li>
-                <li class="active"><a href=""><span class="glyphicon glyphicon-tags"></span>&nbsp;&nbsp;我的周报</a></li>
-                <li><a href="${pageContext.request.contextPath}/term/term_list"><span class="glyphicon glyphicon-tags"></span>&nbsp;&nbsp;学期管理</a></li>
+                <li><a href="${pageContext.request.contextPath}/report/user_report_list"><span class="glyphicon glyphicon-tags"></span>&nbsp;&nbsp;我的周报</a></li>
+                <li class="active"><a href=""><span class="glyphicon glyphicon-tags"></span>&nbsp;&nbsp;学期管理</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
@@ -59,46 +59,45 @@
 	<div class="row">
 	<div class="col-md-2">
 	    <div class="list-group">
-	        <a href="content.html" class="list-group-item active">周报管理</a>	        
+	        <a href="content.html" class="list-group-item active">学期管理</a>
+	        <a href="" role="button"  class="list-group-item" data-toggle="modal" data-target="#CreateTerm">创建新学期</a>
 	    </div>
 	</div>
 	<div class="col-md-10">
 	<div class="page-header">
-	    <h1>周报管理</h1>
+	    <h1>学期管理</h1>
 	</div>
 	<ul class="nav nav-tabs">
 	    <li class="active">
-	        <a href="content.html">周报管理</a>
-	    </li>
-	    <li>
-	        <a href="" role="button"  class="list-group-item" data-toggle="modal" data-target="#reportAdd">添加周报</a>
-	    </li>
+	        <a href="content.html">学期管理</a>
+	    </li>	  
 	</ul>
 	<table class="table">
 	    <thead>
 	    <tr>
-	    	<th>周次</th>
-	    	<th>作者</th>
-	        <th>周报内容</th>	        
-	        <th>发布时间</th>
+	        <th>学期名称</th>
+	        <th>开始时间</th>
+	        <th>总周数</th>
+	        <th>是否为当前学期</th>
 	    </tr>
 	    </thead>
 	    <tbody>
-	    <c:forEach items="${result.data }" var="report">
+	    <c:forEach items="${result.data }" var="term">
+	    	<input type="hidden" name="author" value="${term.id}"> 
 	    <tr>	    	
-	        <th scope="row">${report.week}</th>	        
-	        <td>${report.author }</td>
-	        <td>${report.content }</td>
-	        <td>${report.time }</td>
+	        <th scope="row">${term.name}</th>
+	        <td>${term.startTime }</td>
+	        <td>${term.weeks }</td>
+	        <td>${term.isCurrent }</td>
 	        <td>
 	            <div role="presentation" class="dropdown">
 	                <button class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
 	                    操作<span class="caret"></span>
 	                </button>
 	                <ul class="dropdown-menu">
-	                    <li><a href="#">编辑</a></li>
-	                    <li><a href="#">删除</a></li>
-	                    <li><a href="#">全局置顶</a></li>
+	                    <li><a href="${pageContext.request.contextPath}/term/goto_term_update">编辑</a></li>
+	                    <li><a href="${pageContext.request.contextPath}/term/term_delete?termId=${term.id}">删除</a></li>
+	                    <li><a href="${pageContext.request.contextPath}/term/term_activate?termId=${term.id}">激活为当前学期</a></li>
 	                </ul>
 	            </div>
 	        </td>	        
@@ -121,42 +120,38 @@
 	</div>
 	</div>
 	</div>
-	<div class="modal fade" id="reportAdd" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal fade" id="CreateTerm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel">添加周报</h4>
+                <h4 class="modal-title" id="myModalLabel">创建新学期</h4>
             </div>
             <div class="modal-body">
-                <form action="${pageContext.request.contextPath}/report/report_add" method="post">
-                	<input type="hidden" name="author" value="${loggedUser.id}"> 
+                <form action="${pageContext.request.contextPath}/term/term_add" method="post">
                     <div class="form-group">
-                        <label for="week">周报所属周次</label>
-                        <select id="week" name="week" class="form-control">  
-                        	<option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>4</option>
-                            <option>5</option>
-                                                  
-                        </select>
+                        <label for="name">学期名称</label>
+                        <input type="text" id="name" name="name" class="form-control" placeholder="学期名称">
                     </div>
                     <div class="form-group">
-	                    <label for="content">周报内容</label>
-	                    <textarea id="content" name="content" class="form-control" rows="15" cols="10" placeholder="请输入周报正文部分"></textarea>
-                	</div>
+                        <label for="startTime">学期开始时间</label>
+                        <input type="date" id="startTime" name="startTime" class="form-control" placeholder="请选择学期开始时间">
+                    </div>
                     <div class="form-group">
-                        <label for="isSubmit">是否提交周报</label>
+                        <label for="weeks">总周数</label>
+                        <input type="number" id="weeks" name="weeks" class="form-control" placeholder="请确认输入用户密码">
+                    </div>
+                    <div class="form-group">
+                        <label for="isCurrent">是否为当前学期</label>
                         <div>
-	                        <input type="radio" name="isSubmit" value="1" > 是
-	                        <input type="radio" name="isSubmit" value="0" > 否
+	                        <input type="radio" name="isCurrent" value=true > 是
+	                        <input type="radio" name="isCurrent" value=false > 否
                         </div>
                         
                     </div>
                     <div class="modal-footer">
 		                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-		                <button type="submit" class="btn btn-primary">添加</button>
+		                <button type="submit" class="btn btn-primary">提交</button>
             		</div>
                 </form>
             </div>
@@ -164,9 +159,9 @@
         </div>
     </div>
     </div>
-	
-	
-	
+
+    
+    
 	<!--footer-->
 	<footer>
 	    <div class="container">
