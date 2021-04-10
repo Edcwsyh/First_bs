@@ -30,10 +30,10 @@ public interface TermDao {
 	@Update("update t_term set name=#{name}, weeks=#{weeks}, startTime=#{startTime} where id=#{id}")
 	public void update_term (Term term);
 	
-	@Insert("insert into t_term(name, startTime, weeks, isCurrent) value(#{name}, #{startTime},#{weeks}, #{isCurrent})")
+	//@Insert("insert into t_term(name, startTime, weeks, isCurrent) value(#{name}, #{startTime},#{weeks}, #{isCurrent})")
 	public void insert_term (Term term);
 	
 	@Delete("delete from t_term where id=#{id}")
-	public void delete_term(Term term);
+	public void delete_term(Integer id);
 }
 

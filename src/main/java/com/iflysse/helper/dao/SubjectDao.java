@@ -18,6 +18,12 @@ public interface SubjectDao {
 	public List<Subject> get_subject_list(int userId, int teamId);
 	
 	/*
+	 * 获取指定用户及指定学期的科目列表
+	 */
+	@Select("select * from t_subject where term=#{termId}")
+	public List<Subject> get_subject_list_by_term(int teamId);
+	
+	/*
 	 * 获取指定科目的信息
 	 */
 	@Select("select * from t_subject where id=#{subject}")
