@@ -121,10 +121,11 @@ public class SubjectController {
 	public String subject_update(HttpServletRequest request,Subject subject) {
 		if( subject.check( Constant.CHECK_ALL ) != 0 ) {
 			request.setAttribute("result", new Result<Subject>(ResultCode.ERROR_PARAM, null) );
+			return "error/400";
 		}
 		subjectDao.update_subject(subject);
 		request.setAttribute("result", new Result<Subject>(ResultCode.SUCCESS, null) );
-		return "subjectInfo";
+		return "redirect:subject_info?subjectId=" + subject.getId();
 	}
 
 	/**
@@ -171,10 +172,18 @@ public class SubjectController {
 	 * 	}
 	 */
 	@RequestMapping("/subject_info")
-	public String subject_info(HttpServletRequest request, Integer subjectId) {
+	public String subject_info(HttpServletRequest request, HttpSession session, Integer subjectId) {
+		User requestUser = (User) session.getAttribute("loggedUser");
 		Subject dbSubject = subjectDao.get_subject_by_id(subjectId);
 		if(dbSubject == null) {
 			request.setAttribute( "result", new Result<Subject>( ResultCode.ERROR_SUBJECT_NOT_FOUND, null ) );
+			return "error/404";
+		}
+		if( requestUser.getId() != dbSubject.getTeacher() ) {
+			if(requestUser.getPermission() == Constant.USER_PERMISSION_NORMAL ) {
+				request.setAttribute( "result", new Result<Subject>( ResultCode.ERROR_PARAM, null ) );
+				return "error/400";
+			}
 		}
 		request.setAttribute( "result", new Result<Subject>(ResultCode.SUCCESS, dbSubject ) );
 		return "subjectInfo";

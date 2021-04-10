@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iflysse.helper.dao.CourseDao">
+	
+	<insert id="insert_course_list" parameterType="com.iflysse.helper.bean.Course" >
+    insert into t_course
+        (subject, time, goal, content, mode, isHomework, specificTime)
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+        (#{item.subject}, #{item.time},#{item.goal}, #{item.content}, 
+        #{item.mode}, #{item.isHomework}, #{item.specificTime} )
+    </foreach>
+	</insert>
+	
+	<insert id="update_course_list" parameterType="com.iflysse.helper.bean.Course" >
+    	insert into t_course
+        	(id, goal, content, mode, isHomework, specificTime)
+    	VALUES
+    	<foreach collection="list" item="item" index="index" separator=",">
+        	(#{id},#{item.goal}, #{item.content},#{item.mode}, #{item.isHomework}, #{item.specificTime} ) 
+    	</foreach>
+    	on duplicate key update 
+       	goal=values(goal), content=values(content), mode=values(mode), isHomework=values(isHomework),
+       	specificTime=values(specificTime)
+			
+	</insert>
+	
+</mapper>
