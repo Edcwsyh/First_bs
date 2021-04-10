@@ -20,12 +20,7 @@ import com.iflysse.helper.tools.Constant;
 public class CacheController {
 	@Autowired
 	private TermDao termDao;
-	/**
-	 * 科目表缓存队列
-	 */
-	private static final Integer LENGTH_CACHE_QUEUE_INIT = 64;
-	public static BlockingQueue<Integer> indexQueue = null;
-	public static Vector<Subject> subjectCache = null;
+
 	/**
 	 * 学期缓存(当前学期)
 	 */
@@ -39,13 +34,5 @@ public class CacheController {
 					Constant.TERM_DEFAULT_WEEKS , true );
 			termDao.insert_term(termBuffer);
 		}
-		indexQueue = new LinkedBlockingQueue<Integer>(LENGTH_CACHE_QUEUE_INIT);
-		subjectCache = new Vector<Subject>(LENGTH_CACHE_QUEUE_INIT);
-		for(int i = 0 ; i < LENGTH_CACHE_QUEUE_INIT; ++i) {
-			indexQueue.offer( i );
-		}
-	}
-	
-	public void cache_queue_expand() {
 	}
 }

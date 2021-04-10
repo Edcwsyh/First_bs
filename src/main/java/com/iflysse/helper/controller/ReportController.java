@@ -1,6 +1,5 @@
 package com.iflysse.helper.controller;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -36,11 +35,6 @@ public class ReportController {
 			return new Result<Report>(ResultCode.ERROR_PERMISSION, null);
 		}
 		return new Result<Report>(ResultCode.SUCCESS, dbReport);
-	}
-	
-	@RequestMapping("/goto_report_add")
-	public String goto_report_add() {
-		return "userReportAdd";
 	}
 
 	/**
@@ -83,7 +77,7 @@ public class ReportController {
 	 */
 	@RequestMapping("/submit_report_list")
 	public String submit_report_list(HttpServletRequest request, HttpSession session) {
-		User requestUser = (User) session.getAttribute("requestUser");
+		User requestUser = (User) session.getAttribute("loggedUser");
 		//判断发出请求的用户的权限
 		switch ( requestUser.getPermission() ) {
 			case Constant.USER_PERMISSION_NORMAL:

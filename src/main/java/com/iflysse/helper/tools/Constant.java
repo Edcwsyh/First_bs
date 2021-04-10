@@ -92,6 +92,10 @@ public interface Constant {
 	 */
 	int CHECK_WEEKS= 1 << 28;
 	/**
+	 * 检测-科目(外键)
+	 */
+	int CHECK_SUBJECT= 1 << 27;
+	/**
 	 * 检测-周报作者
 	 */
 	int CHECK_AUTHOR = 1 << 1;
@@ -103,10 +107,6 @@ public interface Constant {
 	 * 检测-周报提交状态
 	 */
 	int CHECK_SUBMIT = 1 << 3;
-	/**
-	 * 检测-周报标题
-	 */
-	int CHECK_TITLE = 1 << 4;
 	/**
 	 * 检测-用户名
 	 */
@@ -147,6 +147,26 @@ public interface Constant {
 	 * 检测-当前学期
 	 */
 	int CHECK_CURRENT = 1;
+	/**
+	 * 检测-时间表时间段(表示一周的第几天 及 一天中的第几节课)
+	 */
+	int CHECK_TIME_QUAUTUM = 1 << 1;
+	/**
+	 * 检测-上课间隔(周数)
+	 */
+	int CHECK_INTERVAL = 1 << 2;
+	/**
+	 * 检测-上课具体时间
+	 */
+	int CHECK_SPECIFIC_TIME = 1;
+	/**
+	 * 检测-家庭作业
+	 */
+	int CHECK_HOMEWORK = 1 << 1;
+	/**
+	 * 检测-教学模式
+	 */
+	int CHECK_MODE = 1 << 2;
 	/**
 	 * 检测-所有字段
 	 */
