@@ -1,6 +1,5 @@
 package com.iflysse.helper.controller;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -36,11 +35,6 @@ public class ReportController {
 			return new Result<Report>(ResultCode.ERROR_PERMISSION, null);
 		}
 		return new Result<Report>(ResultCode.SUCCESS, dbReport);
-	}
-	
-	@RequestMapping("/goto_report_add")
-	public String goto_report_add() {
-		return "userReportAdd";
 	}
 
 	/**
