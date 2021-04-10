@@ -84,15 +84,19 @@ public class Report {
 	public int check(int checkField) {
 		int result = 0;
 		if( (checkField & Constant.CHECK_ID) != 0 && id == null ) {
+			System.out.println("id为空");
 			result |= Constant.CHECK_ID;
 		}
 		if( (checkField & Constant.CHECK_AUTHOR) != 0 && author == null ) {
+			System.out.println("作者为空");
 			result |= Constant.CHECK_AUTHOR;
 		}
 		if( (checkField & Constant.CHECK_WEEKS) != 0 && week == null ) {
+			System.out.println("周数为空");
 			result |= Constant.CHECK_WEEKS;
 		}
 		if( (checkField & Constant.CHECK_SUBMIT) != 0 && isSubmit == null ) {
+			System.out.println("提交为空");
 			result |= Constant.CHECK_SUBMIT;
 		}
 		return result;

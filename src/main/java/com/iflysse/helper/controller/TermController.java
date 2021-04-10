@@ -217,6 +217,7 @@ public class TermController {
 	public String term_update(HttpServletRequest request, Term term) {
 		if(term.check( Constant.CHECK_ALL ) != 0) {
 			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_PARAM, null) ); 
+			return "error/404";
 		}
 		termDao.update_term(term);
 		request.setAttribute("result", new Result<Void>(ResultCode.SUCCESS, null) ); 
@@ -224,10 +225,10 @@ public class TermController {
 	}
 	
 	/**
-	 * @api {get} /TeacherHelper/term/term_activate 激活某一学期
+	 * @api {get} /TeacherHelper/term/goto_term_update 跳转到更新学期页面
 	 * @apiVersion 1.0.0
-	 * @apiGroup Term
-	 * @apiName 激活某一学期
+	 * @apiGroup page
+	 * @apiName 更新学期页面
 	 * @apiSuccess {Boolean} Success true表示请求成功，false表示请求失败
 	 * @apiSuccess {number} code 错误代码
 	 * @apiSuccess {string} message 错误信息
@@ -255,13 +256,14 @@ public class TermController {
 	 */
 	@RequestMapping("/goto_term_update")
 	public String goto_term_update(HttpServletRequest request, Integer termId) {
+		System.out.println("接口调用");
 		Term term = termDao.get_term_by_id(termId);
 		if ( term == null ) {
 			request.setAttribute("result", new Result<Term>(ResultCode.ERROR_TERM_NOT_FOUND, null) ); 
 			return "error/404";
 		}
 		request.setAttribute("result", new Result<Term>(ResultCode.SUCCESS, term) ); 
-		return "redirect:term_list";
+		return "termUpdate";
 	}
 	
 	/**

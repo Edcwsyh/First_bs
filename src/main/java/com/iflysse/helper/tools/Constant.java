@@ -78,23 +78,23 @@ public interface Constant {
 	/**
 	 * 检测-id
 	 */
-	int CHECK_ID = 1 << 31;
+	int CHECK_ID = 1 << 30;
 	/**
 	 * 检测-名称
 	 */
-	int CHECK_NAME = 1 << 30;
+	int CHECK_NAME = 1 << 29;
 	/**
 	 * 检测-时间
 	 */
-	int CHECK_TIME= 1 << 29;
+	int CHECK_TIME= 1 << 28;
 	/**
 	 * 检测-周数
 	 */
-	int CHECK_WEEKS= 1 << 28;
+	int CHECK_WEEKS= 1 << 27;
 	/**
 	 * 检测-科目(外键)
 	 */
-	int CHECK_SUBJECT= 1 << 27;
+	int CHECK_SUBJECT= 1 << 26;
 	/**
 	 * 检测-周报作者
 	 */

@@ -216,7 +216,7 @@ public class ReportController {
 	@RequestMapping("/report_add")
 	public String user_register(HttpServletRequest request, Report report) {
 		//检测report中除id外是否存在空字段(time不进行检测)
-		if( report == null || report.check(Constant.CHECK_ALL ^ Constant.CHECK_ID) != 0 ) {
+		if( report.check(Constant.CHECK_ALL ^ Constant.CHECK_ID) != 0 ) {
 			request.setAttribute("result", new Result<Boolean>(ResultCode.ERROR_PARAM, null));
 			return "error/404";
 		}
