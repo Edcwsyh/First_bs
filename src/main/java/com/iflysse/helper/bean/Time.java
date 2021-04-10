@@ -1,7 +1,7 @@
 package com.iflysse.helper.bean;
 
+import com.iflysse.helper.controller.CacheController;
 import com.iflysse.helper.controller.TermController;
-import com.iflysse.helper.tools.Cache;
 
 public class Time extends TimeBase{
 
@@ -16,7 +16,7 @@ public class Time extends TimeBase{
 	public Time(TimeVO timeVO) {
 		super(timeVO.getId(), timeVO.getSubject(), timeVO.getClassroom() );
 		Byte startWeek = timeVO.getStarWeek();
-		Byte endWeek = Cache.termBuffer.getWeeks();
+		Byte endWeek = CacheController.termBuffer.getWeeks();
 		endWeek = endWeek <= timeVO.getEndWeek() ? endWeek : timeVO.getEndWeek();
 		do {
 			this.weeks |= 1 << (startWeek - 1);
@@ -78,7 +78,7 @@ public class Time extends TimeBase{
 	public String getWeeks() {
 		StringBuilder result = new StringBuilder();
 		int startWeek = 0;
-		for( int index = 0 ; index < Cache.termBuffer.getWeeks(); ++index) {
+		for( int index = 0 ; index < CacheController.termBuffer.getWeeks(); ++index) {
 			if ( (weeks & (1 << index)) != 0 ) {
 				startWeek = startWeek == 0 ? index : startWeek;
 			} else {

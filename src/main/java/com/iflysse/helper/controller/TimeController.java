@@ -24,7 +24,6 @@ import com.iflysse.helper.bean.User;
 import com.iflysse.helper.dao.SubjectDao;
 import com.iflysse.helper.dao.TermDao;
 import com.iflysse.helper.dao.UserDao;
-import com.iflysse.helper.tools.Cache;
 import com.iflysse.helper.tools.Constant;
 import com.iflysse.helper.tools.Result;
 import com.iflysse.helper.tools.ResultCode;
@@ -69,10 +68,10 @@ public class TimeController {
 		List<Course> courseList = new LinkedList<>();
 		Calendar calendar = Calendar.getInstance(), calendarTemp = Calendar.getInstance();
 		boolean flag = true;
-		calendar.setTime( Cache.termBuffer.getStartTime() );
+		calendar.setTime( CacheController.termBuffer.getStartTime() );
 		Subject subject = null;
 		try {
-			subject = Cache.subjectQueue.take();
+			subject = CacheController.subjectQueue.take();
 		} catch (InterruptedException e) {
 			// TODO 自动生成的 catch 块
 			System.out.println("subject队列出队发生错误 : " + e.toString() );
@@ -90,40 +89,45 @@ public class TimeController {
 			}
 		} );
 		//设置开始周和结束周
-		int startWeek = 0, endWeek = Cache.termBuffer.getWeeks();
+		int startWeek = 0, endWeek = CacheController.termBuffer.getWeeks();
 		//遍历本学期的所有周次
-		while (startWeek < endWeek ) {
-			for (Time time : timeList) {
-				//对某一周进行检测
-				if( (time.getWeeksValue() & 1 << startWeek) != 0) {
-					if( flag && calendar.get(Calendar.DAY_OF_WEEK ) > time.getWeek() ) {
-						continue;
+		try {
+			while (startWeek < endWeek ) {
+				for (Time time : timeList) {
+					//对某一周进行检测
+					if( (time.getWeeksValue() & 1 << startWeek) != 0) {
+						if( flag && calendar.get(Calendar.DAY_OF_WEEK ) > time.getWeek() ) {
+							continue;
+						}
+						if( subject.getTimeTotal() <= 0 ) {
+							throw new Exception("跳出循环");
+						}
+						calendarTemp.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_YEAR) );
+						calendarTemp.set(Calendar.DAY_OF_WEEK, time.getWeek() );
+						courseList.add( new Course(
+								time.getSubject(),
+								null,
+								null,
+								(byte) 0,
+								false,
+								new Date( calendarTemp.getTime().getTime() ) ) );
 					}
-					if( subject.getTimeTotal() <= 0 ) {
-						;
-					}
-					calendarTemp.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_YEAR) );
-					calendarTemp.set(Calendar.DAY_OF_WEEK, time.getWeek() );
-					courseList.add( new Course(
-							time.getSubject(),
-							null,
-							null,
-							(byte) 0,
-							false,
-							new Date( calendarTemp.getTime().getTime() ) ) );
+				}
+				if(flag) {
+					//第一次运行将calendar格式化为周一
+					int addDay = 8 - calendar.get(Calendar.DAY_OF_WEEK );
+					calendar.add(Calendar.DAY_OF_WEEK, addDay);
+					flag = false;
+				}else {
+					//向后快进一周
+					calendar.add(Calendar.DAY_OF_WEEK, 7);
 				}
 			}
-			if(flag) {
-				//第一次运行将calendar格式化为周一
-				int addDay = 8 - calendar.get(Calendar.DAY_OF_WEEK );
-				calendar.add(Calendar.DAY_OF_WEEK, addDay);
-				flag = false;
-			}else {
-				//向后快进一周
-				calendar.add(Calendar.DAY_OF_WEEK, 7);
-			}
+		} catch (Exception e) {
+			request.setAttribute("result", new Result<Void>(ResultCode.SUCCESS, null) );
+			return "courseUpdate";
 		}
-		return "courseUpdate";
+		return "error/500";
 	}
 	
 }

@@ -14,7 +14,6 @@ import com.iflysse.helper.bean.User;
 import com.iflysse.helper.dao.SubjectDao;
 import com.iflysse.helper.dao.TermDao;
 import com.iflysse.helper.dao.UserDao;
-import com.iflysse.helper.tools.Cache;
 import com.iflysse.helper.tools.Constant;
 import com.iflysse.helper.tools.Result;
 import com.iflysse.helper.tools.ResultCode;
@@ -71,7 +70,7 @@ public class SubjectController {
 	@RequestMapping("/subject_add")
 	public String subject_add(HttpServletRequest request, Subject newSubject) {
 		if (newSubject.getTerm() == null) {
-			newSubject.setTerm( Cache.termBuffer.getId() );
+			newSubject.setTerm( CacheController.termBuffer.getId() );
 		}
 		if(newSubject.check( Constant.CHECK_ALL ^ Constant.CHECK_TERM ^ Constant.CHECK_ID ) != 0 ) {
 			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_PARAM, null) );
@@ -82,13 +81,13 @@ public class SubjectController {
 		System.out.println(newSubject.getId());
 		
 		try {
-			Cache.subjectQueue.put(newSubject);
-			
+			Integer cacheIndex = CacheController.indexQueue.take();
+			CacheController.subjectCache.set(cacheIndex, newSubject);
 		} catch (InterruptedException e) {
 			System.out.println ("subject队列发生异常 : " + e.toString() );
-			request.setAttribute("result", new Result<Void>(ResultCode.SUCCESS, null ) );
+			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_SERVER, null ) );
 		}
-		request.setAttribute("result", new Result<Void>(ResultCode.ERROR_SERVER, null ) );
+		request.setAttribute("result", new Result<Void>(ResultCode.SUCCESS, null ) );
 		return "error/500";
 	}
 	
@@ -260,7 +259,7 @@ public class SubjectController {
 		
 		//验证传入的学期id
 		if(termId == null) {
-			termId = Cache.termBuffer.getId();
+			termId = CacheController.termBuffer.getId();
 		}else if( termDao.get_term_by_id(termId) == null ) {
 			request.setAttribute( "result", new Result< List<Subject> >( ResultCode.ERROR_TERM_NOT_FOUND, null ) );
 			return "error/404";

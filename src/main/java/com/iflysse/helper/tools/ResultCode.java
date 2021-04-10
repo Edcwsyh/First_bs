@@ -57,8 +57,18 @@ public enum ResultCode{
 	 * 请求失败 - 当前学期已激活
 	 */
 	ERROR_TERM_ACTIVATE(false, 23000, "当前学期已激活"),
-	ERROR_TERM_NOT_FOUND(false, 23001, "未找到学期"),
-	ERROR_TERM_NOT_DATA(false, 23002, "不存在任何学期数据"),
+	/**
+	 * 请求失败 - 当前学期已激活, 不可删除
+	 */
+	ERROR_TERM_DELETE_ACTION(false, 23001, "当前学期已激活"),
+	/**
+	 * 请求失败 - 学期未找到
+	 */
+	ERROR_TERM_NOT_FOUND(false, 23002, "未找到学期"),
+	/**
+	 * 请求失败 - 学期所属科目不为空
+	 */
+	ERROR_TERM_NOT_EMPTY(false, 23003, "当前学期被其他科目引用, 不可删除!"),
 	
 	/**
 	 * 请求失败 - 周报内容为空
