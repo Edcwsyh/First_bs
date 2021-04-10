@@ -220,7 +220,7 @@ public class TermController {
 		}
 		termDao.update_term(term);
 		request.setAttribute("result", new Result<Void>(ResultCode.SUCCESS, null) ); 
-		return "redirect:termList";
+		return "redirect:term_list";
 	}
 	
 	/**
@@ -261,7 +261,7 @@ public class TermController {
 			return "error/404";
 		}
 		request.setAttribute("result", new Result<Term>(ResultCode.SUCCESS, term) ); 
-		return "redirect:termList";
+		return "redirect:term_list";
 	}
 	
 	/**
@@ -289,7 +289,6 @@ public class TermController {
 	 * 该接口只允许管理员调用,
 	 * 该接口调用成功后，原先激活的学期将失效
 	 */
-	@ResponseBody
 	@RequestMapping("/term_activate")
 	public String term_activate(HttpServletRequest request, Integer termId) {
 		if(termId == CacheController.termBuffer.getId() ) {
@@ -308,7 +307,7 @@ public class TermController {
 			CacheController.termBuffer = term;
 			System.out.println("请求通过 - 已更改当前激活学期");
 			request.setAttribute("result", new Result<Void>(ResultCode.SUCCESS, null) );
-			return "redirect:termList";
+			return "redirect:term_list";
 		}
 	}
 	
