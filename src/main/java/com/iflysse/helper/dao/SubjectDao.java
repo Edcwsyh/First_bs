@@ -26,8 +26,8 @@ public interface SubjectDao {
 	/*
 	 * 获取指定科目的信息
 	 */
-	@Select("select * from t_subject where id=#{subject}")
-	public Subject get_subject_info(int subject);
+	@Select("select * from t_subject where id=#{id}")
+	public Subject get_subject_by_id(int id);
 	
 	/*
 	 * 更新科目信息

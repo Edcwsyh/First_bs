@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iflysse.helper.dao.TimeDao">
+	
+	<insert id="insert_time_list" parameterType="com.iflysse.helper.bean.Time" keyColumn="id" 
+ 		useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO t_time
+        (subject, classroom, weeks, timeQuantum)
+    VALUES
+    <foreach collection="list" item="item" index="index" separator=",">
+        (#{item.subject}, #{item.classroom},#{tem.weeks}, #{tem.timeQuantum})
+    </foreach>
+	</insert>
+	
+</mapper>

@@ -1,5 +1,7 @@
 package com.iflysse.helper.bean;
 
+import com.iflysse.helper.tools.Constant;
+
 public class TimeVO extends TimeBase{
 	private String weeks;
 	private Byte starWeek;
@@ -90,6 +92,31 @@ public class TimeVO extends TimeBase{
 
 	public void setHowTime(Byte howTime) {
 		this.howTime = howTime;
+	}
+	
+	/**
+	 * 用于检测对象中的某些属性是否为空, 检测参数应使用Constant中提供的check常量(CHECK_*)
+	 * 若有多个检测字段则应使用"按位或(异或)运算"来传递参数, 列入检测id和状态是否为空 : Constant.CHECK_ID | Constant.CHECK_STATE
+	 * 若所检测的字段为空则返回的结果对应参数, 例如id和状态都为空, 则返回值为 : Constant.CHECK_ID | Constant.CHECK_STATE
+	 * 该函数可检测属性 : CHECK_ID, CHECK_WEEKS, CHECK_WEEKS, CHECK_SUBMIT, CHECK_ALL(所有属性)
+	 * @param checkField
+	 * @return
+	 */
+	public int check(int checkField) {
+		int result = 0;
+		if( (checkField & Constant.CHECK_ID) != 0 && id == null ) {
+			result |= Constant.CHECK_ID;
+		}
+		if( (checkField & Constant.CHECK_WEEKS) != 0 && (starWeek == null || endWeek == null) ) {
+			result |= Constant.CHECK_WEEKS;
+		}
+		if( (checkField & Constant.CHECK_TIME_QUAUTUM) != 0 && ( week == null || howTime == null ) ) {
+			result |= Constant.CHECK_TIME_QUAUTUM;
+		}
+		if( (checkField & Constant.CHECK_INTERVAL) != 0 && interval == null ) {
+			result |= Constant.CHECK_INTERVAL;
+		}
+		return result;
 	}
 	
 }

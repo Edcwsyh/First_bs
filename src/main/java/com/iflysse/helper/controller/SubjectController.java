@@ -79,14 +79,6 @@ public class SubjectController {
 		}
 		subjectDao.insert_subject(newSubject);
 		System.out.println(newSubject.getId());
-		
-		try {
-			Integer cacheIndex = CacheController.indexQueue.take();
-			CacheController.subjectCache.set(cacheIndex, newSubject);
-		} catch (InterruptedException e) {
-			System.out.println ("subject队列发生异常 : " + e.toString() );
-			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_SERVER, null ) );
-		}
 		request.setAttribute("result", new Result<Void>(ResultCode.SUCCESS, null ) );
 		return "error/500";
 	}
@@ -180,7 +172,7 @@ public class SubjectController {
 	 */
 	@RequestMapping("/subject_info")
 	public String subject_info(HttpServletRequest request, Integer subjectId) {
-		Subject dbSubject = subjectDao.get_subject_info(subjectId);
+		Subject dbSubject = subjectDao.get_subject_by_id(subjectId);
 		if(dbSubject == null) {
 			request.setAttribute( "result", new Result<Subject>( ResultCode.ERROR_SUBJECT_NOT_FOUND, null ) );
 		}
@@ -243,7 +235,6 @@ public class SubjectController {
 	@RequestMapping("/subject_list")
 	public String subject_list(HttpServletRequest request, HttpSession session, Integer userId, Integer termId) {
 		User requestUser = (User) session.getAttribute("loggedUser");
-		
 		//判断用户请求的是否为自己的科目表, 若不是则需验证用户权限
 		if (requestUser.getId() != userId ) {
 			if(requestUser.getPermission() == Constant.USER_PERMISSION_NORMAL ) {
