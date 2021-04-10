@@ -55,83 +55,16 @@
 </nav>
 	<!--导航-->
 	
-	<div class="container">
-	<div class="row">
-	<div class="col-md-2">
-	    <div class="list-group">
-	        <a href="content.html" class="list-group-item active">学期管理</a>
-	        <a href="" role="button"  class="list-group-item" data-toggle="modal" data-target="#CreateTerm">创建新学期</a>
-	    </div>
-	</div>
-	<div class="col-md-10">
-	<div class="page-header">
-	    <h1>学期管理</h1>
-	</div>
-	<ul class="nav nav-tabs">
-	    <li class="active">
-	        <a href="content.html">学期管理</a>
-	    </li>	  
-	</ul>
-	<table class="table">
-	    <thead>
-	    <tr>
-	        <th>学期名称</th>
-	        <th>开始时间</th>
-	        <th>总周数</th>
-	        <th>是否为当前学期</th>
-	    </tr>
-	    </thead>
-	    <tbody>
-	    <c:forEach items="${result.data }" var="term">
-	    	<input type="hidden" name="author" value="${term.id}"> 
-	    <tr>	    	
-	        <th scope="row">${term.name}</th>
-	        <td>${term.startTime }</td>
-	        <td>${term.weeks }</td>
-	        <td>${term.isCurrent }</td>
-	        <td>
-	            <div role="presentation" class="dropdown">
-	                <button class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-	                    操作<span class="caret"></span>
-	                </button>
-	                <ul class="dropdown-menu">
-	                    <li><a href="${pageContext.request.contextPath}/term/goto_term_update">编辑</a></li>
-	                    <li><a href="${pageContext.request.contextPath}/term/term_delete?termId=${term.id}">删除</a></li>
-	                    <li><a href="${pageContext.request.contextPath}/term/term_activate?termId=${term.id}">激活为当前学期</a></li>
-	                </ul>
-	            </div>
-	        </td>	        
-	    </tr>
-	    </c:forEach>	  	    
-	    </tbody>
-	</table>
-	<nav class="pull-right">
-	    <ul class="pagination">
-	        <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
-	        <li class="active"><a href="#">1</a></li>
-	        <li><a href="#">2 </a></li>
-	        <li><a href="#">3 </a></li>
-	        <li><a href="#">4 </a></li>
-	        <li><a href="#">5 </a></li>
-	        <li><a href="#">6 </a></li>
-	        <li><a href="#"><span aria-hidden="true">&raquo;</span></a></li>
-	    </ul>
-	</nav>
-	</div>
-	</div>
-	</div>
-	<div class="modal fade" id="CreateTerm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel">创建新学期</h4>
-            </div>
+
+   
+   
+   <div > 
+   <div style="margin-left: 400px;margin-right: 200px" class="col-md-5">
             <div class="modal-body">
-                <form action="${pageContext.request.contextPath}/term/term_add" method="post">
+                <form action="${pageContext.request.contextPath}/term/term_update" method="post">
                     <div class="form-group">
                         <label for="name">学期名称</label>
-                        <input type="text" id="name" name="name" class="form-control" placeholder="学期名称">
+                        <input type="text" id="name" name="name" class="form-control" value="${result.data.name }">
                     </div>
                     <div class="form-group">
                         <label for="startTime">学期开始时间</label>
@@ -144,8 +77,8 @@
                     <div class="form-group">
                         <label for="isCurrent">是否为当前学期</label>
                         <div>
-	                        <input type="radio" name="isCurrent" value=true > 是
-	                        <input type="radio" name="isCurrent" value=false > 否
+	                        <input type="radio" name="isCurrent" value=true ${term.isCurrent == true ? 'checked':'' }> 是
+	                        <input type="radio" name="isCurrent" value=false ${term.isCurrent == true ? 'checked':'' }> 否
                         </div>
                         
                     </div>
@@ -155,11 +88,10 @@
             		</div>
                 </form>
             </div>
+          </div>
+         </div>
             
-        </div>
-    </div>
-    </div>
-
+      
     
     
 	<!--footer-->
