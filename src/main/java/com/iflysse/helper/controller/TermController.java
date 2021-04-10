@@ -238,6 +238,47 @@ public class TermController {
 	 *     	"Success" : true,
 	 *      "code" : 20000,
 	 *      "message" : "请求成功",
+	 *      "data" : 
+	 *      	{
+	 *      	"id" : 172,
+	 * 			"name" : "2099年上半年秋季第12345学期",
+	 * 			"weeks" : 20,
+	 * 			"startTime" : 2019-02-01,
+	 *      	}
+	 *	}
+	 * @apiParamExample {json} 请求示例:
+	 *	{	
+	 * 		"termId" : 19921
+	 * 	}
+	 * @apiDescription 接口说明.
+	 * 该接口只允许管理员调用,
+	 */
+	@RequestMapping("/goto_term_update")
+	public String goto_term_update(HttpServletRequest request, Integer termId) {
+		Term term = termDao.get_term_by_id(termId);
+		if ( term == null ) {
+			request.setAttribute("result", new Result<Term>(ResultCode.ERROR_TERM_NOT_FOUND, null) ); 
+			return "error/404";
+		}
+		request.setAttribute("result", new Result<Term>(ResultCode.SUCCESS, term) ); 
+		return "redirect:termList";
+	}
+	
+	/**
+	 * @api {get} /TeacherHelper/term/term_activate 激活某一学期
+	 * @apiVersion 1.0.0
+	 * @apiGroup Term
+	 * @apiName 激活某一学期
+	 * @apiSuccess {Boolean} Success true表示请求成功，false表示请求失败
+	 * @apiSuccess {number} code 错误代码
+	 * @apiSuccess {string} message 错误信息
+	 * @apiSuccess {Object} data 返回的数据，该接口不返回任何数据
+	 * @apiParam {number} termId 学期id
+	 * @apiSuccessExample {json} 请求成功例子:
+	 * 	{
+	 *     	"Success" : true,
+	 *      "code" : 20000,
+	 *      "message" : "请求成功",
 	 *      "data" : "null"
 	 *	}
 	 * @apiParamExample {json} 请求示例:
@@ -250,21 +291,24 @@ public class TermController {
 	 */
 	@ResponseBody
 	@RequestMapping("/term_activate")
-	public Result<Void> term_activate(HttpServletRequest request, Integer termId) {
+	public String term_activate(HttpServletRequest request, Integer termId) {
 		if(termId == CacheController.termBuffer.getId() ) {
 			System.out.println("已拦截  - 当前学期已被激活");
-			return new Result<Void>(ResultCode.ERROR_TERM_ACTIVATE, null);
+			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_TERM_ACTIVATE, null) );
+			return "error/403";
 		}
 		Term term = termDao.get_term_by_id(termId);
 		if(term == null) {
 			System.out.println("已拦截  - 新的学期为空");
-			return new Result<Void>(ResultCode.ERROR_TERM_NOT_FOUND, null);
+			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_TERM_NOT_FOUND, null) );
+			return "error/404";
 		} else {
 			termDao.update_term_state(term.getId(), true);
 			termDao.update_term_state(CacheController.termBuffer.getId(), false);
 			CacheController.termBuffer = term;
 			System.out.println("请求通过 - 已更改当前激活学期");
-			return new Result<Void>(ResultCode.SUCCESS, null);
+			request.setAttribute("result", new Result<Void>(ResultCode.SUCCESS, null) );
+			return "redirect:termList";
 		}
 	}
 	
