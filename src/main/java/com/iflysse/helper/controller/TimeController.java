@@ -23,6 +23,7 @@ import com.iflysse.helper.bean.TimeVO;
 import com.iflysse.helper.bean.User;
 import com.iflysse.helper.dao.SubjectDao;
 import com.iflysse.helper.dao.TermDao;
+import com.iflysse.helper.dao.TimeDao;
 import com.iflysse.helper.dao.UserDao;
 import com.iflysse.helper.tools.Constant;
 import com.iflysse.helper.tools.Result;
@@ -36,7 +37,7 @@ public class TimeController {
 	private SubjectDao subjectDao;
 	
 	@Autowired
-	private TermDao termDao;
+	private TimeDao timeDao;
 	
 	@Autowired
 	private UserDao userDao;
@@ -69,8 +70,13 @@ public class TimeController {
 		Calendar calendar = Calendar.getInstance(), calendarTemp = Calendar.getInstance();
 		boolean flag = true;
 		calendar.setTime( CacheController.termBuffer.getStartTime() );
-		Subject subject = ;
+		Subject subject = subjectDao.get_subject_by_id( timeVOList.get(0).getSubject() );
 		for(TimeVO timeVO: timeVOList) {
+			//检测时间表的参数是否完整
+			if(timeVO.check(Constant.CHECK_ALL ^ Constant.CHECK_ID) != 0) {
+				request.setAttribute("result", new Result< List<Course> >(ResultCode.ERROR_PARAM, courseList) );
+				return "error/400";
+			}
 			timeList.add( new Time(timeVO) );
 		}
 		//对timeList进行排序(根据每周课时)
@@ -80,6 +86,7 @@ public class TimeController {
 				return o1.getTimeQuantum() - o2.getTimeQuantum();
 			}
 		} );
+
 		//设置开始周和结束周
 		int startWeek = 0, endWeek = CacheController.termBuffer.getWeeks();
 		//遍历本学期的所有周次
@@ -88,6 +95,7 @@ public class TimeController {
 				for (Time time : timeList) {
 					//对某一周进行检测
 					if( (time.getWeeksValue() & 1 << startWeek) != 0) {
+						subject.setTimeTotal( (short) (subject.getTimeTotal() - 2 ) );
 						if( flag && calendar.get(Calendar.DAY_OF_WEEK ) > time.getWeek() ) {
 							continue;
 						}
@@ -98,6 +106,7 @@ public class TimeController {
 						calendarTemp.set(Calendar.DAY_OF_WEEK, time.getWeek() );
 						courseList.add( new Course(
 								time.getSubject(),
+								time.getId(),
 								null,
 								null,
 								(byte) 0,
@@ -116,8 +125,11 @@ public class TimeController {
 				}
 			}
 		} catch (Exception e) {
-			request.setAttribute("result", new Result<Void>(ResultCode.SUCCESS, null) );
-			return "courseUpdate";
+			//通过try-catch跳出二重循环
+			request.setAttribute("result", new Result< List<Course> >(ResultCode.SUCCESS, courseList) );
+			//插入时间表
+			timeDao.insert_time_list(timeList);
+			return "courseAdd";
 		}
 		return "error/500";
 	}

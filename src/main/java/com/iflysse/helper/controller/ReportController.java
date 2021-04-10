@@ -83,7 +83,7 @@ public class ReportController {
 	 */
 	@RequestMapping("/submit_report_list")
 	public String submit_report_list(HttpServletRequest request, HttpSession session) {
-		User requestUser = (User) session.getAttribute("requestUser");
+		User requestUser = (User) session.getAttribute("loggedUser");
 		//判断发出请求的用户的权限
 		switch ( requestUser.getPermission() ) {
 			case Constant.USER_PERMISSION_NORMAL:

@@ -172,7 +172,7 @@ public class SubjectController {
 	 */
 	@RequestMapping("/subject_info")
 	public String subject_info(HttpServletRequest request, Integer subjectId) {
-		Subject dbSubject = subjectDao.get_subject_info(subjectId);
+		Subject dbSubject = subjectDao.get_subject_by_id(subjectId);
 		if(dbSubject == null) {
 			request.setAttribute( "result", new Result<Subject>( ResultCode.ERROR_SUBJECT_NOT_FOUND, null ) );
 		}
@@ -235,7 +235,6 @@ public class SubjectController {
 	@RequestMapping("/subject_list")
 	public String subject_list(HttpServletRequest request, HttpSession session, Integer userId, Integer termId) {
 		User requestUser = (User) session.getAttribute("loggedUser");
-		
 		//判断用户请求的是否为自己的科目表, 若不是则需验证用户权限
 		if (requestUser.getId() != userId ) {
 			if(requestUser.getPermission() == Constant.USER_PERMISSION_NORMAL ) {
