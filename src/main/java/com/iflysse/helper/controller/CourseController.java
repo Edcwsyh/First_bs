@@ -140,7 +140,7 @@ public class CourseController {
 		}
 		List<Course> courseList = courseDao.get_course_list_by_subject(subjectId);
 		request.setAttribute("result", new Result< List <Course> >(ResultCode.SUCCESS, courseList));
-		return "redirect:course_list?subjectId=" + courseList.get(0).getSubject() ;
+		return "redirect:course_list?subjectId=" + courseList.get(0).getSubject(); 
 	}
 	
 }

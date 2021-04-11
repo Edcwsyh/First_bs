@@ -1,16 +1,14 @@
 package com.iflysse.helper.bean;
 
-import com.iflysse.helper.controller.CacheController;
-import com.iflysse.helper.controller.TermController;
-
 public class Time extends TimeBase{
 
 	private Integer weeks;
 	private Byte timeQuantum;
 
-	public Time(Integer id, Integer subject, Integer timeQuantum, String classroom, Integer weeks) {
+	public Time(Integer id, Integer subject, Byte timeQuantum, String classroom, Integer weeks) {
 		super(id, subject, classroom);
 		this.weeks = weeks;
+		this.timeQuantum = timeQuantum;
 	}
 	
 	public Time(TimeVO timeVO) {
@@ -77,16 +75,19 @@ public class Time extends TimeBase{
 
 	public String getWeeks() {
 		StringBuilder result = new StringBuilder();
-		int startWeek = 0;
-		for( int index = 0 ; index < CacheController.termBuffer.getWeeks(); ++index) {
+		int startWeek = -1;
+		boolean flag = true;
+		for( int index = 0 ; index < 10; ++index) {
 			if ( (weeks & (1 << index)) != 0 ) {
-				startWeek = startWeek == 0 ? index : startWeek;
-			} else {
-				result.append("第" + startWeek + "周");
-				if ( index - 1 > startWeek ) {
-					result.append("到第" + (index - 1) + "周");
+				startWeek = startWeek == -1 ? index : startWeek;
+			} else if (startWeek != -1 ){
+				flag = false;
+				result.append("第" + ( startWeek + 1 ) + "周");
+				if ( index - 1  > startWeek ) {
+					result.append("到第" + (index) + "周");
 				}
 				result.append(", ");
+				startWeek = -1;
 			}
 		}
 		return result.toString();
@@ -107,5 +108,18 @@ public class Time extends TimeBase{
 	
 	public Byte getHowTime() {
 		return (byte) (timeQuantum % 10);
+	}
+	
+	/**
+	 * 
+	 * @param time
+	 * @return 若返回0则表示合并成功, 否则为合并失败, 返回值 > 1表示this时间段较为靠后, 反之则较为靠前
+	 */
+	public int merage(Time time) {
+		int buf = this.timeQuantum - time.getTimeQuantum();
+		if( buf == 0 ) {
+			this.weeks |= time.getWeeksValue();
+		}
+		return buf;
 	}
 }

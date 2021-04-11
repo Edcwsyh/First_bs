@@ -1,7 +1,6 @@
 package com.iflysse.helper.controller;
 
 import java.sql.Date;
-import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
@@ -42,11 +41,25 @@ public class TimeController {
 	@Autowired
 	private UserDao userDao;
 	
+	private void time_merage(List<Time> timeList) {
+		//合并完成的数量
+		for(int i = 0 ; i  < timeList.size(); ++i) {
+			for(int g = i + 1; g < timeList.size(); ++g) {
+				if( timeList.get(i).getTimeQuantum() != timeList.get(g).getTimeQuantum() ) {
+					timeList.subList(i + 1, g).clear(); //删除已被合并的数据
+					break;
+				} else {
+					timeList.get(i).merage( timeList.get(g) );
+				}
+			}
+		}
+	}
+	
 	/**
 	 * @api {post} /TeacherHelper/subject/time/time_add 新增时间表
 	 * @apiVersion 1.0.0
-	 * @apiGroup Subject
-	 * @apiName 新增科目
+	 * @apiGroup Time
+	 * @apiName 新增时间表
 	 * @apiSuccess {Boolean} success true表示请求成功，false表示请求失败
 	 * @apiSuccess {number} code 错误代码
 	 * @apiSuccess {string} message 错误信息
@@ -86,6 +99,8 @@ public class TimeController {
 				return o1.getTimeQuantum() - o2.getTimeQuantum();
 			}
 		} );
+		//合并相同时间段上课的数据
+		time_merage(timeList);
 
 		//设置开始周和结束周
 		int startWeek = 0, endWeek = CacheController.termBuffer.getWeeks();
@@ -132,6 +147,32 @@ public class TimeController {
 			return "courseAdd";
 		}
 		return "error/500";
+	}
+	
+	/**
+	 * @api {post} /TeacherHelper/subject/time/time_delete 新增时间表
+	 * @apiVersion 1.0.0
+	 * @apiGroup Time
+	 * @apiName 删除时间表
+	 * @apiSuccess {Boolean} success true表示请求成功，false表示请求失败
+	 * @apiSuccess {number} code 错误代码
+	 * @apiSuccess {string} message 错误信息
+	 * @apiParam {string} name 学期名
+	 * 	@apiSuccessExample {json} 请求成功例子:
+	 * 	{
+	 *     	"success" : true,
+	 *      "code" : 20000,
+	 *      "message" : "请求成功",
+	 *      "data" : null
+	 *	}
+	 * @apiParamExample {json} 请求示例:
+	 * 	{
+	 *
+	 * 	}
+	 */
+	@RequestMapping("/time_delete")
+	public String time_delete(HttpServletRequest request, List<TimeVO> timeVOList) {
+		return null;
 	}
 	
 }

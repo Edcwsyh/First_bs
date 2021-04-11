@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.iflysse.helper.bean.User;
-import com.iflysse.helper.dao.UserDao;
 import com.iflysse.helper.service.UserServer;
 import com.iflysse.helper.tools.Constant;
 import com.iflysse.helper.tools.Result;
