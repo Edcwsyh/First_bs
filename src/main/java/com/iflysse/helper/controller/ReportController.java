@@ -31,10 +31,44 @@ public class ReportController {
 		Report dbReport = reportDao.get_report_by_id( reportId );
 		if ( dbReport == null ) {
 			return new Result<Report>(ResultCode.ERROR_REPORT_NOT_FOUNT, null);
-		} else if( requestUser.getId() != dbReport.getAuthor() && requestUser.getPermission() == Constant.USER_PERMISSION_NORMAL ) {
+		} else if( requestUser.getId() != dbReport.getAuthor() && 
+				   requestUser.getPermission() == Constant.USER_PERMISSION_NORMAL ) {
 			return new Result<Report>(ResultCode.ERROR_PERMISSION, null);
 		}
 		return new Result<Report>(ResultCode.SUCCESS, dbReport);
+	}
+	
+	/**
+	 * @api {post} /TeacherHelper/report/report_update 跳转至更新周报
+	 * @apiVersion 1.0.0
+	 * @apiGroup Page
+	 * @apiName 跳转至更新周报
+	 * @apiSuccess {Boolean} Success true表示请求成功，false表示请求失败
+	 * @apiSuccess {number} code 错误代码
+	 * @apiSuccess {string} message 错误信息
+	 * @apiParam {number} id 周报id
+	 * @apiSuccessExample {json} 请求成功例子:
+	 *     {
+	 *     	"Success" : true,
+	 *      "code" : 20000,
+	 *      "message" : "请求成功",
+	 *      "data" : null
+	 *     }
+	 *     
+	 */
+	@RequestMapping("/goto_report_update")
+	public String goto_report_update(HttpServletRequest request, HttpSession session, Integer reportId) {
+		User requestUser = (User) session.getAttribute("loggedUser");
+		Report dbReport = reportDao.get_report_by_id( reportId );
+		//通过封装的方法获取数据库中的周报
+		Result<Report> result = get_report_by_id(requestUser, reportId);
+		request.setAttribute("result", result);
+		switch( result.getResultCode() ) {
+			case ERROR_REPORT_NOT_FOUNT : return "error/404";
+			case ERROR_PERMISSION : 	  return "error/403";
+			case SUCCESS : 				  return "reportUpdate";
+			default : 					  return "error/500";
+		}
 	}
 
 	/**
@@ -101,7 +135,6 @@ public class ReportController {
 	 * @apiSuccess {Boolean} Success true表示请求成功，false表示请求失败
 	 * @apiSuccess {number} code 错误代码
 	 * @apiSuccess {string} message 错误信息
-	 * @apiSuccess {Object} data 返回的数据
 	 * @apiSuccess {number} id 周报的id
 	 * @apiSuccess {number} author 周报作者的id
 	 * @apiSuccess {String} content 周报的内容
@@ -109,26 +142,31 @@ public class ReportController {
 	 * @apiSuccess {isSubmit} id 周报的提交状态
 	 * @apiSuccessExample {json} 请求成功例子:
 	 *     {
-	 *     	"Success" : true,
-	 *      "code" : 20000,
-	 *      "message" : "请求成功",
-	 *      "data" : 
-	 *      	{
-	 *      		{
-	 *      		"id" : 8977
-	 * 				"author": 1234,
-	 * 				"content":"没有内容",
-	 * 				"time":"2020-9-1",
-	 * 				"isSubmit":true
-	 *      		},
-	 *      		{
-	 *      		"id" : 8978
-	 * 				"author": 1234,
-	 * 				"content":"1234567",
-	 * 				"time":"2020-9-2",
-					"isSubmit":true
-	 *      		}
-	 *      	}
+	 *     	"result"
+	 *     			{
+	 *     	     	"Success" : true,
+	 *      		"code" : 20000,
+	 *      		"message" : "请求成功",
+	 *      		"data" : 
+	 *      			{
+	 *      				{
+	 *      				"id" : 8977
+	 *      				"week" : 1,
+	 * 						"author": 1234,
+	 * 						"content":"没有内容",
+	 * 						"time":"2020-9-1",
+	 * 						"isSubmit":true
+	 *      				},
+	 *      				{
+	 *      				"id" : 8978
+	 *      				"week" : 2,
+	 * 						"author": 1234,
+	 * 						"content":"1234567",
+	 * 						"time":"2020-9-2",
+							"isSubmit":true
+	 *      				}
+	 *      			}
+	 *     			}
 	 *     }
 	 */
 	@RequestMapping("/user_report_list")
@@ -193,7 +231,7 @@ public class ReportController {
 	 * @apiSuccess {Boolean} Success true表示请求成功，false表示请求失败
 	 * @apiSuccess {number} code 错误代码
 	 * @apiSuccess {string} message 错误信息
-	 * @apiParam {number} author 作者id
+	 * @apiParam {number} week 周报所属周
 	 * @apiParam {string} content 周报内容
 	 * @apiParam {boolean} isSubmit 是否提交, 若为true,则创建的周报将被设为只读的提交状态, 若为false,则存为草稿
 	 * @apiSuccessExample {json} 请求成功例子:
@@ -207,55 +245,24 @@ public class ReportController {
 	 *	{
 	 *		"user"
 	 * 			{
-	 * 				"author":1234,
+	 * 				"week" : 16,
 	 * 				"content":"abcdefg",
 	 * 				"isSubmit":true
 	 * 			}
 	 * 	}
 	 */
 	@RequestMapping("/report_add")
-	public String user_register(HttpServletRequest request, Report report) {
+	public String report_add(HttpServletRequest request,HttpSession session, Report report) {
 		//检测report中除id外是否存在空字段(time不进行检测)
-		if( report.check(Constant.CHECK_ALL ^ Constant.CHECK_ID) != 0 ) {
+		User requestUser = (User) session.getAttribute("loggedUser");
+		report.setAuthor( requestUser.getId() );
+		if( report.check(Constant.CHECK_ALL ^ Constant.CHECK_ID ^ Constant.CHECK_AUTHOR) != 0 ) {
 			request.setAttribute("result", new Result<Boolean>(ResultCode.ERROR_PARAM, null));
 			return "error/404";
 		}
 		reportDao.insert_report(report);
 		request.setAttribute("result", new Result<Boolean>(ResultCode.SUCCESS, null));
 		return "redirect:user_report_list";
-	}
-	
-	/**
-	 * @api {post} /TeacherHelper/report/report_update 跳转至更新周报
-	 * @apiVersion 1.0.0
-	 * @apiGroup Page
-	 * @apiName 跳转至更新周报
-	 * @apiSuccess {Boolean} Success true表示请求成功，false表示请求失败
-	 * @apiSuccess {number} code 错误代码
-	 * @apiSuccess {string} message 错误信息
-	 * @apiParam {number} id 周报id
-	 * @apiSuccessExample {json} 请求成功例子:
-	 *     {
-	 *     	"Success" : true,
-	 *      "code" : 20000,
-	 *      "message" : "请求成功",
-	 *      "data" : null
-	 *     }
-	 *     
-	 */
-	@RequestMapping("/goto_report_update")
-	public String goto_report_update(HttpServletRequest request, HttpSession session, Integer reportId) {
-		User requestUser = (User) session.getAttribute("requestUser");
-		Report dbReport = reportDao.get_report_by_id( reportId );
-		//通过封装的方法获取数据库中的周报
-		Result<Report> result = get_report_by_id(requestUser, reportId);
-		request.setAttribute("result", result);
-		switch( result.getResultCode() ) {
-			case ERROR_REPORT_NOT_FOUNT : return "error/404";
-			case ERROR_PERMISSION : 	  return "error/403";
-			case SUCCESS : 				  return "reportUpdate";
-			default : 					  return "error/500";
-		}
 	}
 	
 	/**
@@ -267,6 +274,7 @@ public class ReportController {
 	 * @apiSuccess {number} code 错误代码
 	 * @apiSuccess {string} message 错误信息
 	 * @apiParam {number} id 周报id
+	 * @apiParam {number} week 周报所属周数
 	 * @apiParam {string} content 周报内容
 	 * @apiParam {boolean} isSubmit 是否提交, 若为true,则创建的周报将被设为只读的提交状态, 若为false,则存为草稿
 	 * @apiSuccessExample {json} 请求成功例子:
@@ -288,31 +296,88 @@ public class ReportController {
 	 */
 	@RequestMapping("/report_update")
 	public String report_update(HttpServletRequest request, HttpSession session, Report report) {
-		User requestUser = (User) session.getAttribute("requestUser");
+		User requestUser = (User) session.getAttribute("loggedUser");
 		Report dbReport;
 		//检测report中的id和状态是否为空
 		if( report.check(Constant.CHECK_ID | Constant.CHECK_SUBMIT) != 0 ) {
-			request.setAttribute("result", new Result<Boolean>(ResultCode.ERROR_PARAM, null));
+			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_PARAM, null));
 			return "error/400";
 		}
 		//检测数据库中是否存在该周报
 		if( (dbReport = reportDao.get_report_by_id( report.getId() ) ) == null ) {
-			request.setAttribute("result", new Result<Boolean>(ResultCode.ERROR_REPORT_NOT_FOUNT, null));
+			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_REPORT_NOT_FOUNT, null));
 			return "error/404";
 		//判断该周报是否属于请求用户
 		} else if ( dbReport.getAuthor() != requestUser.getId() ) {
-			request.setAttribute("result", new Result<Boolean>(ResultCode.ERROR_REPORT_ALREADY_SUBMIT, null));
+			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_REPORT_ALREADY_SUBMIT, null));
 			return "error/403";
 		//判断该周报是否为已提交(只读状态)
 		} else if ( dbReport.getIsSubmit() == true) {
-			request.setAttribute("result", new Result<Boolean>(ResultCode.ERROR_REPORT_ALREADY_SUBMIT, null));
+			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_REPORT_ALREADY_SUBMIT, null));
 			return "error/403";
 		//判断周报的内容是否为空
 		} else if(report.getContent() == null ) {
-			request.setAttribute("result", new Result<Boolean>(ResultCode.ERROR_REPORT_CONTENT_EMPTY, null));
+			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_REPORT_CONTENT_EMPTY, null));
 			return "";
 		}
 		reportDao.update_report(report);;
 		return "redirect:user_report_list";
 	}
+	
+	/**
+	 * @api {get} /TeacherHelper/report_delete 删除周报
+	 * @apiVersion 1.0.0
+	 * @apiGroup Report
+	 * @apiName 删除周报
+	 * @apiSuccess {Boolean} Success true表示请求成功，false表示请求失败
+	 * @apiSuccess {number} code 错误代码
+	 * @apiSuccess {string} message 错误信息
+	 * @apiSuccess {Object} data 返回的数据
+	 * @apiSuccess {number} id 周报的id
+	 * @apiSuccess {number} author 周报作者的id
+	 * @apiSuccess {String} content 周报的内容
+	 * @apiSuccess {Timestamp} time 周报的创建时间
+	 * @apiSuccess {isSubmit} id 周报的提交状态
+	 * @apiSuccessExample {json} 请求成功例子:
+	 *     {
+	 *     	"Success" : true,
+	 *      "code" : 20000,
+	 *      "message" : "请求成功",
+	 *      "data" : 
+	 *      	{
+	 *      	"id" : 8977
+	 * 			"author": 1234,
+	 * 			"content":"没有内容",
+	 * 			"time":"2020-9-1",
+	 * 			"isSubmit":true
+	 *      	}
+	 *     }
+	 */
+	@RequestMapping("/report_delete")
+	public String report_delete(HttpServletRequest request, HttpSession session, Integer reportId) {
+		User requestUser = (User) session.getAttribute("loggedUser");
+		//通过封装的方法获取数据库中的周报
+		Report dbReport = reportDao.get_report_by_id(reportId);
+		if( dbReport == null ) {
+			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_REPORT_NOT_FOUNT, null) );
+			return "error/404";
+		} else if ( dbReport.getAuthor() == requestUser.getId() ) {
+			if( dbReport.getIsSubmit() == true ) {
+				request.setAttribute("result", new Result<Void>(ResultCode.ERROR_PERMISSION, null) );
+				return "error/403";
+			}
+			request.setAttribute("result", new Result<Void>(ResultCode.SUCCESS, null) );
+			return "redirect:user_report_list";
+		} else if ( requestUser.getPermission() == Constant.USER_PERMISSION_NORMAL ) {
+			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_PERMISSION, null) );
+			return "error/403";
+		} else if ( dbReport.getIsSubmit() == false ) {
+			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_PERMISSION, null) );
+			return "error/403";
+		}
+		reportDao.delete_report(reportId);
+		request.setAttribute("result", new Result<Void>(ResultCode.SUCCESS, null) );
+		return "redirect:report_list";
+	}
+	
 }
