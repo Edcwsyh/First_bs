@@ -1,5 +1,7 @@
 package com.iflysse.helper.bean;
 
+import com.iflysse.helper.controller.CacheController;
+
 public class Time extends TimeBase{
 
 	private Integer weeks;
