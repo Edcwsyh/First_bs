@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.iflysse.helper.bean.Subject;
 import com.iflysse.helper.bean.User;
+import com.iflysse.helper.dao.CourseDao;
 import com.iflysse.helper.dao.SubjectDao;
 import com.iflysse.helper.dao.TermDao;
+import com.iflysse.helper.dao.TimeDao;
 import com.iflysse.helper.dao.UserDao;
 import com.iflysse.helper.tools.Constant;
 import com.iflysse.helper.tools.Result;
@@ -30,6 +32,12 @@ public class SubjectController {
 	
 	@Autowired
 	private UserDao userDao;
+	
+	@Autowired 
+	private CourseDao courseDao;
+	
+	@Autowired 
+	private TimeDao timeDao;
 	
 	/**
 	 * @api {post} /TeacherHelper/subject/subject_add 新增科目
@@ -95,9 +103,9 @@ public class SubjectController {
 	 * @apiParam {number} type 该科目的课程类型, 0表示方向课, 1表示理论课
 	 * @apiParam {string} ta 该科目的助教
 	 * @apiParam {string} klass 该科目的班级
-	 * @apiParam {number} subjectTimeTotal 该科目的总课时
-	 * @apiParam {number} subjectTimeTheory 该科目的理论课时
-	 * @apiParam {number} subjectTimePractice 该科目的实践课时
+	 * @apiParam {number} timeTotal 该科目的总课时
+	 * @apiParam {number} timeTheory 该科目的理论课时
+	 * @apiParam {number} timePractice 该科目的实践课时
 	 * @apiParam {number} id 科目名
 	 * @apiSuccessExample {json} 请求成功例子:
 	 * 	{
@@ -112,9 +120,9 @@ public class SubjectController {
 	 * 		"type":0,
 	 * 		"ta":"窦尔敦",
 	 * 		"klass":"不知道取什么名字",
-	 * 		"subjectTimeTotal":"66",
-	 * 		"subjectTimeTheory":"33",
-	 * 		"subjectTimePractice":"33"
+	 * 		"timeTotal":"66",
+	 * 		"timeTheory":"33",
+	 * 		"timePractice":"33"
 	 * 	}
 	 */
 	@RequestMapping("/subject_update")
@@ -142,11 +150,11 @@ public class SubjectController {
 	 * @apiSuccess {string} teacher 讲师外键
 	 * @apiSuccess {string} ta 该科目的助教
 	 * @apiSuccess {string} klass 该科目的班级
-	 * @apiSuccess {number} subjectTimeTotal 该科目的总课时
-	 * @apiSuccess {number} subjectTimeTheory 该科目的理论课时
-	 * @apiSuccess {number} subjectTimePractice 该科目的实践课时
+	 * @apiSuccess {number} timeTotal 该科目的总课时
+	 * @apiSuccess {number} timeTheory 该科目的理论课时
+	 * @apiSuccess {number} timePractice 该科目的实践课时
 	 * @apiSuccess {number} term 学期外键
-	 * @apiParam {number} id 科目id
+	 * @apiParam {number} subjectId 科目id
 	 * 	@apiSuccessExample {json} 请求成功例子:
 	 * 	{
 	 *     	"success" : true,
@@ -160,15 +168,15 @@ public class SubjectController {
 		 * 		"teacher":"马云"
 		 * 		"ta":"刘备",
 		 * 		"klass":"草鞋营销1班",
-		 * 		"subjectTimeTotal":"66",
-		 * 		"subjectTimeTheory":"33",
-		 * 		"subjectTimePractice":"33",
+		 * 		"timeTotal":"66",
+		 * 		"timeTheory":"33",
+		 * 		"timePractice":"33",
 		 * 		"term" : 2233
 	 *      }
 	 *	}
 	 * @apiParamExample {json} 请求示例:
 	 * 	{
-	 * 		"id":778899,
+	 * 		"subjectId":778899,
 	 * 	}
 	 */
 	@RequestMapping("/subject_info")
@@ -202,10 +210,11 @@ public class SubjectController {
 	 * @apiSuccess {number} type 该科目的课程类型, 0表示方向课, 1表示理论课
 	 * @apiSuccess {string} ta 该科目的助教
 	 * @apiSuccess {string} klass 该科目的班级
-	 * @apiSuccess {number} subjectTimeTotal 该科目的总课时
-	 * @apiSuccess {number} subjectTimeTheory 该科目的理论课时
-	 * @apiSuccess {number} subjectTimePractice 该科目的实践课时
+	 * @apiSuccess {number} timeTotal 该科目的总课时
+	 * @apiSuccess {number} timeTheory 该科目的理论课时
+	 * @apiSuccess {number} timePractice 该科目的实践课时
 	 * @apiParam {number} termId=nullptr 学期Id, 若不指定则表示当前学期
+	 * @apiParam {number} userId 用户Id
 	 * 	@apiSuccessExample {json} 请求成功例子:
 	 * 	{
 	 *     	"success" : true,
@@ -218,9 +227,9 @@ public class SubjectController {
 		 * 		"type":"方向课",
 		 * 		"ta":"陶渊明",
 		 * 		"klass":"植物栽培1班",
-		 * 		"subjectTimeTotal":"66",
-		 * 		"subjectTimeTheory":"33",
-		 * 		"subjectTimePractice":"33",
+		 * 		"timeTotal":"66",
+		 * 		"timeTheory":"33",
+		 * 		"timePractice":"33",
 		 * 		"term":1221
 	 *      },
 	 *   	{
@@ -229,23 +238,25 @@ public class SubjectController {
 		 * 		"type":"方向课",
 		 * 		"ta":"蒋介石",
 		 * 		"klass":"头发护理学333班",
-		 * 		"subjectTimeTotal":"66",
-		 * 		"subjectTimeTheory":"33",
-		 * 		"subjectTimePractice":"33",
+		 * 		"timeTotal":"66",
+		 * 		"timeTheory":"33",
+		 * 		"timePractice":"33",
 		 * 		"term":1221
 	 *      }
 	 *	}
 	 * @apiParamExample {json} 请求示例:
 	 * 	{
 	 * 		"termId" : null,
-	 * 		"userId" : 
+	 * 		"userId" : 1123
 	 * 	}
 	 */
 	@RequestMapping("/subject_list")
 	public String subject_list(HttpServletRequest request, HttpSession session, Integer userId, Integer termId) {
 		User requestUser = (User) session.getAttribute("loggedUser");
 		//判断用户请求的是否为自己的科目表, 若不是则需验证用户权限
-		if (requestUser.getId() != userId ) {
+		if(userId == null) {
+			userId = requestUser.getId();
+		} else if (requestUser.getId() != userId ) {
 			if(requestUser.getPermission() == Constant.USER_PERMISSION_NORMAL ) {
 				request.setAttribute( "result", new Result< List<Subject> >( ResultCode.ERROR_PERMISSION, null ) );
 				return "error/403";
@@ -260,19 +271,72 @@ public class SubjectController {
 		//验证传入的学期id
 		if(termId == null) {
 			termId = CacheController.termBuffer.getId();
-		}else if( termDao.get_term_by_id(termId) == null ) {
-			request.setAttribute( "result", new Result< List<Subject> >( ResultCode.ERROR_TERM_NOT_FOUND, null ) );
-			return "error/404";
+		}else {
+			if(termDao.get_term_by_id(termId) == null ) {
+				request.setAttribute( "result", new Result< List<Subject> >( ResultCode.ERROR_TERM_NOT_FOUND, null ) );
+				return "error/404";
+			}
 		}
-		
+
 		//请求成功, 返回数据
 		request.setAttribute( "result", 
 								new Result< List<Subject> >( 
 									ResultCode.SUCCESS,  
-									subjectDao.get_subject_list(requestUser.getId(), termId)
+									subjectDao.get_subject_list(userId, termId)
 								) 
 							);
 		return "subjectList";
+	}
+	
+	/**
+	 * @api {post} /TeacherHelper/subject/subject_delete 删除某一科目
+	 * @apiVersion 1.0.0
+	 * @apiGroup Subject
+	 * @apiName 删除某一科目
+	 * @apiSuccess {Boolean} success true表示请求成功，false表示请求失败
+	 * @apiSuccess {number} code 错误代码
+	 * @apiSuccess {string} message 错误信息
+	 * @apiParam {number} subjectId 科目id
+	 * @apiSuccessExample {json} 请求成功例子:
+	 * 	{
+	 *     	"success" : true,
+	 *      "code" : 20000,
+	 *      "message" : "请求成功",
+	 *      "data" : null
+	 *	}
+	 * @apiParamExample {json} 请求示例:
+	 * 	{
+	 * 		"subjectId":"1167"
+	 * 	}
+	 */
+	@RequestMapping("/subject_delete")
+	public String subject_delete(HttpServletRequest request, HttpSession session, Integer subjectId) {
+		System.out.println("调用删除接口");
+		User requestUser = (User) session.getAttribute("loggedUser");
+		if(subjectId == null ) {
+			request.setAttribute("result", new Result<Subject>(ResultCode.ERROR_PARAM, null) );
+			return "error/403";
+		}
+		Subject subject = subjectDao.get_subject_by_id(subjectId);
+		//权限验证
+		if(subject.getTeacher() != requestUser.getId() ) {
+			if(requestUser.getPermission() == Constant.USER_PERMISSION_NORMAL ) {
+				System.out.println("已拦截 - 请求用户权限不足");
+				request.setAttribute("result", new Result<Subject>(ResultCode.ERROR_PERMISSION, null) );
+				return "error/403";
+			}
+		}
+		//验证被删除的科目是否非空
+		if ( timeDao.get_time_list_by_subject(subjectId).size() != 0 || 
+				courseDao.get_course_list_by_subject(subjectId).size() != 0 ) {
+			System.out.println("已拦截 - 试图删除非空科目");
+			request.setAttribute("result", new Result<Subject>(ResultCode.ERROR_SUBJECT_NOT_EMPTY, null) );
+
+		}
+		subjectDao.delete_subject(subjectId);
+		request.setAttribute("result", new Result<Subject>(ResultCode.SUCCESS, null) );
+		System.out.println("请求成功 - 已删除空的科目");
+		return "redirect:subject_list?userId=" + requestUser.getId();
 	}
 	
 	/**
@@ -287,5 +351,6 @@ public class SubjectController {
 	public String goto_subject_add() {
 		return "subjectAdd";
 	}
+	
 	
 }

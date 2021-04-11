@@ -8,7 +8,7 @@
     INSERT INTO t_time
         (subject, classroom, weeks, timeQuantum)
     VALUES
-    <foreach collection="list" item="item" index="index" separator=",">
+    <foreach collection="timeList" item="item" index="index" separator=",">
         (#{item.subject}, #{item.classroom},#{item.weeks}, #{item.timeQuantum})
     </foreach>
 	</insert>

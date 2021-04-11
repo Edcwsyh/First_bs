@@ -15,7 +15,7 @@ public interface SubjectDao {
 	 * 获取指定用户及指定学期的科目列表
 	 */
 	@Select("select * from t_subject where teacher=#{userId} and term=#{termId}")
-	public List<Subject> get_subject_list(int userId, int teamId);
+	public List<Subject> get_subject_list(int userId, int termId);
 	
 	/*
 	 * 获取指定用户及指定学期的科目列表
@@ -46,8 +46,8 @@ public interface SubjectDao {
 	public void insert_subject (Subject subject);
 	
 	//删除某一科目
-	@Delete("delete from t_term where id=#{id}")
-	public void delete_subject(Subject subject);
+	@Delete("delete from t_subject where id=#{subjectId}")
+	public void delete_subject(Integer subjectId);
 	
 	//删除某一教师的所有科目
 	@Delete("delete from t_term where teacher=#{userId}")

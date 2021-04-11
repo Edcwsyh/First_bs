@@ -48,8 +48,10 @@ public enum ResultCode{
 	 */
 	ERROR_USER_SAME_OLD_NEW_PASSWORD(false, 21017, "用户新旧密码一致"),
 
-	
-	ERROR_SUBJECT_CREATE(false, 22000, "科目创建失败"),
+	/**
+	 * 请求失败 - 用户修改密码时新旧密码一致科目表非空
+	 */
+	ERROR_SUBJECT_NOT_EMPTY(false, 22000, "科目非空"),
 	ERROR_SUBJECT_DELETE(false, 22001, "科目删除失败"),
 	ERROR_SUBJECT_NOT_FOUND(false, 22002, "科目不存在"),
 	

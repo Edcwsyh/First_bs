@@ -65,7 +65,7 @@ public class TermController {
 	 * @api {get} /term/term_list 获取当前学期列表
 	 * @apiVersion 1.0.0
 	 * @apiGroup Term
-	 * @apiName 获取当前学期id
+	 * @apiName 获取学期列表
 	 * @apiSuccess {Boolean} Success true表示请求成功，false表示请求失败
 	 * @apiSuccess {number} code 错误代码
 	 * @apiSuccess {string} message 错误信息

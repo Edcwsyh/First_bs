@@ -168,8 +168,110 @@ define({ "api": [
   },
   {
     "type": "post",
-    "url": "/course/course_update",
-    "title": "更新科目信息",
+    "url": "/admin/user_all_info",
+    "title": "获取用户的所有信息",
+    "version": "1.0.0",
+    "group": "Admin",
+    "name": "获取用户列表",
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "Success",
+            "description": "<p>true表示请求成功，false表示请求失败</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "code",
+            "description": "<p>错误代码</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "message",
+            "description": "<p>错误信息</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>返回的数据</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "请求成功例子:",
+          "content": "    {\n    \t\"Success\" : true,\n     \"code\" : 20000,\n     \"message\" : \"请求成功\",\n     \"data\" : \n     \t{\n     \t\t{\n     \t\t\"id\" : 8977\n\t\t\t\t\"username\":\"supper man\",\n\t\t\t\t\"password\":\"1234567\",\n\t\t\t\t\"realname\":\"张三\",\n\t\t\t\t\"mail\":\"123456@gmail.com\",\n\t\t\t\t\"phone\":\"13960241683\",\n\t\t\t\t\"gender\":1,\n\t\t\t\t\"permission\":1,\n\t\t\t\t\"state\" : 1\n     \t\t}\n     \t}\n    }",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "input/AdminController.java",
+    "groupTitle": "Admin"
+  },
+  {
+    "type": "post",
+    "url": "/admin/user_all_info",
+    "title": "获取用户的所有信息",
+    "version": "1.0.0",
+    "group": "Admin",
+    "name": "获取用户列表",
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "Success",
+            "description": "<p>true表示请求成功，false表示请求失败</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "code",
+            "description": "<p>错误代码</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "message",
+            "description": "<p>错误信息</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>返回的数据</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "请求成功例子:",
+          "content": "    {\n    \t\"Success\" : true,\n     \"code\" : 20000,\n     \"message\" : \"请求成功\",\n     \"data\" : \n     \t{\n     \t\t{\n     \t\t\"id\" : 8977\n\t\t\t\t\"username\":\"supper man\",\n\t\t\t\t\"password\":\"1234567\",\n\t\t\t\t\"realname\":\"张三\",\n\t\t\t\t\"mail\":\"123456@gmail.com\",\n\t\t\t\t\"phone\":\"13960241683\",\n\t\t\t\t\"gender\":1,\n\t\t\t\t\"permission\":1,\n\t\t\t\t\"state\" : 1\n     \t\t}\n     \t}\n    }",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "input/AdminController.java",
+    "groupTitle": "Admin"
+  },
+  {
+    "type": "post",
+    "url": "/TeacherHelper/subject/course/course_update",
+    "title": "更新课程信息",
     "version": "1.0.0",
     "group": "Course",
     "name": "更新课程信息",
@@ -233,45 +335,158 @@ define({ "api": [
           },
           {
             "group": "Parameter",
-            "type": "boolean",
+            "type": "string",
             "optional": false,
-            "field": "isHomework",
-            "description": "<p>是否布置作业</p>"
+            "field": "goal",
+            "description": "<p>教学目标</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "content",
+            "description": "<p>教学内容</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "number",
+            "optional": false,
+            "field": "mode",
+            "description": "<p>教学模式</p>"
           },
           {
             "group": "Parameter",
             "type": "date",
             "optional": false,
-            "field": "subjectTimeTotal",
-            "description": "<p>该科目的总课时</p>"
+            "field": "time",
+            "description": "<p>具体上课时间(年-月-日)</p>"
           },
           {
             "group": "Parameter",
-            "type": "number",
+            "type": "boolean",
             "optional": false,
-            "field": "subjectTimeTheory",
-            "description": "<p>该科目的理论课时</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "number",
-            "optional": false,
-            "field": "subjectTimePractice",
-            "description": "<p>该科目的实践课时</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "number",
-            "optional": false,
-            "field": "subjectId",
-            "description": "<p>科目名</p>"
+            "field": "isHomework",
+            "description": "<p>是否布置作业</p>"
           }
         ]
       },
       "examples": [
         {
           "title": "请求示例:",
-          "content": "{\n\t\"subjectName\":\"拾金不昧\",\n\t\"subjectType\":0,\n\t\"subjectTa\":\"窦尔敦\",\n\t\"subjectClass\":\"不知道取什么名字\",\n\t\"subjectTimeTotal\":\"66\",\n\t\"subjectTimeTheory\":\"33\",\n\t\"subjectTimePractice\":\"33\"\n}",
+          "content": "{\n\t{\n\t\"goal\" : \"没有目标\",\n\t\"content\" : \"没有内容\",\n\t\"mode\" : 1,\n\t\"time\" : 2020-9-10,\n\t\"isHomework\" : false\n\t},\n \t{\n\t\"goal\" : \"有目标\",\n\t\"content\" : \"有内容\",\n\t\"mode\" : 0,\n\t\"time\" : 2020-9-9,\n\t\"isHomework\" : true\n\t}\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "input/CourseController.java",
+    "groupTitle": "Course"
+  },
+  {
+    "type": "post",
+    "url": "/TeacherHelper/subject/course/course_update",
+    "title": "更新课程信息",
+    "version": "1.0.0",
+    "group": "Course",
+    "name": "更新课程信息",
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>true表示请求成功，false表示请求失败</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "code",
+            "description": "<p>错误代码</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "message",
+            "description": "<p>错误信息</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "请求成功例子:",
+          "content": "\t{\n    \t\"success\" : true,\n     \"code\" : 20000,\n     \"message\" : \"请求成功\",\n     \"data\" : null\n\t}",
+          "type": "json"
+        }
+      ]
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "teachingGoal",
+            "description": "<p>教学目标</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "teachingContent",
+            "description": "<p>教学内容</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "teachingMode",
+            "description": "<p>教学模式， 0表示学练-线下， 1表示授课-现场</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "goal",
+            "description": "<p>教学目标</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "content",
+            "description": "<p>教学内容</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "number",
+            "optional": false,
+            "field": "mode",
+            "description": "<p>教学模式</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "date",
+            "optional": false,
+            "field": "time",
+            "description": "<p>具体上课时间(年-月-日)</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "boolean",
+            "optional": false,
+            "field": "isHomework",
+            "description": "<p>是否布置作业</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "请求示例:",
+          "content": "{\n\t{\n\t\"goal\" : \"没有目标\",\n\t\"content\" : \"没有内容\",\n\t\"mode\" : 1,\n\t\"time\" : 2020-9-10,\n\t\"isHomework\" : false\n\t},\n \t{\n\t\"goal\" : \"有目标\",\n\t\"content\" : \"有内容\",\n\t\"mode\" : 0,\n\t\"time\" : 2020-9-9,\n\t\"isHomework\" : true\n\t}\n}",
           "type": "json"
         }
       ]
@@ -1006,6 +1221,70 @@ define({ "api": [
   },
   {
     "type": "post",
+    "url": "/TeacherHelper/subject/subject_delete",
+    "title": "删除某一科目",
+    "version": "1.0.0",
+    "group": "Subject",
+    "name": "删除某一科目",
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>true表示请求成功，false表示请求失败</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "code",
+            "description": "<p>错误代码</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "message",
+            "description": "<p>错误信息</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "请求成功例子:",
+          "content": "\t{\n    \t\"success\" : true,\n     \"code\" : 20000,\n     \"message\" : \"请求成功\",\n     \"data\" : null\n\t}",
+          "type": "json"
+        }
+      ]
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "number",
+            "optional": false,
+            "field": "subjectId",
+            "description": "<p>科目id</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "请求示例:",
+          "content": "{\n\t\"subjectId\":\"1167\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "input/SubjectController.java",
+    "groupTitle": "Subject"
+  },
+  {
+    "type": "post",
     "url": "/TeacherHelper/subject/subject_add",
     "title": "新增科目",
     "version": "1.0.0",
@@ -1103,6 +1382,13 @@ define({ "api": [
             "optional": false,
             "field": "timePractice",
             "description": "<p>该科目的实践课时</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "number",
+            "optional": false,
+            "field": "term",
+            "description": "<p>学期的id, 默认当前学期</p>"
           }
         ]
       },
@@ -1193,21 +1479,21 @@ define({ "api": [
             "group": "Parameter",
             "type": "number",
             "optional": false,
-            "field": "subjectTimeTotal",
+            "field": "timeTotal",
             "description": "<p>该科目的总课时</p>"
           },
           {
             "group": "Parameter",
             "type": "number",
             "optional": false,
-            "field": "subjectTimeTheory",
+            "field": "timeTheory",
             "description": "<p>该科目的理论课时</p>"
           },
           {
             "group": "Parameter",
             "type": "number",
             "optional": false,
-            "field": "subjectTimePractice",
+            "field": "timePractice",
             "description": "<p>该科目的实践课时</p>"
           },
           {
@@ -1222,7 +1508,7 @@ define({ "api": [
       "examples": [
         {
           "title": "请求示例:",
-          "content": "{\n\t\"name\":\"拾金不昧\",\n\t\"type\":0,\n\t\"ta\":\"窦尔敦\",\n\t\"klass\":\"不知道取什么名字\",\n\t\"subjectTimeTotal\":\"66\",\n\t\"subjectTimeTheory\":\"33\",\n\t\"subjectTimePractice\":\"33\"\n}",
+          "content": "{\n\t\"name\":\"拾金不昧\",\n\t\"type\":0,\n\t\"ta\":\"窦尔敦\",\n\t\"klass\":\"不知道取什么名字\",\n\t\"timeTotal\":\"66\",\n\t\"timeTheory\":\"33\",\n\t\"timePractice\":\"33\"\n}",
           "type": "json"
         }
       ]
@@ -1307,21 +1593,21 @@ define({ "api": [
             "group": "Success 200",
             "type": "number",
             "optional": false,
-            "field": "subjectTimeTotal",
+            "field": "timeTotal",
             "description": "<p>该科目的总课时</p>"
           },
           {
             "group": "Success 200",
             "type": "number",
             "optional": false,
-            "field": "subjectTimeTheory",
+            "field": "timeTheory",
             "description": "<p>该科目的理论课时</p>"
           },
           {
             "group": "Success 200",
             "type": "number",
             "optional": false,
-            "field": "subjectTimePractice",
+            "field": "timePractice",
             "description": "<p>该科目的实践课时</p>"
           },
           {
@@ -1336,7 +1622,7 @@ define({ "api": [
       "examples": [
         {
           "title": "请求成功例子:",
-          "content": "\t{\n    \t\"success\" : true,\n     \"code\" : 20000,\n     \"message\" : \"请求成功\",\n     \"data\" : \n     {\n     \"id\":778899,\n\t\t\"name\":\"摸鱼学导论\",\n\t\t\"type\":\"理论课\",\n\t\t\"teacher\":\"马云\"\n\t\t\"ta\":\"刘备\",\n\t\t\"klass\":\"草鞋营销1班\",\n\t\t\"subjectTimeTotal\":\"66\",\n\t\t\"subjectTimeTheory\":\"33\",\n\t\t\"subjectTimePractice\":\"33\",\n\t\t\"term\" : 2233\n     }\n\t}",
+          "content": "\t{\n    \t\"success\" : true,\n     \"code\" : 20000,\n     \"message\" : \"请求成功\",\n     \"data\" : \n     {\n     \"id\":778899,\n\t\t\"name\":\"摸鱼学导论\",\n\t\t\"type\":\"理论课\",\n\t\t\"teacher\":\"马云\"\n\t\t\"ta\":\"刘备\",\n\t\t\"klass\":\"草鞋营销1班\",\n\t\t\"timeTotal\":\"66\",\n\t\t\"timeTheory\":\"33\",\n\t\t\"timePractice\":\"33\",\n\t\t\"term\" : 2233\n     }\n\t}",
           "type": "json"
         }
       ]
@@ -1348,7 +1634,7 @@ define({ "api": [
             "group": "Parameter",
             "type": "number",
             "optional": false,
-            "field": "id",
+            "field": "subjectId",
             "description": "<p>科目id</p>"
           }
         ]
@@ -1356,7 +1642,7 @@ define({ "api": [
       "examples": [
         {
           "title": "请求示例:",
-          "content": "{\n\t\"id\":778899,\n}",
+          "content": "{\n\t\"subjectId\":778899,\n}",
           "type": "json"
         }
       ]
@@ -1434,21 +1720,21 @@ define({ "api": [
             "group": "Success 200",
             "type": "number",
             "optional": false,
-            "field": "subjectTimeTotal",
+            "field": "timeTotal",
             "description": "<p>该科目的总课时</p>"
           },
           {
             "group": "Success 200",
             "type": "number",
             "optional": false,
-            "field": "subjectTimeTheory",
+            "field": "timeTheory",
             "description": "<p>该科目的理论课时</p>"
           },
           {
             "group": "Success 200",
             "type": "number",
             "optional": false,
-            "field": "subjectTimePractice",
+            "field": "timePractice",
             "description": "<p>该科目的实践课时</p>"
           }
         ]
@@ -1456,7 +1742,7 @@ define({ "api": [
       "examples": [
         {
           "title": "请求成功例子:",
-          "content": "\t{\n    \t\"success\" : true,\n     \"code\" : 20000,\n     \"message\" : \"请求成功\",\n     \"data\" : \n     {\n     \t\"id\":1778899,\n\t\t\"name\":\"菊花鉴赏\",\n\t\t\"type\":\"方向课\",\n\t\t\"ta\":\"陶渊明\",\n\t\t\"klass\":\"植物栽培1班\",\n\t\t\"subjectTimeTotal\":\"66\",\n\t\t\"subjectTimeTheory\":\"33\",\n\t\t\"subjectTimePractice\":\"33\",\n\t\t\"term\":1221\n     },\n  \t{\n     \t\"id\":2778899,\n\t\t\"name\":\"植发与护理\",\n\t\t\"type\":\"方向课\",\n\t\t\"ta\":\"蒋介石\",\n\t\t\"klass\":\"头发护理学333班\",\n\t\t\"subjectTimeTotal\":\"66\",\n\t\t\"subjectTimeTheory\":\"33\",\n\t\t\"subjectTimePractice\":\"33\",\n\t\t\"term\":1221\n     }\n\t}",
+          "content": "\t{\n    \t\"success\" : true,\n     \"code\" : 20000,\n     \"message\" : \"请求成功\",\n     \"data\" : \n     {\n     \t\"id\":1778899,\n\t\t\"name\":\"菊花鉴赏\",\n\t\t\"type\":\"方向课\",\n\t\t\"ta\":\"陶渊明\",\n\t\t\"klass\":\"植物栽培1班\",\n\t\t\"timeTotal\":\"66\",\n\t\t\"timeTheory\":\"33\",\n\t\t\"timePractice\":\"33\",\n\t\t\"term\":1221\n     },\n  \t{\n     \t\"id\":2778899,\n\t\t\"name\":\"植发与护理\",\n\t\t\"type\":\"方向课\",\n\t\t\"ta\":\"蒋介石\",\n\t\t\"klass\":\"头发护理学333班\",\n\t\t\"timeTotal\":\"66\",\n\t\t\"timeTheory\":\"33\",\n\t\t\"timePractice\":\"33\",\n\t\t\"term\":1221\n     }\n\t}",
           "type": "json"
         }
       ]
@@ -1471,13 +1757,20 @@ define({ "api": [
             "field": "termId",
             "defaultValue": "nullptr",
             "description": "<p>学期Id, 若不指定则表示当前学期</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "number",
+            "optional": false,
+            "field": "userId",
+            "description": "<p>用户Id</p>"
           }
         ]
       },
       "examples": [
         {
           "title": "请求示例:",
-          "content": "{\n\t\"termId\" : null,\n\t\"userId\" : \n}",
+          "content": "{\n\t\"termId\" : null,\n\t\"userId\" : 1123\n}",
           "type": "json"
         }
       ]
@@ -1803,6 +2096,72 @@ define({ "api": [
   },
   {
     "type": "get",
+    "url": "/term/term_list",
+    "title": "获取当前学期列表",
+    "version": "1.0.0",
+    "group": "Term",
+    "name": "获取学期列表",
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "Success",
+            "description": "<p>true表示请求成功，false表示请求失败</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "code",
+            "description": "<p>错误代码</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "message",
+            "description": "<p>错误信息</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>学期的id</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "name",
+            "description": "<p>学期的的名称</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "state",
+            "description": "<p>学期的状态</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "请求成功例子:",
+          "content": "\t{\n    \t\"Success\" : true,\n     \"code\" : 20000,\n     \"message\" : \"请求成功\",\n     \"data\" : \n     \t{\n     \t\t\"id\" : \"123456\",\n     \t\t\"name\" : \"2099年上半年秋季第12345学期\",\n     \t\t\"state\" : 1\n     \t}\n\t}",
+          "type": "json"
+        }
+      ]
+    },
+    "description": "<p>接口说明. 该接口没有参数，但只允许登录后调用</p>",
+    "filename": "input/TermController.java",
+    "groupTitle": "Term"
+  },
+  {
+    "type": "get",
     "url": "/term/term_current",
     "title": "获取当前学期信息",
     "version": "1.0.0",
@@ -1868,12 +2227,12 @@ define({ "api": [
     "groupTitle": "Term"
   },
   {
-    "type": "get",
-    "url": "/term/term_list",
-    "title": "获取当前学期列表",
+    "type": "post",
+    "url": "/TeacherHelper/subject/time/time_delete",
+    "title": "新增时间表",
     "version": "1.0.0",
-    "group": "Term",
-    "name": "获取当前学期id",
+    "group": "Time",
+    "name": "删除时间表",
     "success": {
       "fields": {
         "Success 200": [
@@ -1881,7 +2240,7 @@ define({ "api": [
             "group": "Success 200",
             "type": "Boolean",
             "optional": false,
-            "field": "Success",
+            "field": "success",
             "description": "<p>true表示请求成功，false表示请求失败</p>"
           },
           {
@@ -1897,41 +2256,103 @@ define({ "api": [
             "optional": false,
             "field": "message",
             "description": "<p>错误信息</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "number",
-            "optional": false,
-            "field": "id",
-            "description": "<p>学期的id</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "string",
-            "optional": false,
-            "field": "name",
-            "description": "<p>学期的的名称</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "number",
-            "optional": false,
-            "field": "state",
-            "description": "<p>学期的状态</p>"
           }
         ]
       },
       "examples": [
         {
           "title": "请求成功例子:",
-          "content": "\t{\n    \t\"Success\" : true,\n     \"code\" : 20000,\n     \"message\" : \"请求成功\",\n     \"data\" : \n     \t{\n     \t\t\"id\" : \"123456\",\n     \t\t\"name\" : \"2099年上半年秋季第12345学期\",\n     \t\t\"state\" : 1\n     \t}\n\t}",
+          "content": "\t{\n    \t\"success\" : true,\n     \"code\" : 20000,\n     \"message\" : \"请求成功\",\n     \"data\" : null\n\t}",
           "type": "json"
         }
       ]
     },
-    "description": "<p>接口说明. 该接口没有参数，但只允许登录后调用</p>",
-    "filename": "input/TermController.java",
-    "groupTitle": "Term"
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "name",
+            "description": "<p>学期名</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "请求示例:",
+          "content": "{\n\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "input/TimeController.java",
+    "groupTitle": "Time"
+  },
+  {
+    "type": "post",
+    "url": "/TeacherHelper/subject/time/time_add",
+    "title": "新增时间表",
+    "version": "1.0.0",
+    "group": "Time",
+    "name": "新增时间表",
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>true表示请求成功，false表示请求失败</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "code",
+            "description": "<p>错误代码</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "message",
+            "description": "<p>错误信息</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "请求成功例子:",
+          "content": "\t{\n    \t\"success\" : true,\n     \"code\" : 20000,\n     \"message\" : \"请求成功\",\n     \"data\" : null\n\t}",
+          "type": "json"
+        }
+      ]
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "name",
+            "description": "<p>学期名</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "请求示例:",
+          "content": "{\n\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "input/TimeController.java",
+    "groupTitle": "Time"
   },
   {
     "type": "post",
@@ -2384,6 +2805,78 @@ define({ "api": [
     },
     "filename": "input/UserController.java",
     "groupTitle": "User"
+  },
+  {
+    "type": "get",
+    "url": "/TeacherHelper/term/goto_term_update",
+    "title": "跳转到更新学期页面",
+    "version": "1.0.0",
+    "group": "page",
+    "name": "更新学期页面",
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "Success",
+            "description": "<p>true表示请求成功，false表示请求失败</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "code",
+            "description": "<p>错误代码</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "message",
+            "description": "<p>错误信息</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>返回的数据，该接口不返回任何数据</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "请求成功例子:",
+          "content": "\t{\n    \t\"Success\" : true,\n     \"code\" : 20000,\n     \"message\" : \"请求成功\",\n     \"data\" : \n     \t{\n     \t\"id\" : 172,\n\t\t\t\"name\" : \"2099年上半年秋季第12345学期\",\n\t\t\t\"weeks\" : 20,\n\t\t\t\"startTime\" : 2019-02-01,\n     \t}\n\t}",
+          "type": "json"
+        }
+      ]
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "number",
+            "optional": false,
+            "field": "termId",
+            "description": "<p>学期id</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "请求示例:",
+          "content": "{\t\n\t\"termId\" : 19921\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "description": "<p>接口说明. 该接口只允许管理员调用,</p>",
+    "filename": "input/TermController.java",
+    "groupTitle": "page"
   },
   {
     "type": "post",

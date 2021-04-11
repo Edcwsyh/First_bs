@@ -16,26 +16,26 @@ public interface CourseDao {
 	 * 获取某一科目的所属课程
 	 * @return
 	 */
-	@Select("select * from t_user where subject=#{subjectId}")
+	@Select("select * from t_course where subject=#{subjectId}")
 	public List<Course> get_course_list_by_subject(Integer subjectId);
 	
 	/**
-	 * 新增一条用户数据
-	 * @param user
+	 * 新增多条课表数据
+	 * @param courseList
 	 */
 	public void insert_course_list (List<Course> courseList);
 	
 	/**
-	 * 更新用户的 用户名、真实姓名、邮箱、电话号码、性别
-	 * @param user
+	 * 更新课表的信息(教学目标, 教学内容, 教学模式, 是否布置作业, 上课的具体时间)
+	 * @param courseList
 	 */
 	public void update_course_list (List<Course> courseList);
 	/**
 	 * 更新用户的密码
 	 * @param user
 	 */
-	@Update("update t_user set password=#{password} where id = #{id}")
-	public void update_user_password (User user);
+	@Update("update t_course set goal=#{goal}, content=#{content}, mode=#{mode}, isHomework=#{isHomework}, specifcTime=#{specifcTime} where id = #{id}")
+	public void update_user_password (Course course);
 	
 	
 	@Update("update t_user set state=#{state} where id=#{id}")

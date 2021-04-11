@@ -28,9 +28,9 @@ public interface TimeDao {
 	@Insert("insert into t_time(subject, classroom, timeQuantum, weeks) value(#{subject}, #{classroom},#{timeQuantum}, #{weeks})")
 	public void insert_time (Time time);
 	
-	public void insert_time_list (List<Time> time);
+	public void insert_time_list (List<Time> timeList);
 	
-	@Delete("delete from t_term where id=#{id}")
-	public void delete_term(Integer id);
+	@Delete("delete from t_time where id=#{id}")
+	public void delete_time(Integer id);
 }
 

@@ -7,7 +7,7 @@
     insert into t_course
         (subject, time, goal, content, mode, isHomework, specificTime)
     values
-    <foreach collection="list" item="item" index="index" separator=",">
+    <foreach collection="courseList" item="item" index="index" separator=",">
         (#{item.subject}, #{item.time},#{item.goal}, #{item.content}, 
         #{item.mode}, #{item.isHomework}, #{item.specificTime} )
     </foreach>
@@ -17,7 +17,7 @@
     	insert into t_course
         	(id, goal, content, mode, isHomework, specificTime)
     	VALUES
-    	<foreach collection="list" item="item" index="index" separator=",">
+    	<foreach collection="courseList" item="item" index="index" separator=",">
         	(#{id},#{item.goal}, #{item.content},#{item.mode}, #{item.isHomework}, #{item.specificTime} ) 
     	</foreach>
     	on duplicate key update 
