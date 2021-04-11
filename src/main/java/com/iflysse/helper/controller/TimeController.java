@@ -38,9 +38,6 @@ public class TimeController {
 	@Autowired
 	private TimeDao timeDao;
 	
-	@Autowired
-	private UserDao userDao;
-	
 	private void time_merage(List<Time> timeList) {
 		//合并完成的数量
 		for(int i = 0 ; i  < timeList.size(); ++i) {
