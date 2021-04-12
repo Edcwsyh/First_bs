@@ -32,8 +32,8 @@ public interface SubjectDao {
 	/*
 	 * 更新科目信息
 	 */
-	@Update("update t_term set name=#{name}, type=#{type}, ta=#{ta}, klass=#{klass}, timeTotal=#{timeTotal}, "
-			+ "timeTheory=#{timeTheory}, timePractice=#{timePractice}, term=#{term} where id=#{id}")
+	@Update("update t_subject set name=#{name}, type=#{type}, ta=#{ta}, klass=#{klass}, timeTotal=#{timeTotal}, "
+			+ "timeTheory=#{timeTheory}, timePractice=#{timePractice} where id=#{id}")
 	public void update_subject (Subject subject);
 	
 	/*

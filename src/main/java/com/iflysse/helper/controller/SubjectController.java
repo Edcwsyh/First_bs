@@ -88,7 +88,7 @@ public class SubjectController {
 		subjectDao.insert_subject(newSubject);
 		System.out.println(newSubject.getId());
 		request.setAttribute("result", new Result<Void>(ResultCode.SUCCESS, null ) );
-		return "error/500";
+		return "redirect:subject_list";
 	}
 	
 	/**
@@ -127,13 +127,13 @@ public class SubjectController {
 	 */
 	@RequestMapping("/subject_update")
 	public String subject_update(HttpServletRequest request,Subject subject) {
-		if( subject.check( Constant.CHECK_ALL ) != 0 ) {
+		if( subject.check( Constant.CHECK_ALL ^ Constant.CHECK_TERM ) != 0 ) {
 			request.setAttribute("result", new Result<Subject>(ResultCode.ERROR_PARAM, null) );
 			return "error/400";
 		}
 		subjectDao.update_subject(subject);
 		request.setAttribute("result", new Result<Subject>(ResultCode.SUCCESS, null) );
-		return "redirect:subject_info?subjectId=" + subject.getId();
+		return "redirect:subject_list";
 	}
 
 	/**

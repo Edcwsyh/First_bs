@@ -36,7 +36,8 @@ public class ReportController {
 		}
 		return new Result<Report>(ResultCode.SUCCESS, dbReport);
 	}
-
+	
+	
 	/**
 	 * @api {get} /TeacherHelper/submit_report_list 获取所有用户的周报列表
 	 * @apiVersion 1.0.0
@@ -245,7 +246,7 @@ public class ReportController {
 	 */
 	@RequestMapping("/goto_report_update")
 	public String goto_report_update(HttpServletRequest request, HttpSession session, Integer reportId) {
-		User requestUser = (User) session.getAttribute("requestUser");
+		User requestUser = (User) session.getAttribute("loggedUser");
 		Report dbReport = reportDao.get_report_by_id( reportId );
 		//通过封装的方法获取数据库中的周报
 		Result<Report> result = get_report_by_id(requestUser, reportId);
@@ -288,7 +289,7 @@ public class ReportController {
 	 */
 	@RequestMapping("/report_update")
 	public String report_update(HttpServletRequest request, HttpSession session, Report report) {
-		User requestUser = (User) session.getAttribute("requestUser");
+		User requestUser = (User) session.getAttribute("loggedUser");
 		Report dbReport;
 		//检测report中的id和状态是否为空
 		if( report.check(Constant.CHECK_ID | Constant.CHECK_SUBMIT) != 0 ) {
