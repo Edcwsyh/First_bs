@@ -4,12 +4,33 @@ import com.iflysse.helper.tools.Constant;
 
 public class TimeVO extends TimeBase{
 	private String weeks;
+	/**
+	 * 必填, 开始周
+	 */
 	private Byte starWeek;
+	/**
+	 * 必填,结束周
+	 */
 	private Byte endWeek;
+	/**
+	 * 必填,上课间隔(周),默认为1
+	 */
 	private Byte interval;
+	/**
+	 * 选填,额外上课周
+	 */
 	private String addWeek;
+	/**
+	 * 选填,开始周和结束周之间不用上课的周
+	 */
 	private String deleteWeek;
+	/**
+	 * 必填, 上课时间(星期几)
+	 */
 	private Byte week;
+	/**
+	 * 必填,上课时间(一天中的第几大节课(1-6))
+	 */
 	private Byte howTime;
 
 	public TimeVO(Integer id, Integer subject, String classroom, String weeks, Byte starWeek,
