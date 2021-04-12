@@ -59,8 +59,8 @@
 	<div class="row">
 	<div class="col-md-2">
 	    <div class="list-group">
-	        <a href="content.html" class="list-group-item active">周报管理</a>
-	        <a href="${pageContext.request.contextPath}/report/submit_report_list" class="list-group-item ">查看所有用户周报</a>	 	        
+	        <a href="" class="list-group-item ">周报管理</a>
+	        <a href="" class="list-group-item active">查看所有用户周报</a>	 	        
 	    </div>
 	</div>
 	<div class="col-md-10">
@@ -71,9 +71,7 @@
 	    <li class="active">
 	        <a href="content.html">周报管理</a>
 	    </li>
-	    <li>
-	        <a href="" role="button"  class="list-group-item" data-toggle="modal" data-target="#reportAdd">添加周报</a>
-	    </li>
+	    
 	</ul>
 	<table class="table">
 	    <thead>
