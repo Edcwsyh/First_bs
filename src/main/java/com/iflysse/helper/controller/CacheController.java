@@ -1,6 +1,11 @@
 package com.iflysse.helper.controller;
 
 import java.sql.Date;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -11,6 +16,7 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import com.iflysse.helper.bean.Course;
 import com.iflysse.helper.bean.Subject;
 import com.iflysse.helper.bean.Term;
 import com.iflysse.helper.dao.TermDao;
@@ -26,6 +32,8 @@ public class CacheController {
 	 */
 	public static Term termBuffer = null;
 	
+	public static Map<Integer, List<Course> > courseCache = null;
+	
 	@PostConstruct
 	private void cache_init() {
 		if ( ( termBuffer = termDao.get_current_term() ) == null) {
@@ -34,5 +42,6 @@ public class CacheController {
 					Constant.TERM_DEFAULT_WEEKS , true );
 			termDao.insert_term(termBuffer);
 		}
+		courseCache = Collections.synchronizedMap( new HashMap<>() );
 	}
 }

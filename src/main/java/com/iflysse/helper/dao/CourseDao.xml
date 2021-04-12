@@ -23,7 +23,6 @@
     	on duplicate key update 
        	goal=values(goal), content=values(content), mode=values(mode), isHomework=values(isHomework),
        	specificTime=values(specificTime)
-			
 	</insert>
 	
 </mapper>

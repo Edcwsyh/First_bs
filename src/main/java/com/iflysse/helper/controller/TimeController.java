@@ -4,8 +4,10 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -20,6 +22,7 @@ import com.iflysse.helper.bean.Term;
 import com.iflysse.helper.bean.Time;
 import com.iflysse.helper.bean.TimeVO;
 import com.iflysse.helper.bean.User;
+import com.iflysse.helper.dao.CourseDao;
 import com.iflysse.helper.dao.SubjectDao;
 import com.iflysse.helper.dao.TermDao;
 import com.iflysse.helper.dao.TimeDao;
@@ -37,6 +40,9 @@ public class TimeController {
 	
 	@Autowired
 	private TimeDao timeDao;
+	
+	@Autowired
+	private CourseDao courseDao;
 	
 	private void time_merage(List<Time> timeList) {
 		//合并完成的数量
@@ -106,7 +112,7 @@ public class TimeController {
 			while (startWeek < endWeek ) {
 				for (Time time : timeList) {
 					//对某一周进行检测
-					if( (time.getWeeksValue() & 1 << startWeek) != 0) {
+					if( (time.getWeeksValue() & 1 << startWeek++) != 0) {
 						subject.setTimeTotal( (short) (subject.getTimeTotal() - 2 ) );
 						if( flag && calendar.get(Calendar.DAY_OF_WEEK ) > time.getWeek() ) {
 							continue;
@@ -147,7 +153,7 @@ public class TimeController {
 	}
 	
 	/**
-	 * @api {post} /TeacherHelper/subject/time/time_delete 新增时间表
+	 * @api {post} /TeacherHelper/subject/time/time_update 新增时间表
 	 * @apiVersion 1.0.0
 	 * @apiGroup Time
 	 * @apiName 删除时间表
@@ -167,9 +173,50 @@ public class TimeController {
 	 *
 	 * 	}
 	 */
-	@RequestMapping("/time_delete")
+	@RequestMapping("/time_update")
 	public String time_delete(HttpServletRequest request, List<TimeVO> timeVOList) {
+		if( timeVOList.size() == 0 ) {
+			request.setAttribute("result", new Result< Void >(ResultCode.ERROR_PARAM, null) );
+			return "error/404";
+		}
+		List<Time> timeList = timeDao.get_time_list_by_subject( timeVOList.get(0).getSubject() );
+		TimeVO timeVOBuf = null;
+		Time timeBuf = null;
+		/*
+		 * 此段代码可优化
+		 * 思路: 数据库直接查询多个id返回列表
+		 */
+		for( int i = 0, g = 0; i < timeVOList.size() ; ++g ) {
+			if( timeList.get(g).getId() == timeVOBuf.getId() ) {
+				timeBuf = timeList.get(g);
+				if( timeVOBuf.getAddWeek() != null) {
+					timeBuf.addWeeks( timeVOBuf.getAddWeek() );
+				}
+				if( timeVOBuf.getDeleteWeek() != null) {
+					timeBuf.deleteWeeks( timeVOBuf.getDeleteWeek() );
+				}
+				timeBuf.setTimeQuantum(timeVOBuf.getWeek(), timeVOBuf.getHowTime());
+				++i;
+			}
+			if(g >= timeList.size() ) {
+				g = 0;
+			}
+		}
+		Map<Integer, Time> timeCache = new HashMap<Integer, Time>();
+		for(Time time : timeList) {
+			timeCache.put(time.getId(), time);
+		}
+		/*
+		 * 此处可优化
+		 * 思路 : 查询数据库时按外键time排序, 一旦subject发生变化再去map中查询time对象
+		 */
+		List<Course> courseList = courseDao.get_course_list_by_subject( timeVOBuf.getSubject() );
+		
+		for(Course course : courseList) {
+			timeBuf = timeCache.get( course.getTime() );
+			
+		}
+		timeDao.update_time_list(timeList);
 		return null;
 	}
-	
 }

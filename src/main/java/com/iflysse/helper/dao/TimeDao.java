@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Update;
 
 import com.iflysse.helper.bean.Term;
 import com.iflysse.helper.bean.Time;
+import com.iflysse.helper.bean.TimeVO;
 
 
 public interface TimeDao {
@@ -16,11 +17,12 @@ public interface TimeDao {
 	@Select("select * from t_time where subject=#{subjectId}")
 	public List<Time> get_time_list_by_subject(Integer subjectId);
 	
+	public List<Time> get_time_list_by_id(List<TimeVO> timeList);
+	
 //	@Select("select * from t_term where id=#{termId}")
 //	public Term get_term_by_id(int termId);
 	
-	@Update("update t_term set isCurrent=#{isCurrent} where id=#{id}")
-	public void update_term_state (int id, boolean isCurrent);
+	public void update_time_list (List<Time> timeList);
 	
 	@Update("update t_term set subject=#{subject}, weeks=#{weeks}, classroom=#{classroom}, timeQuantum=#{timeQuantum} where id=#{id}")
 	public void update_time (Time time);
