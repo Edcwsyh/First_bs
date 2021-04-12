@@ -17,6 +17,13 @@ public interface SubjectDao {
 	@Select("select * from t_subject where teacher=#{userId} and term=#{termId}")
 	public List<Subject> get_subject_list(int userId, int termId);
 	
+	/**
+	 * 通过课程id查询所属课表
+	 */
+	@Select("select t_subject.id id, t_subject.teacher teacher from t_subject, t_course where "
+			+ "t_subject.id=t_course.subject and t_course.id=#{courseId}")
+	public Subject get_subject_by_course(Integer courseId);
+	
 	/*
 	 * 获取指定用户及指定学期的科目列表
 	 */

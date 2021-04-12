@@ -14,7 +14,7 @@ public interface ReportDao {
 	/*
 	 * 获取所有已提交的周报
 	 */
-	@Select("select * from t_report where isSubmit=false")
+	@Select("select * from t_report where isSubmit=true")
 	public List<Report> get_report_list();
 	
 	/*

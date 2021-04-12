@@ -100,8 +100,7 @@ public class Time extends TimeBase{
 	}
 
 	public void setTimeQuantum(Byte week, Byte howTime) {
-		timeQuantum = week;
-		timeQuantum = (byte) (timeQuantum * 10 + howTime);
+		timeQuantum = (byte) (week * 10 + howTime);
 	}
 	
 	public Byte getWeek() {

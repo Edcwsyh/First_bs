@@ -14,6 +14,7 @@ import com.iflysse.helper.bean.Subject;
 import com.iflysse.helper.bean.User;
 import com.iflysse.helper.dao.CourseDao;
 import com.iflysse.helper.dao.SubjectDao;
+import com.iflysse.helper.dao.UserDao;
 import com.iflysse.helper.tools.Constant;
 import com.iflysse.helper.tools.Result;
 import com.iflysse.helper.tools.ResultCode;
@@ -28,7 +29,7 @@ public class CourseController {
 	private SubjectDao subjectDao;
 
 	/**
-	 * @api {post} /TeacherHelper/subject/course/course_update 更新课程信息
+	 * @api {post} /TeacherHelper/subject/course/course_add更新课程信息
 	 * @apiVersion 1.0.0
 	 * @apiGroup Course
 	 * @apiName 更新课程信息
@@ -68,12 +69,13 @@ public class CourseController {
 	 *		}
 	 * 	}
 	 */
-	@RequestMapping("/course_insert")
-	public String course_update(HttpServletRequest request, List<Course> courseList) {
+	@RequestMapping("/course_add")
+	public String course_add(HttpServletRequest request, List<Course> courseList) {
 		if(courseList.size() == 0) {
 			request.setAttribute("result", new Result< List <Report> >(ResultCode.ERROR_PARAM, null));
 			return "error/400";
 		}
+		
 		for(Course course : courseList) {
 			//检测所传入的课程是否合法
 			if(course.check( Constant.CHECK_ALL ^ Constant.CHECK_ID ) != 0) {
@@ -148,10 +150,10 @@ public class CourseController {
 	}
 	
 	/**
-	 * @api {post} /TeacherHelper/subject/course/course_update 更新课程信息
+	 * @api {post} /TeacherHelper/subject/course/course_delete_single 删除单次课程
 	 * @apiVersion 1.0.0
 	 * @apiGroup Course
-	 * @apiName 更新课程信息
+	 * @apiName 删除单次课程
 	 * @apiSuccess {Boolean} success true表示请求成功，false表示请求失败
 	 * @apiSuccess {number} code 错误代码
 	 * @apiSuccess {string} message 错误信息
@@ -165,27 +167,26 @@ public class CourseController {
 	 *	}
 	 * @apiParamExample {json} 请求示例:
 	 * 	{
-
+	 * 		courseId: "2020"
 	 * 	}
 	 */
 	@RequestMapping("/course_delete_single")
 	public String course_delete_single(HttpServletRequest request, HttpSession session, Integer courseId) {
 		User requestUser = (User) session.getAttribute("loggedUser");
 		if(courseId == null) {
-			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_PARAM, null));
+			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_PARAM, null) );
 			return "error/400";
 		}
-		User user = 
-		//如果非本人请求则需验证权限
+		
+		Subject subject = subjectDao.get_subject_by_course(courseId);
 		if( requestUser.getId() != subject.getTeacher() ) {
-			if (requestUser.getPermission() == Constant.USER_PERMISSION_NORMAL ) {
-				request.setAttribute("result", new Result<Void>(ResultCode.ERROR_PERMISSION, null));
-				return "error/403";
-			}
+			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_PERMISSION, null) );
+			return "error/403";
 		}
-		List<Course> courseList = courseDao.get_course_list_by_subject(subjectId);
-		request.setAttribute("result", new Result< List <Course> >(ResultCode.SUCCESS, courseList));
-		return "redirect:course_list?subjectId=" + courseList.get(0).getSubject(); 
+		request.setAttribute("result", new Result<Void>(ResultCode.SUCCESS, null) );
+		return "redirect:course_list?subjectId=" + subject.getId();
 	}
+	
+	
 	
 }
