@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import com.iflysse.helper.bean.Subject;
 import com.iflysse.helper.bean.User;
 
 
@@ -17,6 +18,13 @@ public interface UserDao {
 	 */
 	@Select("select * from t_user")
 	public List<User> get_user_list();
+	
+	/**
+	 * 通过课程id查询所属用户
+	 */
+	@Select("select id,permission from t_user where "
+			+ "t_user.id=t_subject.teacher and t_subject.id=t_course.subject")
+	public Subject get_subject_by_course(int userId, int termId);
 	
 	/**
 	 * 通过 用户名 查询用户
