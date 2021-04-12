@@ -63,9 +63,7 @@
     <div class="row">
         <div class="col-md-2">
             <div class="list-group">
-                <a href="user_list.html" class="list-group-item active">用户管理</a>
-                <a href="uesr_search.html" class="list-group-item">用户搜索</a>
-                <a href="" role="button"  class="list-group-item" data-toggle="modal" data-target="#myModal">添加用户</a>
+                <a href="user_list.html" class="list-group-item active">用户管理</a>                
             </div>
         </div>
         <div class="col-md-10">
@@ -80,7 +78,7 @@
                     <a href="uesr_search.html">用户搜索</a>
                 </li>
                 <li>
-                    <a href="" role="button" data-toggle="modal" data-target="#myModal">添加用户</a>
+                    <a href="" role="button" data-toggle="modal" data-target="#userAdd">添加用户</a>
                 </li>
             </ul>
             <table class="table">
@@ -139,7 +137,7 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="userAdd" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -147,33 +145,51 @@
                 <h4 class="modal-title" id="myModalLabel">添加用户</h4>
             </div>
             <div class="modal-body">
-                <form action="#">
+                <form action="${pageContext.request.contextPath}/admin/user_add" method="post">
                     <div class="form-group">
-                        <label for="addname">用户名</label>
-                        <input type="text" id="addname" class="form-control" placeholder="用户名">
-                    </div>
-                    <div class="form-group">
-                        <label for="addpassword">用户密码</label>
-                        <input type="text" id="addpassword" class="form-control" placeholder="请输入用户密码">
-                    </div>
-                    <div class="form-group">
-                        <label for="addpassword1">确认用户密码</label>
-                        <input type="text" id="addpassword1" class="form-control" placeholder="请确认输入用户密码">
-                    </div>
-                    <div class="form-group">
-                        <label for="addemail">请输入用户邮箱</label>
-                        <input type="email" id="addemail" class="form-control" placeholder="请输入用户邮箱">
+                        <label for="username">用户名</label>
+                        <input type="text" id="username" name="username" class="form-control" placeholder="请输入用户名">
                     </div>
                     
+                    <div class="form-group">
+                        <label for="realName">真实名</label>
+                        <input type="text" id="realName" name="realName" class="form-control" placeholder="请输入用户真实名">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">用户密码</label>
+                        <input type="password" id="password" name="password" class="form-control" placeholder="请输入用户密码">
+                    </div>
+                   
+                    <div class="form-group">
+                        <label for="mail">用户邮箱</label>
+                        <input type="email" id="mail" name="mail" class="form-control" placeholder="请输入用户邮箱">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">用户电话</label>
+                        <input type="text" id="phone" name="phone" class="form-control" placeholder="请输入用户电话">
+                    </div>
+                    
+                   	<div class="form-group">
+                        <label for="gender">用户性别</label>
+                        <div>
+	                        <input type="radio" id="gender" name="gender" value="1" > 男
+	                        <input type="radio" id="gender" name="gender" value="0" > 女
+                        </div>
+                        
+                    </div>
+                    <div class="modal-footer">
+		                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+		                <button type="submit" class="btn btn-primary">提交</button>
+            		</div>
                 </form>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                <button type="button" class="btn btn-primary">提交</button>
-            </div>
+            
         </div>
     </div>
 </div>
-
+	<script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+	<script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
 </body>
 </html>

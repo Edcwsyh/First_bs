@@ -59,7 +59,7 @@
 	<div class="row">
 	<div class="col-md-2">
 	    <div class="list-group">
-	        <a href="" class="list-group-item ">周报管理</a>
+	        <a href="${pageContext.request.contextPath}/report/user_report_list" class="list-group-item ">周报管理</a>
 	        <a href="" class="list-group-item active">查看所有用户周报</a>	 	        
 	    </div>
 	</div>
