@@ -6,6 +6,10 @@ public enum ResultCode{
 	 */
 	SUCCESS(true, 20000, "请求成功"),
 	/**
+	 * 存在警告(请求成功) - 课表时间与课程总时间不匹配
+	 */
+	WARNING_SUBJECT_TIME_ERROR(true, 100000, "警告 : 课表时间与课程总时间不匹配, 请审核是否填写有误"),
+	/**
 	 * 请求失败 - 未知的错误
 	 */
 	ERROR_UNKNOW(false, 20001, "未知错误"), 

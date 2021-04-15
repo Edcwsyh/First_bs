@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +44,9 @@ public class TimeController {
 	
 	@Autowired
 	private CourseDao courseDao;
+	
+	@Autowired
+	private TermDao termDao;
 	
 	private void time_merage(List<Time> timeList) {
 		//合并完成的数量
@@ -108,48 +112,35 @@ public class TimeController {
 		//设置开始周和结束周
 		int startWeek = 0, endWeek = CacheController.termBuffer.getWeeks();
 		//遍历本学期的所有周次
-		try {
-			while (startWeek < endWeek ) {
-				for (Time time : timeList) {
-					//对某一周进行检测
-					if( (time.getWeeksValue() & 1 << startWeek++) != 0) {
-						subject.setTimeTotal( (short) (subject.getTimeTotal() - 2 ) );
-						if( flag && calendar.get(Calendar.DAY_OF_WEEK ) > time.getWeek() ) {
-							continue;
-						}
-						if( subject.getTimeTotal() <= 0 ) {
-							throw new Exception("跳出循环");
-						}
-						calendarTemp.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_YEAR) );
-						calendarTemp.set(Calendar.DAY_OF_WEEK, time.getWeek() );
-						courseList.add( new Course(
-								time.getSubject(),
-								time.getId(),
-								null,
-								null,
-								(byte) 0,
-								false,
-								new Date( calendarTemp.getTime().getTime() ) ) );
+		while (startWeek < endWeek ) {
+			for (Time time : timeList) {
+				//对某一周进行检测
+				if( (time.getWeeksValue() & 1 << startWeek++) != 0) {
+					if( flag && calendar.get(Calendar.DAY_OF_WEEK ) > time.getWeek() ) {
+						continue;
 					}
-				}
-				if(flag) {
-					//第一次运行将calendar格式化为周一
-					int addDay = 8 - calendar.get(Calendar.DAY_OF_WEEK );
-					calendar.add(Calendar.DAY_OF_WEEK, addDay);
-					flag = false;
-				}else {
-					//向后快进一周
-					calendar.add(Calendar.DAY_OF_WEEK, 7);
+					calendarTemp.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_YEAR) );
+					calendarTemp.set(Calendar.DAY_OF_WEEK, time.getWeek() );
+					courseList.add( new Course( time, new Date( calendarTemp.getTime().getTime() ) ) );
 				}
 			}
-		} catch (Exception e) {
-			//通过try-catch跳出二重循环
-			request.setAttribute("result", new Result< List<Course> >(ResultCode.SUCCESS, courseList) );
-			//插入时间表
-			timeDao.insert_time_list(timeList);
-			return "courseAdd";
+			if(flag) {
+				//第一次运行将calendar格式化为周一
+				int addDay = 8 - calendar.get(Calendar.DAY_OF_WEEK );
+				calendar.add(Calendar.DAY_OF_WEEK, addDay);
+				flag = false;
+			}else {
+				//向后快进一周
+				calendar.add(Calendar.DAY_OF_WEEK, 7);
+			}
 		}
-		return "error/500";
+		Result< List<Course> > result = timeList.size() * Constant.COURSE_LENGTH > subject.getTimeTotal() ? 
+				new Result< List<Course> >(ResultCode.WARNING_SUBJECT_TIME_ERROR, courseList) :
+				new Result< List<Course> >(ResultCode.SUCCESS, courseList);
+		request.setAttribute("result",  result);
+		//插入时间表
+		timeDao.insert_time_list(timeList);
+		return "courseAdd";
 	}
 	
 	/**
@@ -179,44 +170,53 @@ public class TimeController {
 			request.setAttribute("result", new Result< Void >(ResultCode.ERROR_PARAM, null) );
 			return "error/404";
 		}
-		List<Time> timeList = timeDao.get_time_list_by_subject( timeVOList.get(0).getSubject() );
-		TimeVO timeVOBuf = null;
-		Time timeBuf = null;
-		/*
-		 * 此段代码可优化
-		 * 思路: 数据库直接查询多个id返回列表
-		 */
-		for( int i = 0, g = 0; i < timeVOList.size() ; ++g ) {
-			if( timeList.get(g).getId() == timeVOBuf.getId() ) {
-				timeBuf = timeList.get(g);
-				if( timeVOBuf.getAddWeek() != null) {
-					timeBuf.addWeeks( timeVOBuf.getAddWeek() );
+		Subject subject = subjectDao.get_subject_by_id(timeVOList.get(0).getSubject());
+		List<Time> timeList = new LinkedList<Time>();
+		List<Course> courseList = courseDao.get_course_list_by_subject(subject.getId());
+		Iterator<Course> courseIterator = courseList.listIterator();
+		Calendar calendar = Calendar.getInstance(), calendarTemp = Calendar.getInstance();
+		boolean flag = true;
+		Course courseCache;
+		calendar.setTime( CacheController.termBuffer.getStartTime() );
+		for ( TimeVO timeVOIter : timeVOList ) {
+			timeList.add( new Time(timeVOIter) );
+		}
+		int startWeek = 0, 
+			endWeek = subject.getTerm() == CacheController.termBuffer.getId() ? 
+						CacheController.termBuffer.getWeeks() : 
+						termDao.get_term_by_id( subject.getTerm() ).getWeeks() ;
+		while (startWeek < endWeek ) {
+			for (Time time : timeList) {
+				//对某一周进行检测
+				if( (time.getWeeksValue() & 1 << startWeek++) != 0) {
+					if( flag && calendar.get(Calendar.DAY_OF_WEEK ) > time.getWeek() ) {
+						continue;
+					}
+					calendarTemp.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_YEAR) );
+					calendarTemp.set(Calendar.DAY_OF_WEEK, time.getWeek() );
+					//如果课程列表中还存在课程,则修改, 否则,将新增课程
+					if ( courseIterator.hasNext() ) {
+						courseCache = courseIterator.next();
+						courseCache.setSpecificTime(new Date( calendarTemp.getTime().getTime() ) );
+					} else {
+						courseList.add( new Course( time, new Date( calendarTemp.getTime().getTime() ) ) );
+					}
 				}
-				if( timeVOBuf.getDeleteWeek() != null) {
-					timeBuf.deleteWeeks( timeVOBuf.getDeleteWeek() );
-				}
-				timeBuf.setTimeQuantum(timeVOBuf.getWeek(), timeVOBuf.getHowTime());
-				++i;
 			}
-			if(g >= timeList.size() ) {
-				g = 0;
+			if(flag) {
+				//第一次运行将calendar格式化为周一
+				int addDay = 8 - calendar.get(Calendar.DAY_OF_WEEK );
+				calendar.add(Calendar.DAY_OF_WEEK, addDay);
+				flag = false;
+			}else {
+				//向后快进一周
+				calendar.add(Calendar.DAY_OF_WEEK, 7);
 			}
 		}
-		Map<Integer, Time> timeCache = new HashMap<Integer, Time>();
-		for(Time time : timeList) {
-			timeCache.put(time.getId(), time);
-		}
-		/*
-		 * 此处可优化
-		 * 思路 : 查询数据库时按外键time排序, 一旦subject发生变化再去map中查询time对象
-		 */
-		List<Course> courseList = courseDao.get_course_list_by_subject( timeVOBuf.getSubject() );
-		
-		for(Course course : courseList) {
-			timeBuf = timeCache.get( course.getTime() );
-			
-		}
-		timeDao.update_time_list(timeList);
+		Result< List<Course> > result = timeList.size() * Constant.COURSE_LENGTH > subject.getTimeTotal() ? 
+				new Result< List<Course> >(ResultCode.WARNING_SUBJECT_TIME_ERROR, courseList) :
+				new Result< List<Course> >(ResultCode.SUCCESS, courseList);
+		request.setAttribute("result",  result);
 		return null;
 	}
 }
