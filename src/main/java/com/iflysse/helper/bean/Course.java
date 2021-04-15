@@ -35,7 +35,15 @@ public class Course {
 	 */
 	private Date specificTime;
 	
-	
+	public Course(Time time, Date specificTime) {
+		this.subject = time.getSubject();
+		this.time = time.getId();
+		this.goal = null;
+		this.content = null;
+		this.mode = Constant.COURSE_TYPE_LEARN_AND_PRACTIVE;
+		this.isHomework = false;
+		this.specificTime = specificTime;
+	}
 
 	public Course(Integer id, Integer subject, Integer time, String goal, String content, Byte mode, Boolean isHomework,
 			Date specificTime) {

@@ -74,6 +74,10 @@ public interface Constant {
 	 * 课程类型-授课-现场
 	 */
 	byte COURSE_TYPE_TEACHE = 0;
+	/**
+	 * 课程 - 单次课程的时长
+	 */
+	byte COURSE_LENGTH = 2;
 	
 	/**
 	 * 检测-id
