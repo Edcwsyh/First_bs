@@ -41,6 +41,6 @@ public interface CourseDao {
 	@Update("update t_user set state=#{state} where id=#{id}")
 	public void update_user_state (int id, byte state);
 	
-	@Delete("delete from t_term where id=#{id}")
-	public void delete_user (User user);
+	@Delete("delete from t_course where id=#{id}")
+	public void delete_course_single (Integer id);
 }

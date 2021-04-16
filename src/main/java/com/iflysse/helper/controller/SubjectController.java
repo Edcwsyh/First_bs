@@ -16,6 +16,7 @@ import com.iflysse.helper.dao.SubjectDao;
 import com.iflysse.helper.dao.TermDao;
 import com.iflysse.helper.dao.TimeDao;
 import com.iflysse.helper.dao.UserDao;
+import com.iflysse.helper.service.SubjectServer;
 import com.iflysse.helper.tools.Constant;
 import com.iflysse.helper.tools.Result;
 import com.iflysse.helper.tools.ResultCode;
@@ -38,6 +39,9 @@ public class SubjectController {
 	
 	@Autowired 
 	private TimeDao timeDao;
+	
+	@Autowired 
+	private SubjectServer subjectServer;
 	
 	/**
 	 * @api {post} /TeacherHelper/subject/subject_add 新增科目

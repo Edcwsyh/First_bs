@@ -183,10 +183,47 @@ public class CourseController {
 			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_PERMISSION, null) );
 			return "error/403";
 		}
+		courseDao.delete_course_single(courseId);
 		request.setAttribute("result", new Result<Void>(ResultCode.SUCCESS, null) );
 		return "redirect:course_list?subjectId=" + subject.getId();
 	}
 	
-	
+	/**
+	 * @api {post} /TeacherHelper/subject/course/course_delete_single 删除多次课程
+	 * @apiVersion 1.0.0
+	 * @apiGroup Course
+	 * @apiName 删除多次课程
+	 * @apiSuccess {Boolean} success true表示请求成功，false表示请求失败
+	 * @apiSuccess {number} code 错误代码
+	 * @apiSuccess {string} message 错误信息
+	 * @apiParam {number} courseId 教学目标
+	 * 	@apiSuccessExample {json} 请求成功例子:
+	 * 	{
+	 *     	"success" : true,
+	 *      "code" : 20000,
+	 *      "message" : "请求成功",
+	 *      "data" : null
+	 *	}
+	 * @apiParamExample {json} 请求示例:
+	 * 	{
+	 * 		courseId: "2020"
+	 * 	}
+	 */
+	@RequestMapping("/course_delete_list")
+	public String course_delete_list(HttpServletRequest request, HttpSession session, List<Integer> courseIdList) {
+		User requestUser = (User) session.getAttribute("loggedUser");
+		if(courseIdList == null || courseIdList.size() == 0) {
+			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_PARAM, null) );
+			return "error/400";
+		}
+		
+		Subject subject = subjectDao.get_subject_by_course(courseIdList.get(0));
+		if( requestUser.getId() != subject.getTeacher() ) {
+			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_PERMISSION, null) );
+			return "error/403";
+		}
+		request.setAttribute("result", new Result<Void>(ResultCode.SUCCESS, null) );
+		return "redirect:course_list?subjectId=" + subject.getId();
+	}
 	
 }
