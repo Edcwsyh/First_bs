@@ -59,5 +59,11 @@ public interface SubjectDao {
 	//删除某一教师的所有科目
 	@Delete("delete from t_term where teacher=#{userId}")
 	public void delete_subject_for_teacher(int userId);
+	
+	/*
+	 * 删除某一科目表对应的时间表和课程表
+	 */
+	@Delete("delete t_time, t_course from t_time join t_course on t_course.time=t_time.id where t_time.subject=#{subjectId}")
+	public void delete_time_and_course_by_subject(int subjectId);
 }
 

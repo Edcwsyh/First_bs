@@ -28,6 +28,7 @@ import com.iflysse.helper.dao.SubjectDao;
 import com.iflysse.helper.dao.TermDao;
 import com.iflysse.helper.dao.TimeDao;
 import com.iflysse.helper.dao.UserDao;
+import com.iflysse.helper.service.SubjectServer;
 import com.iflysse.helper.tools.Constant;
 import com.iflysse.helper.tools.Result;
 import com.iflysse.helper.tools.ResultCode;
@@ -47,6 +48,9 @@ public class TimeController {
 	
 	@Autowired
 	private TermDao termDao;
+	
+	@Autowired 
+	private SubjectServer subjectServer;
 	
 	private void time_merage(List<Time> timeList) {
 		//合并完成的数量
@@ -173,6 +177,7 @@ public class TimeController {
 		Subject subject = subjectDao.get_subject_by_id(timeVOList.get(0).getSubject());
 		List<Time> timeList = new LinkedList<Time>();
 		List<Course> courseList = courseDao.get_course_list_by_subject(subject.getId());
+		List<Course> insertCoureseList = new LinkedList<Course>();
 		Iterator<Course> courseIterator = courseList.listIterator();
 		Calendar calendar = Calendar.getInstance(), calendarTemp = Calendar.getInstance();
 		boolean flag = true;
@@ -199,7 +204,7 @@ public class TimeController {
 						courseCache = courseIterator.next();
 						courseCache.setSpecificTime(new Date( calendarTemp.getTime().getTime() ) );
 					} else {
-						courseList.add( new Course( time, new Date( calendarTemp.getTime().getTime() ) ) );
+						insertCoureseList.add( new Course( time, new Date( calendarTemp.getTime().getTime() ) ) );
 					}
 				}
 			}
@@ -216,7 +221,8 @@ public class TimeController {
 		Result< List<Course> > result = timeList.size() * Constant.COURSE_LENGTH > subject.getTimeTotal() ? 
 				new Result< List<Course> >(ResultCode.WARNING_SUBJECT_TIME_ERROR, courseList) :
 				new Result< List<Course> >(ResultCode.SUCCESS, courseList);
+		subjectServer.update_time(timeList, courseList,insertCoureseList);
 		request.setAttribute("result",  result);
-		return null;
+		return "timeInfo";
 	}
 }
