@@ -1,6 +1,6 @@
 package com.iflysse.helper.bean;
 
-import com.iflysse.helper.controller.CacheController;
+import com.iflysse.helper.controller.Cache;
 
 public class Time extends TimeBase{
 
@@ -16,7 +16,7 @@ public class Time extends TimeBase{
 	public Time(TimeVO timeVO) {
 		super(timeVO.getId(), timeVO.getSubject(), timeVO.getClassroom() );
 		Byte startWeek = timeVO.getStarWeek();
-		Byte endWeek = CacheController.termBuffer.getWeeks();
+		Byte endWeek = Cache.currTerm.getWeeks();
 		endWeek = endWeek <= timeVO.getEndWeek() ? endWeek : timeVO.getEndWeek();
 		do {
 			this.weeks |= 1 << (startWeek - 1);

@@ -19,29 +19,37 @@ import org.springframework.stereotype.Controller;
 import com.iflysse.helper.bean.Course;
 import com.iflysse.helper.bean.Subject;
 import com.iflysse.helper.bean.Term;
+import com.iflysse.helper.bean.User;
 import com.iflysse.helper.dao.TermDao;
+import com.iflysse.helper.service.UserServer;
 import com.iflysse.helper.tools.Constant;
 
 @Controller
-public class CacheController {
+public class Cache {
 	@Autowired
 	private TermDao termDao;
+	
+	@Autowired
+	private UserServer userServer;
 
 	/**
 	 * 学期缓存(当前学期)
 	 */
-	public static Term termBuffer = null;
-	
-	public static Map<Integer, List<Course> > courseCache = null;
+	public static Term currTerm = null;
 	
 	@PostConstruct
 	private void cache_init() {
-		if ( ( termBuffer = termDao.get_current_term() ) == null) {
+		if ( ( currTerm = termDao.get_current_term() ) == null) {
 			System.out.println("学期为空");
-			termBuffer = new Term("预留学期", new Date(System.currentTimeMillis() ), 
+			currTerm = new Term("预留学期", new Date(System.currentTimeMillis() ), 
 					Constant.TERM_DEFAULT_WEEKS , true );
-			termDao.insert_term(termBuffer);
+			termDao.insert_term(currTerm);
 		}
-		courseCache = Collections.synchronizedMap( new HashMap<>() );
+		//初始化一个管理员用户
+		User admin = userServer.get_user(Constant.FIELD_TYPE_USERNAME, "admin");
+		if ( admin == null ) {
+			admin = new User("admin", "123456", "null", "null", "null");
+			userServer.user_add(admin);
+		}
 	}
 }

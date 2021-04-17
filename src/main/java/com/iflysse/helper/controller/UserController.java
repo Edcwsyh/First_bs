@@ -81,7 +81,6 @@ public class UserController {
 			case ERROR_PARAM : return "error/400";
 			default : return "error/500";
 		}
-		
 	}
 	
 	/**

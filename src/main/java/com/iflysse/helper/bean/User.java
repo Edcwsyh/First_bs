@@ -47,6 +47,18 @@ public class User {
 		
 	}
 
+	public User(@NotBlank @Pattern(regexp = "[A-Za-z_][A-Za-z0-9_]{3,16}", message = "用户名不符合规则") String username,
+			String password, String realName, String phone, String mail) {
+		super();
+		this.username = username;
+		this.password = password;
+		this.realName = realName;
+		this.phone = phone;
+		this.mail = mail;
+	}
+
+
+
 	public Integer getId() {
 		return id;
 	}

@@ -17,9 +17,24 @@ public interface SubjectServer {
 	public Subject get_subject_by_id(Integer id);
 	
 	/**
-	 * 更新
-	 * @param id科目的主键id
-	 * @return
+	 * 更新时间表
+	 * @param timeList 已被更新的时间表
+	 * @param updateCourseList 需要更新的课程表
+	 * @param insertCourseList 需要新增的课程表
 	 */
 	public void update_time(List<Time> timeList, List<Course> updateCourseList, List<Course> insertCourseList);
+	
+	/**
+	 * 通过时间表获取其所属的科目对象
+	 * @param timeId 时间表的id
+	 * @return
+	 */
+	public Subject get_subject_by_time(Integer timeId);
+	
+	/**
+	 * 通过时间表获取课程列表
+	 * @param timeId 时间表的id
+	 * @return
+	 */
+	public List<Course> get_course_by_time(Integer timeId);
 }
