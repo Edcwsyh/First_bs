@@ -14,14 +14,23 @@ import com.iflysse.helper.bean.User;
 public interface CourseDao {
 	/**
 	 * 获取某一科目的所属课程
+	 * @param subjectId 科目id
 	 * @return
 	 */
 	@Select("select * from t_course where subject=#{subjectId}")
 	public List<Course> get_course_list_by_subject(Integer subjectId);
 	
 	/**
+	 * 获取某一时间段的所属课程
+	 * @param timeId 时间id
+	 * @return
+	 */
+	@Select("select * from t_course where timeId=#{timeId}")
+	public List<Course> get_course_list_by_time(Integer timeId);
+	
+	/**
 	 * 新增多条课表数据
-	 * @param courseList
+	 * @param courseList 课程表数据
 	 */
 	public void insert_course_list (List<Course> courseList);
 	

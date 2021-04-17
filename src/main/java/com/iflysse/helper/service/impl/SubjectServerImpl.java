@@ -48,4 +48,12 @@ public class SubjectServerImpl implements SubjectServer {
 		}
 	}
 
+	@Override
+	public Subject get_subject_by_time(Integer timeId) {
+		return subjectDao.get_subject_by_time(timeId);
+	}
+	@Override
+	public List<Course> get_course_by_time(Integer timeId){
+		return courseDao.get_course_list_by_time(timeId);
+	}
 }

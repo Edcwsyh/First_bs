@@ -69,6 +69,14 @@ public interface UserDao {
 	public void insert_user (User user);
 	
 	/**
+	 * 新增一条用户数据(由用户指定id)
+	 * @param user
+	 */
+	@Insert("insert into t_user(id, username, password, realName, phone, mail, gender, permission, state) "
+			+ "value(#{id}, #{username}, #{password},#{realName}, #{phone}, #{mail}, #{gender}, #{permission}, #{state})")
+	public void _insert_user (User user);
+	
+	/**
 	 * 更新用户的 用户名、真实姓名、邮箱、电话号码、性别
 	 * @param user
 	 */

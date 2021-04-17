@@ -193,7 +193,7 @@ public class AdminController {
 	 */
 	@RequestMapping("/user_add")
 	public String user_register(HttpServletRequest request, User user) {
-		Result<Void> result = userServer.user_update_all_info(user);
+		Result<Void> result = userServer.user_add(user);
 		request.setAttribute("result", result);
 		switch( result.getResultCode() ) {
 			case SUCCESS : return "userAllInfo";

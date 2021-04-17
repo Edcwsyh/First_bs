@@ -11,11 +11,25 @@ import com.iflysse.helper.bean.Subject;
 
 public interface SubjectDao {
 
-	/*
-	 * 获取指定用户及指定学期的科目列表
+	/**
+	 * 通过游湖id和学期id查询科目列表
+	 * @param userId 用户id
+	 * @param termId 学期id
+	 * @return
 	 */
 	@Select("select * from t_subject where teacher=#{userId} and term=#{termId}")
 	public List<Subject> get_subject_list(int userId, int termId);
+	
+	/**
+	 * 通过时间id来查询科目对象
+	 * @param time 时间表中的id
+	 * @return
+	 */
+	@Select("select t_subject.id id, t_subject.term term, t_subject.teacher teacher, t_subject.name name,"
+			+ "t_subject.type type, t_subject.ta ta, t_subject.klass klass, t_subject.timeTotal timeTotal,"
+			+ "t_subject.timeTheory timeTheory, t_subject.timePractice timePractice"
+			+ " from t_subject join t_time where t_time.subject=t_subject.id")
+	public Subject get_subject_by_time(int timeId);
 	
 	/**
 	 * 通过课程id查询所属课表

@@ -58,7 +58,7 @@ public class TermController {
 	@ResponseBody
 	@RequestMapping("/term_current")
 	public Result<Term> term_current(HttpServletRequest request) {
-		return new Result<Term>(ResultCode.SUCCESS, CacheController.termBuffer);
+		return new Result<Term>(ResultCode.SUCCESS, Cache.currTerm);
 	}
 	
 	/**
@@ -130,8 +130,8 @@ public class TermController {
 		//判断新增的是否是激活的学期
 		if(newTerm.getIsCurrent() ) {
 			//关闭原激活学期,并更改当前缓存学期
-			termDao.update_term_state( CacheController.termBuffer.getId(), false ); 
-			CacheController.termBuffer = newTerm;
+			termDao.update_term_state( Cache.currTerm.getId(), false ); 
+			Cache.currTerm = newTerm;
 		}
 		termDao.insert_term(newTerm);
 		request.setAttribute("result", new Result<Void>(ResultCode.SUCCESS, null) ); 
@@ -165,7 +165,7 @@ public class TermController {
 	 */
 	@RequestMapping("/term_delete")
 	public String term_delete(HttpServletRequest request, Integer termId) {
-		if (CacheController.termBuffer.getId() == termId) {
+		if (Cache.currTerm.getId() == termId) {
 			System.out.println("已拦截  - 删除当前学期");
 			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_TERM_DELETE_ACTION, null) ); 
 			return "redirect:term_list";
@@ -293,7 +293,7 @@ public class TermController {
 	 */
 	@RequestMapping("/term_activate")
 	public String term_activate(HttpServletRequest request, Integer termId) {
-		if(termId == CacheController.termBuffer.getId() ) {
+		if(termId == Cache.currTerm.getId() ) {
 			System.out.println("已拦截  - 当前学期已被激活");
 			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_TERM_ACTIVATE, null) );
 			return "error/403";
@@ -305,8 +305,8 @@ public class TermController {
 			return "error/404";
 		} else {
 			termDao.update_term_state(term.getId(), true);
-			termDao.update_term_state(CacheController.termBuffer.getId(), false);
-			CacheController.termBuffer = term;
+			termDao.update_term_state(Cache.currTerm.getId(), false);
+			Cache.currTerm = term;
 			System.out.println("请求通过 - 已更改当前激活学期");
 			request.setAttribute("result", new Result<Void>(ResultCode.SUCCESS, null) );
 			return "redirect:term_list";

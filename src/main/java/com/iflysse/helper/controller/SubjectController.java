@@ -82,7 +82,7 @@ public class SubjectController {
 	@RequestMapping("/subject_add")
 	public String subject_add(HttpServletRequest request, Subject newSubject) {
 		if (newSubject.getTerm() == null) {
-			newSubject.setTerm( CacheController.termBuffer.getId() );
+			newSubject.setTerm( Cache.currTerm.getId() );
 		}
 		if(newSubject.check( Constant.CHECK_ALL ^ Constant.CHECK_TERM ^ Constant.CHECK_ID ) != 0 ) {
 			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_PARAM, null) );
@@ -274,7 +274,7 @@ public class SubjectController {
 		
 		//验证传入的学期id
 		if(termId == null) {
-			termId = CacheController.termBuffer.getId();
+			termId = Cache.currTerm.getId();
 		}else {
 			if(termDao.get_term_by_id(termId) == null ) {
 				request.setAttribute( "result", new Result< List<Subject> >( ResultCode.ERROR_TERM_NOT_FOUND, null ) );

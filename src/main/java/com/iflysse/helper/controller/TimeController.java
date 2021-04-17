@@ -88,13 +88,18 @@ public class TimeController {
 	 * 	}
 	 */
 	@RequestMapping("/time_add")
-	public String subject_add(HttpServletRequest request, List<TimeVO> timeVOList) {
+	public String subject_add(HttpServletRequest request,  HttpSession session, List<TimeVO> timeVOList) {
+		Subject subject = subjectDao.get_subject_by_id( timeVOList.get(0).getSubject() );
+		User requestUser = (User) session.getAttribute("loggedUser");
+		if ( subject.getTeacher() != requestUser.getId() ) {
+			request.setAttribute("result", new Result<Boolean>( ResultCode.ERROR_PERMISSION, null) );
+			return "error/403";
+		}
 		List<Time> timeList = new ArrayList<>(timeVOList.size() );
 		List<Course> courseList = new LinkedList<>();
 		Calendar calendar = Calendar.getInstance(), calendarTemp = Calendar.getInstance();
 		boolean flag = true;
-		calendar.setTime( CacheController.termBuffer.getStartTime() );
-		Subject subject = subjectDao.get_subject_by_id( timeVOList.get(0).getSubject() );
+		calendar.setTime( Cache.currTerm.getStartTime() );
 		for(TimeVO timeVO: timeVOList) {
 			//检测时间表的参数是否完整
 			if(timeVO.check(Constant.CHECK_ALL ^ Constant.CHECK_ID) != 0) {
@@ -114,7 +119,7 @@ public class TimeController {
 		time_merage(timeList);
 
 		//设置开始周和结束周
-		int startWeek = 0, endWeek = CacheController.termBuffer.getWeeks();
+		int startWeek = 0, endWeek = Cache.currTerm.getWeeks();
 		//遍历本学期的所有周次
 		while (startWeek < endWeek ) {
 			for (Time time : timeList) {
@@ -169,12 +174,17 @@ public class TimeController {
 	 * 	}
 	 */
 	@RequestMapping("/time_update")
-	public String time_delete(HttpServletRequest request, List<TimeVO> timeVOList) {
+	public String time_update(HttpServletRequest request, HttpSession session, List<TimeVO> timeVOList) {
 		if( timeVOList.size() == 0 ) {
 			request.setAttribute("result", new Result< Void >(ResultCode.ERROR_PARAM, null) );
 			return "error/404";
 		}
-		Subject subject = subjectDao.get_subject_by_id(timeVOList.get(0).getSubject());
+		Subject subject = subjectDao.get_subject_by_id( timeVOList.get(0).getSubject() );
+		User requestUser = (User) session.getAttribute("loggedUser");
+		if ( subject.getTeacher() != requestUser.getId() ) {
+			request.setAttribute("result", new Result<Boolean>( ResultCode.ERROR_PERMISSION, null) );
+			return "error/403";
+		}
 		List<Time> timeList = new LinkedList<Time>();
 		List<Course> courseList = courseDao.get_course_list_by_subject(subject.getId());
 		List<Course> insertCoureseList = new LinkedList<Course>();
@@ -182,13 +192,13 @@ public class TimeController {
 		Calendar calendar = Calendar.getInstance(), calendarTemp = Calendar.getInstance();
 		boolean flag = true;
 		Course courseCache;
-		calendar.setTime( CacheController.termBuffer.getStartTime() );
+		calendar.setTime( Cache.currTerm.getStartTime() );
 		for ( TimeVO timeVOIter : timeVOList ) {
 			timeList.add( new Time(timeVOIter) );
 		}
 		int startWeek = 0, 
-			endWeek = subject.getTerm() == CacheController.termBuffer.getId() ? 
-						CacheController.termBuffer.getWeeks() : 
+			endWeek = subject.getTerm() == Cache.currTerm.getId() ? 
+						Cache.currTerm.getWeeks() : 
 						termDao.get_term_by_id( subject.getTerm() ).getWeeks() ;
 		while (startWeek < endWeek ) {
 			for (Time time : timeList) {
@@ -199,7 +209,7 @@ public class TimeController {
 					}
 					calendarTemp.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_YEAR) );
 					calendarTemp.set(Calendar.DAY_OF_WEEK, time.getWeek() );
-					//如果课程列表中还存在课程,则修改, 否则,将新增课程
+					//如果课程列表中还存在课程,则修改, 否则,将新增课程到新增列表当中
 					if ( courseIterator.hasNext() ) {
 						courseCache = courseIterator.next();
 						courseCache.setSpecificTime(new Date( calendarTemp.getTime().getTime() ) );
@@ -218,11 +228,49 @@ public class TimeController {
 				calendar.add(Calendar.DAY_OF_WEEK, 7);
 			}
 		}
-		Result< List<Course> > result = timeList.size() * Constant.COURSE_LENGTH > subject.getTimeTotal() ? 
-				new Result< List<Course> >(ResultCode.WARNING_SUBJECT_TIME_ERROR, courseList) :
-				new Result< List<Course> >(ResultCode.SUCCESS, courseList);
+		Result< List<Time> > result = timeList.size() * Constant.COURSE_LENGTH > subject.getTimeTotal() ? 
+				new Result< List<Time> >(ResultCode.WARNING_SUBJECT_TIME_ERROR, timeList) :
+				new Result< List<Time> >(ResultCode.SUCCESS, timeList);
+		subjectServer.update_time(timeList, courseList,insertCoureseList);
 		subjectServer.update_time(timeList, courseList,insertCoureseList);
 		request.setAttribute("result",  result);
-		return "timeInfo";
+		return "timeList";
+	}
+	
+	/**
+	 * @api {post} /TeacherHelper/subject/time/time_update 新增时间表
+	 * @apiVersion 1.0.0
+	 * @apiGroup Time
+	 * @apiName 删除时间表
+	 * @apiSuccess {Boolean} success true表示请求成功，false表示请求失败
+	 * @apiSuccess {number} code 错误代码
+	 * @apiSuccess {string} message 错误信息
+	 * @apiParam {string} name 学期名
+	 * 	@apiSuccessExample {json} 请求成功例子:
+	 * 	{
+	 *     	"success" : true,
+	 *      "code" : 20000,
+	 *      "message" : "请求成功",
+	 *      "data" : null
+	 *	}
+	 * @apiParamExample {json} 请求示例:
+	 * 	{
+	 *
+	 * 	}
+	 */
+	@RequestMapping("/time_delete")
+	public String time_delete(HttpServletRequest request, HttpSession session, Integer timeId) {
+		Subject subject = subjectServer.get_subject_by_time(timeId);
+		User requestUser = (User) session.getAttribute("loggedUser");
+		if ( subject.getTeacher() != requestUser.getId() ) {
+			request.setAttribute("result", new Result<Boolean>( ResultCode.ERROR_PERMISSION, null) );
+			return "error/403";
+		}
+		List<Course> courseList = subjectServer.get_course_by_time(timeId);
+		if ( courseList != null ) {
+			request.setAttribute("result", new Result<Boolean>( ResultCode.ERROR_TIME_NOT_EMPTY, null) );
+			return "timeList";
+		}
+		return null;
 	}
 }
