@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.iflysse.helper.bean.Course;
@@ -26,6 +27,7 @@ import com.iflysse.helper.dao.UserDao;
 import com.iflysse.helper.service.SubjectServer;
 import com.iflysse.helper.tools.Result;
 
+@Service
 public class SubjectServerImpl implements SubjectServer {
 	
 	@Autowired

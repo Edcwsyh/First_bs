@@ -54,22 +54,17 @@
     </div>
 </nav>
 	<!--导航-->
-	
-
-   
-   
+	 
 
    <div style="margin-left: 400px;margin-right: 200px" class="col-md-5">
             <div class="modal-body">
-                <form action="${pageContext.request.contextPath}/subject/subject_update" method="post">
+                <form action="${pageContext.request.contextPath}" method="post">
                 	<input type="hidden" name="id" value="${result.data.id }">
-                	<input type="hidden" name="teacher" value="${result.data.teacher }">
-                	
+              	
                     <div class="form-group">
-							<label for="name">课程名</label> <input type="text" id="name"
-								name="name" class="form-control" value="${result.data.name }">
+							<label for="week">课程名</label> <input type="text" id="week"
+								name="week" class="form-control" placeholder="请输入">
 						</div>
-
 						
 						<div class="form-group">
 							<label for="ta">课程助教</label> <input type="text" id="ta" name="ta"
