@@ -178,7 +178,7 @@ public class UserController {
 		}
 		
 		//查询用户名、邮箱、电话号码是否已经被注册
-		if (userDao.get_user_by_ump(user) != null) {
+		if (userDao.get_user_by_ump(user).size() != 0) {
 			request.setAttribute("result", new Result<Boolean>(ResultCode.ERROR_USER_EXIST, null));
 			return  "error/409";
 		}

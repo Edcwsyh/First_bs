@@ -273,4 +273,12 @@ public class TimeController {
 		}
 		return null;
 	}
+	
+	@RequestMapping("/goto_timeAdd")
+	public String subject_add() {
+		
+		return "timeAdd";
+	}
+	
+	
 }

@@ -108,7 +108,7 @@
                                     操作<span class="caret"></span>
                                 </button>
                                 <ul class="dropdown-menu">
-                                   <li><a href="#">编辑</a></li>
+                                   <li><a href="${pageContext.request.contextPath}/admin/user_all_info?userId=${user.id}">编辑</a></li>
                                    <li><a href="#">删除</a></li>
                                    <li><a href="#">锁定</a></li>
                                    <li><a href="#">修改密码</a></li>
@@ -169,6 +169,25 @@
                     <div class="form-group">
                         <label for="phone">用户电话</label>
                         <input type="text" id="phone" name="phone" class="form-control" placeholder="请输入用户电话">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="gender">用户权限</label>
+                        <div>
+	                        <input type="radio" id="permission" name="permission" value="1" > 普通用户
+	                        <input type="radio" id="permission" name="permission" value="0" > 管理员
+	                        <input type="radio" id="permission" name="permission" value="2" > 经理
+                        </div>
+                        
+                    </div>
+                    
+                     <div class="form-group">
+                        <label for="gender">用户状态</label>
+                        <div>
+	                        <input type="radio" id="state" name="state" value="1" > 正常
+	                        <input type="radio" id="state" name="state" value="0" > 冻结
+                        </div>
+                        
                     </div>
                     
                    	<div class="form-group">

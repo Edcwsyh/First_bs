@@ -145,11 +145,17 @@ public class AdminController {
 		Result<Void> result = userServer.user_update_all_info(user);
 		request.setAttribute("result", result);
 		switch( result.getResultCode() ) {
-			case SUCCESS : return "userAllInfo";
+			case SUCCESS : return "redirect:user_list";
 			case ERROR_PARAM : return "error/400";
 			case ERROR_USER_NOT_FOUND : return "error/404";
 			default : return "error/500";
 		}
+	}
+	
+	@RequestMapping("/goto_user_update")
+	public String goto_user_update() {
+		
+		return "adminUserUpdate";
 	}
 	
 	/**
@@ -196,7 +202,7 @@ public class AdminController {
 		Result<Void> result = userServer.user_add(user);
 		request.setAttribute("result", result);
 		switch( result.getResultCode() ) {
-			case SUCCESS : return "userAllInfo";
+			case SUCCESS : return "redirect:user_list";
 			case ERROR_PARAM : return "error/400";
 			case ERROR_USER_EXIST : return "error/409";
 			default : return "error/500";

@@ -3,6 +3,7 @@ package com.iflysse.helper.service.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.iflysse.helper.bean.Course;
@@ -15,6 +16,7 @@ import com.iflysse.helper.dao.TimeDao;
 import com.iflysse.helper.dao.UserDao;
 import com.iflysse.helper.service.SubjectServer;
 
+@Service
 public class SubjectServerImpl implements SubjectServer {
 	
 	@Autowired

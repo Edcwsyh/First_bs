@@ -161,7 +161,7 @@
 					<h4 class="modal-title" id="myModalLabel">添加科目</h4>
 				</div>
 				<div class="modal-body">
-					<form action="${pageContext.request.contextPath}/subject/subject_add" method="post">
+					<form action="${pageContext.request.contextPath}/subject/subject_add"  method="post">
 						<input type="hidden" name="teacher" value="${loggedUser.id }">
 						<div class="form-group">
 							<label for="name">课程名</label> <input type="text" id="name"
@@ -210,9 +210,11 @@
 						<div class="modal-footer">
 							<button type="button" class="btn btn-default"
 								data-dismiss="modal">关闭</button>
-							<button type="submit" class="btn btn-primary">提交</button>
+							<button type="submit" class="btn btn-primary" >提交</button>
 						</div>
 					</form>
+					
+					
 				</div>
 
 			</div>

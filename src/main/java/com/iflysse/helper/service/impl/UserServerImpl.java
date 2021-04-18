@@ -71,11 +71,11 @@ public class UserServerImpl implements UserServer {
 	public Result<Void> user_add(User user) {
 		// TODO 自动生成的方法存根
 		//检测传入的数据是否存在空字段
-		if( user.check( Constant.CHECK_ALL ) != 0 ) {
+		if( user.check( Constant.CHECK_ALL ^ Constant.CHECK_ID ) != 0 ) {
 			return new Result<Void>(ResultCode.ERROR_PARAM, null);
 		}
 		//检测数据库中的用户名、邮箱、电话是否重复
-		if(userDao.get_user_by_ump(user) != null) {
+		if(userDao.get_user_by_ump(user).size() != 0) {
 			return new Result<Void>(ResultCode.ERROR_USER_EXIST, null);
 		}
 		userDao.insert_user(user);

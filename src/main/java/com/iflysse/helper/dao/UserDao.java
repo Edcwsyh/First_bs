@@ -58,7 +58,7 @@ public interface UserDao {
 	 */
 	@Select("select * from t_user where username=#{username} or mail=#{mail} or phone=#{phone}")
 	//ump代表username, mail, phone, 即查找用户名、邮箱或电话号码
-	public User get_user_by_ump(User user);
+	public List<User> get_user_by_ump(User user);
 	
 	/**
 	 * 新增一条用户数据
@@ -108,7 +108,7 @@ public interface UserDao {
 			+ "gender=#{gender}, "
 			+ "permission=#{permission}, "
 			+ "state=#{state} "
-			+ "where id=#{userid}")
+			+ "where id=#{id}")
 	public void update_user_all (User user);
 	
 	@Update("update t_user set state=#{state} where id=#{id}")

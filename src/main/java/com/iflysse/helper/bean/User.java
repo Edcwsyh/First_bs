@@ -142,21 +142,27 @@ public class User {
 	public int check(int checkField) {
 		int result = 0;
 		if( (checkField & Constant.CHECK_ID) != 0 && id == null ) {
+			System.out.println("id为空");
 			result |= Constant.CHECK_ID;
 		}
 		if( (checkField & Constant.CHECK_USERNAME) != 0 && username == null ) {
+			System.out.println("用户名为空");
 			result |= Constant.CHECK_USERNAME;
 		}
 		if( (checkField & Constant.CHECK_PASSWORD) != 0 && password == null ) {
+			System.out.println("密码为空");
 			result |= Constant.CHECK_PASSWORD;
 		}
 		if( (checkField & Constant.CHECK_REALNAME) != 0 && realName == null ) {
+			System.out.println("姓名为空");
 			result |= Constant.CHECK_REALNAME;
 		}
 		if( (checkField & Constant.CHECK_PHONE) != 0 && phone == null ) {
+			System.out.println("电话为空");
 			result |= Constant.CHECK_PHONE;
 		}
 		if( (checkField & Constant.CHECK_MAIL) != 0 && mail == null ) {
+			System.out.println("邮箱为空");
 			result |= Constant.CHECK_MAIL;
 		}
 		return result;
