@@ -114,6 +114,6 @@ public interface UserDao {
 	@Update("update t_user set state=#{state} where id=#{id}")
 	public void update_user_state (int id, byte state);
 	
-	@Delete("delete from t_term where id=#{id}")
-	public void delete_user (User user);
+	@Delete("delete from t_term where id=#{userId}")
+	public void delete_user (Integer userId);
 }

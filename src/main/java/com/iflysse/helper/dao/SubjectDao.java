@@ -3,7 +3,6 @@ package com.iflysse.helper.dao;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
@@ -11,6 +10,13 @@ import com.iflysse.helper.bean.Subject;
 
 public interface SubjectDao {
 
+	/**
+	 * 通过用户查询科目列表
+	 * @param userId
+	 * @return
+	 */
+	@Select("select * from t_subject where teacher=#{userId}")
+	public List<Subject> get_subject_list_by_user(int userId);
 	/**
 	 * 通过游湖id和学期id查询科目列表
 	 * @param userId 用户id

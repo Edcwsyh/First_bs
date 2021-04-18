@@ -54,4 +54,10 @@ public interface UserServer {
 	 * @return
 	 */
 	public Result< List<User> > user_list();
+	/**
+	 * 删除某一用户
+	 * @param userId 必须是未被其他数据引用的用户
+	 * @return
+	 */
+	public Result<Void> user_delete(Integer userId);
 }

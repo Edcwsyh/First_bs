@@ -52,29 +52,23 @@ public class TimeController {
 	@Autowired 
 	private SubjectServer subjectServer;
 	
-	private void time_merage(List<Time> timeList) {
-		//合并完成的数量
-		for(int i = 0 ; i  < timeList.size(); ++i) {
-			for(int g = i + 1; g < timeList.size(); ++g) {
-				if( timeList.get(i).getTimeQuantum() != timeList.get(g).getTimeQuantum() ) {
-					timeList.subList(i + 1, g).clear(); //删除已被合并的数据
-					break;
-				} else {
-					timeList.get(i).merage( timeList.get(g) );
-				}
-			}
-		}
-	}
-	
 	/**
-	 * @api {post} /TeacherHelper/subject/time/time_add 新增时间表
+	 * @api {post} /TeacherHelper/subject/time/time_update 更新时间表
 	 * @apiVersion 1.0.0
 	 * @apiGroup Time
-	 * @apiName 新增时间表
+	 * @apiName 更新时间表
 	 * @apiSuccess {Boolean} success true表示请求成功，false表示请求失败
 	 * @apiSuccess {number} code 错误代码
 	 * @apiSuccess {string} message 错误信息
-	 * @apiParam {string} name 学期名
+	 * @apiParam {object} timeVOList 时间列表
+	 * @apiParam {number} TimeVO.id 要被更新时间表的id(非必填, 若为空, 则表示该时间段是新增的)
+	 * @apiParam {number} TimeVO.startWeek 开始周(必填)
+	 * @apiParam {number} TimeVO.endWeek 结束周(必填)
+	 * @apiParam {number} TimeVO.interval 表示每几周上一次课(必填, 这是一个下选择下拉框, 默认为1)
+	 * @apiParam {String} TimeVO.addWeek 在开始周与结束周之外还要上课的周(非必填), 格式:为一段数字序列,每个数字之间用逗号隔开,如"13,15"
+	 * @apiParam {String} TimeVO.deleteWeek 在开始周与结束周之中不需要上课的周(非必填), 格式同addWeek
+	 * @apiParam {number} TimeVO.week 该课程在周几上课(必填, 这应该是一个选择下拉框, 范围1-7)
+	 * @apiParam {number} TimeVO.howTime 该课程在一天中的第几大节(必填, 这应该是一个选择下拉框, 范围1-6)
 	 * 	@apiSuccessExample {json} 请求成功例子:
 	 * 	{
 	 *     	"success" : true,
@@ -84,93 +78,31 @@ public class TimeController {
 	 *	}
 	 * @apiParamExample {json} 请求示例:
 	 * 	{
-	 *
-	 * 	}
-	 */
-	@RequestMapping("/time_add")
-	public String subject_add(HttpServletRequest request,  HttpSession session, List<TimeVO> timeVOList) {
-		Subject subject = subjectDao.get_subject_by_id( timeVOList.get(0).getSubject() );
-		User requestUser = (User) session.getAttribute("loggedUser");
-		if ( subject.getTeacher() != requestUser.getId() ) {
-			request.setAttribute("result", new Result<Boolean>( ResultCode.ERROR_PERMISSION, null) );
-			return "error/403";
-		}
-		List<Time> timeList = new ArrayList<>(timeVOList.size() );
-		List<Course> courseList = new LinkedList<>();
-		Calendar calendar = Calendar.getInstance(), calendarTemp = Calendar.getInstance();
-		boolean flag = true;
-		calendar.setTime( Cache.currTerm.getStartTime() );
-		for(TimeVO timeVO: timeVOList) {
-			//检测时间表的参数是否完整
-			if(timeVO.check(Constant.CHECK_ALL ^ Constant.CHECK_ID) != 0) {
-				request.setAttribute("result", new Result< List<Course> >(ResultCode.ERROR_PARAM, courseList) );
-				return "error/400";
-			}
-			timeList.add( new Time(timeVO) );
-		}
-		//对timeList进行排序(根据每周课时)
-		timeList.sort( new Comparator<Time>() {
-			@Override
-			public int compare(Time o1, Time o2) {
-				return o1.getTimeQuantum() - o2.getTimeQuantum();
-			}
-		} );
-		//合并相同时间段上课的数据
-		time_merage(timeList);
-
-		//设置开始周和结束周
-		int startWeek = 0, endWeek = Cache.currTerm.getWeeks();
-		//遍历本学期的所有周次
-		while (startWeek < endWeek ) {
-			for (Time time : timeList) {
-				//对某一周进行检测
-				if( (time.getWeeksValue() & 1 << startWeek++) != 0) {
-					if( flag && calendar.get(Calendar.DAY_OF_WEEK ) > time.getWeek() ) {
-						continue;
-					}
-					calendarTemp.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_YEAR) );
-					calendarTemp.set(Calendar.DAY_OF_WEEK, time.getWeek() );
-					courseList.add( new Course( time, new Date( calendarTemp.getTime().getTime() ) ) );
-				}
-			}
-			if(flag) {
-				//第一次运行将calendar格式化为周一
-				int addDay = 8 - calendar.get(Calendar.DAY_OF_WEEK );
-				calendar.add(Calendar.DAY_OF_WEEK, addDay);
-				flag = false;
-			}else {
-				//向后快进一周
-				calendar.add(Calendar.DAY_OF_WEEK, 7);
-			}
-		}
-		Result< List<Course> > result = timeList.size() * Constant.COURSE_LENGTH > subject.getTimeTotal() ? 
-				new Result< List<Course> >(ResultCode.WARNING_SUBJECT_TIME_ERROR, courseList) :
-				new Result< List<Course> >(ResultCode.SUCCESS, courseList);
-		request.setAttribute("result",  result);
-		//插入时间表
-		timeDao.insert_time_list(timeList);
-		return "courseAdd";
-	}
-	
-	/**
-	 * @api {post} /TeacherHelper/subject/time/time_update 新增时间表
-	 * @apiVersion 1.0.0
-	 * @apiGroup Time
-	 * @apiName 删除时间表
-	 * @apiSuccess {Boolean} success true表示请求成功，false表示请求失败
-	 * @apiSuccess {number} code 错误代码
-	 * @apiSuccess {string} message 错误信息
-	 * @apiParam {string} name 学期名
-	 * 	@apiSuccessExample {json} 请求成功例子:
-	 * 	{
-	 *     	"success" : true,
-	 *      "code" : 20000,
-	 *      "message" : "请求成功",
-	 *      "data" : null
-	 *	}
-	 * @apiParamExample {json} 请求示例:
-	 * 	{
-	 *
+	 * 		"timeVOList" :
+	 *			{
+	 *				"id" : null,
+	 *				"startWeek" : 1,
+	 *				"endWeek" : 12,
+	 *				"interval" : 1,
+	 *				"addWeek" : null,
+	 *				"deleteWeek" : "4,6",
+	 *				"week" : 4,
+	 *				"howTime" : 3
+	 *				//参数说明, 该参数表示第1周到第12周的每周4的第3大节(5,6小节)上课, 但是第4周和第6周不用上课(deleteWeek)
+	 *				//由于id为空, 表示这是一条新增数据
+	 *			},
+	 *			{
+	 *				"id" : 112,
+	 *				"startWeek" : 2,
+	 *				"endWeek" : 8,
+	 *				"interval" : 2,
+	 *				"addWeek" : "5,13",
+	 *				"deleteWeek" : null,
+	 *				"week" : 1,
+	 *				"howTime" : 1
+	 *				//参数说明, 该参数表示第2, 4, 5(addWeek), 6, 8, 13周每周1的第1大节(1,2小节)上课
+	 *				//由于id为非空, 将会更新该id所指向的时间段以及引用该时间段的课程的时间
+	 *			}
 	 * 	}
 	 */
 	@RequestMapping("/time_update")
@@ -196,6 +128,7 @@ public class TimeController {
 		for ( TimeVO timeVOIter : timeVOList ) {
 			timeList.add( new Time(timeVOIter) );
 		}
+		
 		int startWeek = 0, 
 			endWeek = subject.getTerm() == Cache.currTerm.getId() ? 
 						Cache.currTerm.getWeeks() : 
@@ -232,16 +165,15 @@ public class TimeController {
 				new Result< List<Time> >(ResultCode.WARNING_SUBJECT_TIME_ERROR, timeList) :
 				new Result< List<Time> >(ResultCode.SUCCESS, timeList);
 		subjectServer.update_time(timeList, courseList,insertCoureseList);
-		subjectServer.update_time(timeList, courseList,insertCoureseList);
 		request.setAttribute("result",  result);
 		return "timeList";
 	}
 	
 	/**
-	 * @api {post} /TeacherHelper/subject/time/time_update 新增时间表
+	 * @api {post} /TeacherHelper/subject/time/time_update 删除时间表
 	 * @apiVersion 1.0.0
 	 * @apiGroup Time
-	 * @apiName 删除时间表
+	 * @apiName 更新时间表
 	 * @apiSuccess {Boolean} success true表示请求成功，false表示请求失败
 	 * @apiSuccess {number} code 错误代码
 	 * @apiSuccess {string} message 错误信息
@@ -255,7 +187,7 @@ public class TimeController {
 	 *	}
 	 * @apiParamExample {json} 请求示例:
 	 * 	{
-	 *
+	 *		"timeId" : 112
 	 * 	}
 	 */
 	@RequestMapping("/time_delete")

@@ -51,6 +51,10 @@ public enum ResultCode{
 	 * 请求失败 - 用户修改密码时新旧密码一致
 	 */
 	ERROR_USER_SAME_OLD_NEW_PASSWORD(false, 21017, "用户新旧密码一致"),
+	/**
+	 * 请求失败 - 被删除的用户被引用
+	 */
+	ERROR_USER_NOT_EMPTY(false, 21018, "被删除的用户所属科目表不为空!"),
 
 	/**
 	 * 请求失败 - 用户修改密码时新旧密码一致科目表非空

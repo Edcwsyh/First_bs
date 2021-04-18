@@ -33,6 +33,13 @@ public interface TimeDao {
 	public void insert_time_list (List<Time> timeList);
 	
 	@Delete("delete from t_time where id=#{id}")
-	public void delete_time(Integer id);
+	public void delete_time_by_id(Integer id);
+	
+	/**
+	 * 删除某科目的所有时间段
+	 * @param subjectId
+	 */
+	@Delete("delete from t_time where subject=#{subjectId}")
+	public void delete_time_by_subject(Integer subjectId);
 }
 

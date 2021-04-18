@@ -5,6 +5,7 @@ import java.util.List;
 import com.iflysse.helper.bean.Course;
 import com.iflysse.helper.bean.Subject;
 import com.iflysse.helper.bean.Time;
+import com.iflysse.helper.bean.User;
 import com.iflysse.helper.tools.Result;
 
 public interface SubjectServer {
@@ -37,4 +38,10 @@ public interface SubjectServer {
 	 * @return
 	 */
 	public List<Course> get_course_by_time(Integer timeId);
+	/**
+	 * 
+	 * @param timeList 时间列表
+	 * @return
+	 */
+	public void time_update( Subject subject,  List<Time> timeList);
 }

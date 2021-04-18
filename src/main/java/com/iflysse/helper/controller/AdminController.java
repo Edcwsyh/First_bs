@@ -192,13 +192,48 @@ public class AdminController {
 	 * 	 该接口只允许管理员调用
 	 */
 	@RequestMapping("/user_add")
-	public String user_register(HttpServletRequest request, User user) {
+	public String user_add(HttpServletRequest request, User user) {
 		Result<Void> result = userServer.user_add(user);
 		request.setAttribute("result", result);
 		switch( result.getResultCode() ) {
 			case SUCCESS : return "userAllInfo";
 			case ERROR_PARAM : return "error/400";
 			case ERROR_USER_EXIST : return "error/409";
+			default : return "error/500";
+		}
+	}
+	
+	/**
+	 * @api {post} /TeacherHelper/admin/user_add 新增用户
+	 * @apiVersion 1.0.0
+	 * @apiGroup Admin
+	 * @apiName 新增用户
+	 * @apiSuccess {Boolean} Success true表示请求成功，false表示请求失败
+	 * @apiSuccess {number} code 错误代码
+	 * @apiSuccess {string} message 错误信息
+	 * @apiParam {number} userId 被删除用户的id
+	 * @apiSuccessExample {json} 请求成功例子:
+	 *     {
+	 *     	"Success" : true,
+	 *      "code" : 20000,
+	 *      "message" : "请求成功",
+	 *      "data" : null
+	 *     }
+	 * @apiParamExample {json} 请求示例:
+	 *	{
+	 *		"userId" : 778899
+	 * 	}
+	 * @apiDescription 接口说明:
+	 * 	 该接口只允许管理员调用
+	 */
+	@RequestMapping("/user_delete")
+	public String user_delete(HttpServletRequest request, Integer userId) {
+		Result<Void> result = userServer.user_delete(userId);
+		request.setAttribute("result", result);
+		switch( result.getResultCode() ) {
+			case SUCCESS : return "redirect:user_list";
+			case ERROR_PARAM : return "error/403";
+			case ERROR_USER_NOT_EMPTY : return "error/403";
 			default : return "error/500";
 		}
 	}

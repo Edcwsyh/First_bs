@@ -5,7 +5,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.iflysse.helper.bean.Subject;
 import com.iflysse.helper.bean.User;
+import com.iflysse.helper.dao.SubjectDao;
 import com.iflysse.helper.dao.UserDao;
 import com.iflysse.helper.service.UserServer;
 import com.iflysse.helper.tools.Constant;
@@ -17,6 +19,9 @@ public class UserServerImpl implements UserServer {
 
 	@Autowired
 	private UserDao userDao;
+	
+	@Autowired
+	private SubjectDao subjectDao;
 	
 	@Override
 	public User get_user(Byte field, String value) {
@@ -102,6 +107,19 @@ public class UserServerImpl implements UserServer {
 		// TODO 自动生成的方法存根
 		
 		return null;
+	}
+
+	@Override
+	public Result<Void> user_delete(Integer userId) {
+		if ( userId == null ) {
+			return new Result<Void>(ResultCode.ERROR_PARAM, null);
+		}
+		List<Subject> subjectList = subjectDao.get_subject_list_by_user(userId);
+		if ( subjectList.size() != 0 ) {
+			return new Result<Void>(ResultCode.ERROR_USER_NOT_EMPTY, null);
+		}
+		userDao.delete_user(userId);
+		return new Result<Void>(ResultCode.SUCCESS, null);
 	}
 
 }
