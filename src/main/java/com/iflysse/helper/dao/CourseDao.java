@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import com.iflysse.helper.bean.CourseVO;
 import com.iflysse.helper.bean.Course;
 import com.iflysse.helper.bean.User;
 
@@ -19,6 +20,19 @@ public interface CourseDao {
 	 */
 	@Select("select * from t_course where subject=#{subjectId}")
 	public List<Course> get_course_list_by_subject(Integer subjectId);
+	/**
+	 * 获取某一科目的所属课程 (返回前端视图类型)
+	 * @param subjectId 科目id
+	 * @return
+	 */
+	@Select("select tc.id id, tc.goal goal, tc.content content, tc.mode mode,"
+			+ "tc.isHomework isHomework, tc.specificTime specificTime, tc.classroom classroom, "
+			+ "tc.timeQuantum timeQuantum "
+			+ "from t_course tc "
+			+ "inner join t_time tt"
+			+ "on tc.time=tt.time"
+			+ "where tc.subject=#{subjectId}")
+	public List<CourseVO> get_courseVO_list_by_subject(Integer subjectId);
 	
 	/**
 	 * 获取某一时间段的所属课程

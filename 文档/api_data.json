@@ -117,6 +117,71 @@
   },
   {
     "type": "post",
+    "url": "/TeacherHelper/admin/user_add",
+    "title": "新增用户",
+    "version": "1.0.0",
+    "group": "Admin",
+    "name": "新增用户",
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "Success",
+            "description": "<p>true表示请求成功，false表示请求失败</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "code",
+            "description": "<p>错误代码</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "message",
+            "description": "<p>错误信息</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "请求成功例子:",
+          "content": "{\n\t\"Success\" : true,\n \"code\" : 20000,\n \"message\" : \"请求成功\",\n \"data\" : null\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "number",
+            "optional": false,
+            "field": "userId",
+            "description": "<p>被删除用户的id</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "请求示例:",
+          "content": "{\n\t\"userId\" : 778899\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "description": "<p>接口说明: 该接口只允许管理员调用</p>",
+    "filename": "input/AdminController.java",
+    "groupTitle": "Admin"
+  },
+  {
+    "type": "post",
     "url": "/admin/user_list",
     "title": "获取用户列表",
     "version": "1.0.0",
@@ -270,11 +335,11 @@
   },
   {
     "type": "post",
-    "url": "/TeacherHelper/subject/course/course_update",
-    "title": "更新课程信息",
+    "url": "/TeacherHelper/subject/course/course_delete_single",
+    "title": "删除单次课程",
     "version": "1.0.0",
     "group": "Course",
-    "name": "更新课程信息",
+    "name": "删除单次课程",
     "success": {
       "fields": {
         "Success 200": [
@@ -314,58 +379,172 @@
         "Parameter": [
           {
             "group": "Parameter",
+            "type": "number",
+            "optional": false,
+            "field": "courseId",
+            "description": "<p>教学目标</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "请求示例:",
+          "content": "{\n\tcourseId: \"2020\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "input/CourseController.java",
+    "groupTitle": "Course"
+  },
+  {
+    "type": "post",
+    "url": "/TeacherHelper/subject/course/course_delete_single",
+    "title": "删除多次课程",
+    "version": "1.0.0",
+    "group": "Course",
+    "name": "删除多次课程",
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>true表示请求成功，false表示请求失败</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "code",
+            "description": "<p>错误代码</p>"
+          },
+          {
+            "group": "Success 200",
             "type": "string",
             "optional": false,
-            "field": "teachingGoal",
+            "field": "message",
+            "description": "<p>错误信息</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "请求成功例子:",
+          "content": "\t{\n    \t\"success\" : true,\n     \"code\" : 20000,\n     \"message\" : \"请求成功\",\n     \"data\" : null\n\t}",
+          "type": "json"
+        }
+      ]
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "list",
+            "optional": false,
+            "field": "courseIdList",
+            "description": "<p>课程id列表</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "请求示例:",
+          "content": "{\n\t\"courseIdList\" : { 11,12,13 }\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "input/CourseController.java",
+    "groupTitle": "Course"
+  },
+  {
+    "type": "post",
+    "url": "/TeacherHelper/subject/course/course_add",
+    "title": "新增课程信息",
+    "version": "1.0.0",
+    "group": "Course",
+    "name": "新增课程信息",
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>true表示请求成功，false表示请求失败</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "code",
+            "description": "<p>错误代码</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "message",
+            "description": "<p>错误信息</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "请求成功例子:",
+          "content": "\t{\n    \t\"success\" : true,\n     \"code\" : 20000,\n     \"message\" : \"请求成功\",\n     \"data\" : null\n\t}",
+          "type": "json"
+        }
+      ]
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "list",
+            "optional": false,
+            "field": "courseList",
+            "description": "<p>课程列表</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "Course.goal",
             "description": "<p>教学目标</p>"
           },
           {
             "group": "Parameter",
             "type": "string",
             "optional": false,
-            "field": "teachingContent",
-            "description": "<p>教学内容</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": "teachingMode",
-            "description": "<p>教学模式， 0表示学练-线下， 1表示授课-现场</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": "goal",
-            "description": "<p>教学目标</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": "content",
+            "field": "Course.content",
             "description": "<p>教学内容</p>"
           },
           {
             "group": "Parameter",
             "type": "number",
             "optional": false,
-            "field": "mode",
+            "field": "Course.mode",
             "description": "<p>教学模式</p>"
           },
           {
             "group": "Parameter",
             "type": "date",
             "optional": false,
-            "field": "time",
+            "field": "Course.specificTime",
             "description": "<p>具体上课时间(年-月-日)</p>"
           },
           {
             "group": "Parameter",
             "type": "boolean",
             "optional": false,
-            "field": "isHomework",
+            "field": "Course.isHomework",
             "description": "<p>是否布置作业</p>"
           }
         ]
@@ -373,11 +552,12 @@
       "examples": [
         {
           "title": "请求示例:",
-          "content": "{\n\t{\n\t\"goal\" : \"没有目标\",\n\t\"content\" : \"没有内容\",\n\t\"mode\" : 1,\n\t\"time\" : 2020-9-10,\n\t\"isHomework\" : false\n\t},\n \t{\n\t\"goal\" : \"有目标\",\n\t\"content\" : \"有内容\",\n\t\"mode\" : 0,\n\t\"time\" : 2020-9-9,\n\t\"isHomework\" : true\n\t}\n}",
+          "content": "{\n\t\"courseList\" : \n\t\t{\n\t\t\"goal\" : \"没有目标\",\n\t\t\"content\" : \"没有内容\",\n\t\t\"mode\" : 1,\n\t\t\"time\" : 2020-9-10,\n\t\t\"isHomework\" : false\n\t\t},\n \t\t{\n\t\t\"goal\" : \"有目标\",\n\t\t\"content\" : \"有内容\",\n\t\t\"mode\" : 0,\n\t\t\"time\" : 2020-9-9,\n\t\t\"isHomework\" : true\n\t\t}\n}",
           "type": "json"
         }
       ]
     },
+    "description": "<p>接口说明: 前端应该传入一个List<Course>列表</p>",
     "filename": "input/CourseController.java",
     "groupTitle": "Course"
   },
@@ -427,58 +607,51 @@
         "Parameter": [
           {
             "group": "Parameter",
+            "type": "list",
+            "optional": false,
+            "field": "courseList",
+            "description": "<p>课程列表</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "number",
+            "optional": false,
+            "field": "Course.id",
+            "description": "<p>单次课程id</p>"
+          },
+          {
+            "group": "Parameter",
             "type": "string",
             "optional": false,
-            "field": "teachingGoal",
+            "field": "Course.goal",
             "description": "<p>教学目标</p>"
           },
           {
             "group": "Parameter",
             "type": "string",
             "optional": false,
-            "field": "teachingContent",
-            "description": "<p>教学内容</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": "teachingMode",
-            "description": "<p>教学模式， 0表示学练-线下， 1表示授课-现场</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": "goal",
-            "description": "<p>教学目标</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": "content",
+            "field": "Course.content",
             "description": "<p>教学内容</p>"
           },
           {
             "group": "Parameter",
             "type": "number",
             "optional": false,
-            "field": "mode",
+            "field": "Course.mode",
             "description": "<p>教学模式</p>"
           },
           {
             "group": "Parameter",
             "type": "date",
             "optional": false,
-            "field": "time",
+            "field": "Course.specificTime",
             "description": "<p>具体上课时间(年-月-日)</p>"
           },
           {
             "group": "Parameter",
             "type": "boolean",
             "optional": false,
-            "field": "isHomework",
+            "field": "Course.isHomework",
             "description": "<p>是否布置作业</p>"
           }
         ]
@@ -486,7 +659,114 @@
       "examples": [
         {
           "title": "请求示例:",
-          "content": "{\n\t{\n\t\"goal\" : \"没有目标\",\n\t\"content\" : \"没有内容\",\n\t\"mode\" : 1,\n\t\"time\" : 2020-9-10,\n\t\"isHomework\" : false\n\t},\n \t{\n\t\"goal\" : \"有目标\",\n\t\"content\" : \"有内容\",\n\t\"mode\" : 0,\n\t\"time\" : 2020-9-9,\n\t\"isHomework\" : true\n\t}\n}",
+          "content": "{\n\t\"courseList\" : \n\t\t{\n\t\t\"id\" : 1,\n\t\t\"goal\" : \"没有目标\",\n\t\t\"content\" : \"没有内容\",\n\t\t\"mode\" : 1,\n\t\t\"time\" : 2020-9-10,\n\t\t\"isHomework\" : false\n\t\t},\n \t\t{\n\t\t\"id\" : 2,\n\t\t\"goal\" : \"有目标\",\n\t\t\"content\" : \"有内容\",\n\t\t\"mode\" : 0,\n\t\t\"time\" : 2020-9-9,\n\t\t\"isHomework\" : true\n\t\t}\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "description": "<p>接口说明: 前端应该传入一个List<Course>列表</p>",
+    "filename": "input/CourseController.java",
+    "groupTitle": "Course"
+  },
+  {
+    "type": "post",
+    "url": "/TeacherHelper/subject/course/course_list",
+    "title": "获取课程列表",
+    "version": "1.0.0",
+    "group": "Course",
+    "name": "获取课程列表",
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>true表示请求成功，false表示请求失败</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "code",
+            "description": "<p>错误代码</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "message",
+            "description": "<p>错误信息</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "请求成功例子:",
+          "content": "\t{\n    \t\"success\" : true,\n     \"code\" : 20000,\n     \"message\" : \"请求成功\",\n     \"data\" : null\n\t}",
+          "type": "json"
+        }
+      ]
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "CourseVO.goal",
+            "description": "<p>教学目标</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "CourseVO.content",
+            "description": "<p>教学内容</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "number",
+            "optional": false,
+            "field": "CourseVO.mode",
+            "description": "<p>教学模式, 0表示学练-线下， 1表示授课-现场</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "date",
+            "optional": false,
+            "field": "CourseVO.specificTime",
+            "description": "<p>具体上课时间(年-月-日)</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "boolean",
+            "optional": false,
+            "field": "CourseVO.isHomework",
+            "description": "<p>是否布置作业</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "number",
+            "optional": false,
+            "field": "CourseVO.howTime",
+            "description": "<p>第几大节上课</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "number",
+            "optional": false,
+            "field": "CourseVO.week",
+            "description": "<p>周几上课</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "请求示例:",
+          "content": "{\n\t{\n\t\"goal\" : \"没有目标\",\n\t\"content\" : \"没有内容\",\n\t\"mode\" : 1,\n\t\"time\" : 2020-9-10,\n\t\"isHomework\" : false,\n\t\"week\" : 5,\n\t\"howTime\" : 6\n\t},\n \t{\n\t\"goal\" : \"有目标\",\n\t\"content\" : \"有内容\",\n\t\"mode\" : 0,\n\t\"time\" : 2020-9-9,\n\t\"isHomework\" : true\n \t\"week\" : 4,\n\t\"howTime\" : 3\n\t}\n}",
           "type": "json"
         }
       ]
@@ -827,6 +1107,85 @@
     "groupTitle": "Page"
   },
   {
+    "type": "get",
+    "url": "/TeacherHelper/report_delete",
+    "title": "删除周报",
+    "version": "1.0.0",
+    "group": "Report",
+    "name": "删除周报",
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "Success",
+            "description": "<p>true表示请求成功，false表示请求失败</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "code",
+            "description": "<p>错误代码</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "message",
+            "description": "<p>错误信息</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>返回的数据</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>周报的id</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "author",
+            "description": "<p>周报作者的id</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "content",
+            "description": "<p>周报的内容</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Timestamp",
+            "optional": false,
+            "field": "time",
+            "description": "<p>周报的创建时间</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "请求成功例子:",
+          "content": "    {\n    \t\"Success\" : true,\n     \"code\" : 20000,\n     \"message\" : \"请求成功\",\n     \"data\" : \n     \t{\n     \t\"id\" : 8977\n\t\t\t\"author\": 1234,\n\t\t\t\"content\":\"没有内容\",\n\t\t\t\"time\":\"2020-9-1\",\n\t\t\t\"isSubmit\":true\n     \t}\n    }",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "input/ReportController.java",
+    "groupTitle": "Report"
+  },
+  {
     "type": "post",
     "url": "/TeacherHelper/report/report_add",
     "title": "新增周报",
@@ -874,8 +1233,8 @@
             "group": "Parameter",
             "type": "number",
             "optional": false,
-            "field": "author",
-            "description": "<p>作者id</p>"
+            "field": "week",
+            "description": "<p>周报所属周</p>"
           },
           {
             "group": "Parameter",
@@ -896,7 +1255,7 @@
       "examples": [
         {
           "title": "请求示例:",
-          "content": "{\n\t\"user\"\n\t\t{\n\t\t\t\"author\":1234,\n\t\t\t\"content\":\"abcdefg\",\n\t\t\t\"isSubmit\":true\n\t\t}\n}",
+          "content": "{\n\t\"user\"\n\t\t{\n\t\t\t\"week\" : 16,\n\t\t\t\"content\":\"abcdefg\",\n\t\t\t\"isSubmit\":true\n\t\t}\n}",
           "type": "json"
         }
       ]
@@ -954,6 +1313,13 @@
             "optional": false,
             "field": "id",
             "description": "<p>周报id</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "number",
+            "optional": false,
+            "field": "week",
+            "description": "<p>周报所属周数</p>"
           },
           {
             "group": "Parameter",
@@ -1173,13 +1539,6 @@
           },
           {
             "group": "Success 200",
-            "type": "Object",
-            "optional": false,
-            "field": "data",
-            "description": "<p>返回的数据</p>"
-          },
-          {
-            "group": "Success 200",
             "type": "number",
             "optional": false,
             "field": "id",
@@ -1211,7 +1570,7 @@
       "examples": [
         {
           "title": "请求成功例子:",
-          "content": "    {\n    \t\"Success\" : true,\n     \"code\" : 20000,\n     \"message\" : \"请求成功\",\n     \"data\" : \n     \t{\n     \t\t{\n     \t\t\"id\" : 8977\n\t\t\t\t\"author\": 1234,\n\t\t\t\t\"content\":\"没有内容\",\n\t\t\t\t\"time\":\"2020-9-1\",\n\t\t\t\t\"isSubmit\":true\n     \t\t},\n     \t\t{\n     \t\t\"id\" : 8978\n\t\t\t\t\"author\": 1234,\n\t\t\t\t\"content\":\"1234567\",\n\t\t\t\t\"time\":\"2020-9-2\",\n\t\t\t\t\t\"isSubmit\":true\n     \t\t}\n     \t}\n    }",
+          "content": "    {\n    \t\"result\"\n    \t\t\t{\n    \t     \t\"Success\" : true,\n     \t\t\"code\" : 20000,\n     \t\t\"message\" : \"请求成功\",\n     \t\t\"data\" : \n     \t\t\t{\n     \t\t\t\t{\n     \t\t\t\t\"id\" : 8977\n     \t\t\t\t\"week\" : 1,\n\t\t\t\t\t\t\"author\": 1234,\n\t\t\t\t\t\t\"content\":\"没有内容\",\n\t\t\t\t\t\t\"time\":\"2020-9-1\",\n\t\t\t\t\t\t\"isSubmit\":true\n     \t\t\t\t},\n     \t\t\t\t{\n     \t\t\t\t\"id\" : 8978\n     \t\t\t\t\"week\" : 2,\n\t\t\t\t\t\t\"author\": 1234,\n\t\t\t\t\t\t\"content\":\"1234567\",\n\t\t\t\t\t\t\"time\":\"2020-9-2\",\n\t\t\t\t\t\t\t\"isSubmit\":true\n     \t\t\t\t}\n     \t\t\t}\n    \t\t\t}\n    }",
           "type": "json"
         }
       ]
@@ -2228,11 +2587,11 @@
   },
   {
     "type": "post",
-    "url": "/TeacherHelper/subject/time/time_delete",
-    "title": "新增时间表",
+    "url": "/TeacherHelper/subject/time/time_update",
+    "title": "更新时间表",
     "version": "1.0.0",
     "group": "Time",
-    "name": "删除时间表",
+    "name": "更新时间表",
     "success": {
       "fields": {
         "Success 200": [
@@ -2272,31 +2631,88 @@
         "Parameter": [
           {
             "group": "Parameter",
-            "type": "string",
+            "type": "object",
             "optional": false,
-            "field": "name",
-            "description": "<p>学期名</p>"
+            "field": "timeVOList",
+            "description": "<p>时间列表</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "number",
+            "optional": false,
+            "field": "TimeVO.id",
+            "description": "<p>要被更新时间表的id(非必填, 若为空, 则表示该时间段是新增的)</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "number",
+            "optional": false,
+            "field": "TimeVO.startWeek",
+            "description": "<p>开始周(必填)</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "number",
+            "optional": false,
+            "field": "TimeVO.endWeek",
+            "description": "<p>结束周(必填)</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "number",
+            "optional": false,
+            "field": "TimeVO.interval",
+            "description": "<p>表示每几周上一次课(必填, 这是一个下选择下拉框, 默认为1)</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "TimeVO.addWeek",
+            "description": "<p>在开始周与结束周之外还要上课的周(非必填), 格式:为一段数字序列,每个数字之间用逗号隔开,如&quot;13,15&quot;</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "TimeVO.deleteWeek",
+            "description": "<p>在开始周与结束周之中不需要上课的周(非必填), 格式同addWeek</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "number",
+            "optional": false,
+            "field": "TimeVO.week",
+            "description": "<p>该课程在周几上课(必填, 这应该是一个选择下拉框, 范围1-7)</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "number",
+            "optional": false,
+            "field": "TimeVO.howTime",
+            "description": "<p>该课程在一天中的第几大节(必填, 这应该是一个选择下拉框, 范围1-6)</p>"
           }
         ]
       },
       "examples": [
         {
           "title": "请求示例:",
-          "content": "{\n\n}",
+          "content": "{\n\t\"timeVOList\" :\n\t\t{\n\t\t\t\"id\" : null,\n\t\t\t\"startWeek\" : 1,\n\t\t\t\"endWeek\" : 12,\n\t\t\t\"interval\" : 1,\n\t\t\t\"addWeek\" : null,\n\t\t\t\"deleteWeek\" : \"4,6\",\n\t\t\t\"week\" : 4,\n\t\t\t\"howTime\" : 3\n\t\t\t//参数说明, 该参数表示第1周到第12周的每周4的第3大节(5,6小节)上课, 但是第4周和第6周不用上课(deleteWeek)\n\t\t\t//由于id为空, 表示这是一条新增数据\n\t\t},\n\t\t{\n\t\t\t\"id\" : 112,\n\t\t\t\"startWeek\" : 2,\n\t\t\t\"endWeek\" : 8,\n\t\t\t\"interval\" : 2,\n\t\t\t\"addWeek\" : \"5,13\",\n\t\t\t\"deleteWeek\" : null,\n\t\t\t\"week\" : 1,\n\t\t\t\"howTime\" : 1\n\t\t\t//参数说明, 该参数表示第2, 4, 5(addWeek), 6, 8, 13周每周1的第1大节(1,2小节)上课\n\t\t\t//由于id为非空, 将会更新该id所指向的时间段以及引用该时间段的课程的时间\n\t\t}\n}",
           "type": "json"
         }
       ]
     },
+    "description": "<p>接口说明: 前端应该传入一个List<TimeVO>列表</p>",
     "filename": "input/TimeController.java",
     "groupTitle": "Time"
   },
   {
     "type": "post",
-    "url": "/TeacherHelper/subject/time/time_add",
-    "title": "新增时间表",
+    "url": "/TeacherHelper/subject/time/time_list",
+    "title": "查看时间列表",
     "version": "1.0.0",
     "group": "Time",
-    "name": "新增时间表",
+    "name": "查看时间列表",
     "success": {
       "fields": {
         "Success 200": [
@@ -2320,13 +2736,20 @@
             "optional": false,
             "field": "message",
             "description": "<p>错误信息</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "list",
+            "optional": false,
+            "field": "data",
+            "description": "<p>错误信息</p>"
           }
         ]
       },
       "examples": [
         {
           "title": "请求成功例子:",
-          "content": "\t{\n    \t\"success\" : true,\n     \"code\" : 20000,\n     \"message\" : \"请求成功\",\n     \"data\" : null\n\t}",
+          "content": "\t{\n\t\t\"success\" : true,\n     \"code\" : 20000,\n     \"message\" : \"请求成功\",\n     \"data\" :\n\t\t\t{\n\t\t\t\t\"id\" : 112,\n\t\t\t\t\"weeks\" : \"第1周到第7周, 第9周到第11周\"\n\t\t\t\t\"week\" : 1,\n\t\t\t\t\"howTime\" : 1\n\t\t\t},\n\t\t\t{\n\t \t\t\t\"id\" : 113,\n\t\t\t\t\"weeks\" : \"第1周到第7周, 第9周到第11周\"\n\t\t\t\t\"week\" : 2,\n\t\t\t\t\"howTime\" : 1\n\t\t\t}\n\t}",
           "type": "json"
         }
       ]
@@ -2336,17 +2759,17 @@
         "Parameter": [
           {
             "group": "Parameter",
-            "type": "string",
+            "type": "number",
             "optional": false,
-            "field": "name",
-            "description": "<p>学期名</p>"
+            "field": "subjectId",
+            "description": "<p>需要查看的科目id</p>"
           }
         ]
       },
       "examples": [
         {
           "title": "请求示例:",
-          "content": "{\n\n}",
+          "content": "{\n\t\"subjectId\" : 889\n}",
           "type": "json"
         }
       ]
