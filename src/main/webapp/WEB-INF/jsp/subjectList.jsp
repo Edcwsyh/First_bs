@@ -77,8 +77,11 @@
 				</div>
 				<ul class="nav nav-tabs">
 					<li class="active"><a href="content.html">课表管理</a></li>
-					<li><a href="" role="button" data-toggle="modal"
-						data-target="#subjectAdd">添加课表</a></li>
+					<li>
+						<a href="" role="button" data-toggle="modal"
+						data-target="#subjectAdd">添加课表</a>
+					</li>
+					<li ><a href="${pageContext.request.contextPath}/subject/time/goto_time_add">添加时间表</a></li>
 				</ul>
 				<table class="table">
 					<thead>

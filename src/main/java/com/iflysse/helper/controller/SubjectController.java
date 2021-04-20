@@ -92,7 +92,7 @@ public class SubjectController {
 		subjectDao.insert_subject(newSubject);
 		System.out.println(newSubject.getId());
 		request.setAttribute("result", new Result<Void>(ResultCode.SUCCESS, null ) );
-		return "redirect:subject_list";
+		return "timeAdd";
 	}
 	
 	/**
