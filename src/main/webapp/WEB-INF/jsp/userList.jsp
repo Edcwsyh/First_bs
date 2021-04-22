@@ -100,7 +100,14 @@
                         <td>${user.username}</td>
                         <td>${user.realName}</td>
                         <td>${user.phone}</td>
-                        <td>${user.gender}</td>
+                        
+                        <c:if test="${user.gender == 1 }">
+                        	 <td>男</td>
+                        </c:if>
+                        <c:if test="${user.gender == 0 }">
+                        	 <td>女</td>
+                        </c:if>
+                       
                         <td>${user.mail}</td>
                         <td>
                             <div role="presentation" class="dropdown">

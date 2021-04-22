@@ -61,50 +61,44 @@
                 <form action="${pageContext.request.contextPath}" method="post">
                 	<input type="hidden" name="id" value="${result.data.id }">
               	
-                    <div class="form-group">
-							<label for="week">课程名</label> <input type="text" id="week"
-								name="week" class="form-control" placeholder="请输入">
+                    	<div class="form-group">
+							<label for="week">周报所属周次</label>
+                        	<select id="week" name="timeVOList[0].week" class="form-control">
+                        	  
+	                        	<option>星期一</option>
+	                            <option>星期二</option>
+	                            <option>星期三</option>
+	                            <option>星期四</option>
+	                            <option>星期五</option>
+	                            <option>星期六</option>
+	                            <option>星期天</option>
+                                                  
+                       	 	</select>
 						</div>
 						
 						<div class="form-group">
-							<label for="ta">课程助教</label> <input type="text" id="ta" name="ta"
-								class="form-control" value="${result.data.ta }">
+							<label for="timeQuantum">上课时间段</label>
+							<select id="timeQuantum" name="timeVOList[0].timeQuantum" class="form-control">
+                        	  
+	                        	<option>第一大节</option>
+	                            <option>第二大节</option>
+	                            <option>第三大节</option>
+	                            <option>第四大节</option>
+	                            <option>第五大节</option>
+	                            <option>第六大节</option>
+                                                  
+                       	 	</select>
 						</div>
 						
 						<div class="form-group">
-							<label for="klass">授课班级</label> 
-								<input type="text" id="klass" name="klass" class="form-control" value="klass">
+							<label for="classRoom">教室</label> 
+								<input type="text" id="classRoom" name="timeVOList[0].classRoom" class="form-control" placeholder="">
 						</div>
 						
-						<div class="form-group">
-							<label for="timeTotal">总课时</label> <input type="number"
-								id="timeTotal" name="timeTotal" class="form-control"
-								value="${result.data.timeTotal }">
-						</div>
-
-						<div class="form-group">
-							<label for="timeTheory">理论课时</label> <input type="number"
-								id="timeTheory" name="timeTheory" class="form-control"
-								value="${result.data.timeTheory }">
-						</div>
-
-						<div class="form-group">
-							<label for="timePractice">实践课时</label> <input type="number"
-								id="timePractice" name="timePractice" class="form-control"
-								value="${result.data.timePractice }">
-						</div>
-
-						<div class="form-group">
-	                        <label for="type">是否提交周报</label>
-	                        <div>
-		                        <input type="radio" name="type" value="1" ${result.data.type == 1 ? 'checked':''}> 理论课
-		                        <input type="radio" name="type" value="0" ${result.data.type == 0 ? 'checked':''}> 方向课
-	                        </div>
-                        
-                    	</div>
+											
 						<div class="modal-footer">
 			                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-			                <button type="submit" class="btn btn-primary">提交</button>
+			                <button type="submit" class="btn btn-primary">添加</button>
             			</div>
                        </form>
                     </div>                                                    
@@ -130,7 +124,8 @@
 	<!--footer-->
 		
 	<script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
-	<script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>	
+	<script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
+	<script src="${pageContext.request.contextPath}/js/multiple.js"></script>
 
 </body>
 </html>
