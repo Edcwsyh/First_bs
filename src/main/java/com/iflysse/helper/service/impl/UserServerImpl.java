@@ -122,4 +122,9 @@ public class UserServerImpl implements UserServer {
 		return new Result<Void>(ResultCode.SUCCESS, null);
 	}
 
+	@Override
+	public User get_user_by_id(Integer id) {
+		return userDao.get_user_by_id(id);
+	}
+
 }

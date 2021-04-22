@@ -51,7 +51,7 @@ public interface SubjectServer {
 	 * @param subjectId 时间表的id
 	 * @return
 	 */
-	public List<CourseVO> get_course_by_subject(Integer subjectId);
+	public List<CourseVO> get_courseVO_by_subject(Integer subjectId);
 	/**
 	 * 通过科目id获取课程列表
 	 * @param subjectId 时间表的id

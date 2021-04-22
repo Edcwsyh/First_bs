@@ -19,13 +19,13 @@ import com.iflysse.helper.bean.Subject;
 import com.iflysse.helper.bean.Term;
 import com.iflysse.helper.bean.Time;
 import com.iflysse.helper.bean.User;
-import com.iflysse.helper.controller.Cache;
 import com.iflysse.helper.dao.CourseDao;
 import com.iflysse.helper.dao.SubjectDao;
 import com.iflysse.helper.dao.TermDao;
 import com.iflysse.helper.dao.TimeDao;
 import com.iflysse.helper.dao.UserDao;
 import com.iflysse.helper.service.SubjectServer;
+import com.iflysse.helper.tools.CacheUtil;
 import com.iflysse.helper.tools.Result;
 
 @Service
@@ -69,8 +69,8 @@ public class SubjectServerImpl implements SubjectServer {
 	 */
 	private List< List<Course> > generate_course( Subject subject,  List<Time> timeList) {
 		int startWeek = 0, 
-				endWeek = subject.getTerm() == Cache.currTerm.getId() ? 
-							Cache.currTerm.getWeeks() : 
+				endWeek = subject.getTerm() == CacheUtil.currTerm.getId() ? 
+							CacheUtil.currTerm.getWeeks() : 
 							termDao.get_term_by_id( subject.getTerm() ).getWeeks() ;
 		//返回两个对象 : 需要插入的课程列表和需要更新的课程列表
 		List<Course> insertList = new LinkedList<Course>();
@@ -127,7 +127,7 @@ public class SubjectServerImpl implements SubjectServer {
 	}
 	
 	@Override
-	public List<CourseVO> get_course_by_subject(Integer subjectId) {
+	public List<CourseVO> get_courseVO_by_subject(Integer subjectId) {
 		return courseDao.get_courseVO_list_by_subject(subjectId);
 	}
 

@@ -1,4 +1,4 @@
-package com.iflysse.helper.controller;
+package com.iflysse.helper.tools;
 
 import java.sql.Date;
 import java.util.Collection;
@@ -22,10 +22,9 @@ import com.iflysse.helper.bean.Term;
 import com.iflysse.helper.bean.User;
 import com.iflysse.helper.dao.TermDao;
 import com.iflysse.helper.service.UserServer;
-import com.iflysse.helper.tools.Constant;
 
 @Controller
-public class Cache {
+public class CacheUtil {
 	@Autowired
 	private TermDao termDao;
 	
