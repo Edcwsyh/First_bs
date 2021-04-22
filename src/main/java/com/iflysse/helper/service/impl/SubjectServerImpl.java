@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.iflysse.helper.bean.Course;
+import com.iflysse.helper.bean.CourseVO;
 import com.iflysse.helper.bean.Subject;
 import com.iflysse.helper.bean.Term;
 import com.iflysse.helper.bean.Time;
@@ -35,9 +36,6 @@ public class SubjectServerImpl implements SubjectServer {
 	
 	@Autowired
 	private TermDao termDao;
-	
-	@Autowired
-	private UserDao userDao;
 	
 	@Autowired 
 	private CourseDao courseDao;
@@ -118,32 +116,34 @@ public class SubjectServerImpl implements SubjectServer {
 		return subjectDao.get_subject_by_id(id);
 	}
 
-	@Transactional
-	@Override
-	public void update_time(List<Time> timeList, List<Course> updateCourseList, List<Course> insertCourseList) {
-		subjectDao.delete_time_and_course_by_subject(timeList.get(0).getSubject());
-		timeDao.insert_time_list(timeList);
-		courseDao.update_course_list(updateCourseList);
-		if ( insertCourseList != null && insertCourseList.size() != 0 ) {
-			courseDao.insert_course_list(insertCourseList);
-		}
-	}
-
 	@Override
 	public Subject get_subject_by_time(Integer timeId) {
 		return subjectDao.get_subject_by_time(timeId);
 	}
+	
+	@Override
+	public Subject get_subject_by_course(Integer courseId) {
+		return subjectDao.get_subject_by_course(courseId);
+	}
+	
+	@Override
+	public List<CourseVO> get_course_by_subject(Integer subjectId) {
+		return courseDao.get_courseVO_list_by_subject(subjectId);
+	}
+
+	@Override
+	public List<Time> get_time_by_subject(Integer subjectId) {
+		return timeDao.get_time_list_by_subject(subjectId);
+	}
+	
 	@Override
 	public List<Course> get_course_by_time(Integer timeId){
 		return courseDao.get_course_list_by_time(timeId);
 	}
+	
 	@Transactional
 	@Override
-	public void time_update( Subject subject,  List<Time> timeList) {
-		Iterator<Time> timeIter = timeList.iterator();
-		//创建两个日历类
-		Calendar calendar = Calendar.getInstance(), calendarTemp = Calendar.getInstance();
-		calendar.setTime( Cache.currTerm.getStartTime() );
+	public List<Course> time_update( Subject subject,  List<Time> timeList) {
 		//对timeList进行排序(根据每周课时)
 		timeList.sort( new Comparator<Time>() {
 			@Override
@@ -163,5 +163,40 @@ public class SubjectServerImpl implements SubjectServer {
 		List< List<Course> > courseList = generate_course(subject, timeList);
 		courseDao.insert_course_list(courseList.get(0)); //插入新的课程列表
 		courseDao.update_course_list(courseList.get(1)); //更新课程列表
+		List<Course> result = new ArrayList<Course>(courseList.get(0));
+		result.addAll(courseList.get(1));
+		return result;
 	}
+
+	@Override
+	public void insert_course_list(List<Course> courseList) {
+		courseDao.insert_course_list(courseList);
+	}
+
+	@Override
+	public void delete_course_single(Integer courseId) {
+		courseDao.delete_course_single(courseId);
+	}
+
+	@Override
+	public List<Subject> get_subject_list(Integer userId, Integer termId) {
+		return subjectDao.get_subject_list(userId, termId);
+	}
+
+	@Override
+	public void insert_subject(Subject newSubject) {
+		subjectDao.insert_subject(newSubject);
+	}
+
+	@Override
+	public void delete_subject(Integer subjectId) {
+		subjectDao.delete_subject(subjectId);
+	}
+
+	@Override
+	public void update_subject(Subject subject) {
+		subjectDao.update_subject(subject);
+	}
+
+
 }

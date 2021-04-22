@@ -38,15 +38,6 @@ import com.iflysse.helper.tools.ResultCode;
 public class TimeController {
 	
 	@Autowired
-	private SubjectDao subjectDao;
-	
-	@Autowired
-	private TimeDao timeDao;
-	
-	@Autowired
-	private CourseDao courseDao;
-	
-	@Autowired
 	private TermDao termDao;
 	
 	@Autowired 
@@ -104,100 +95,80 @@ public class TimeController {
 	 *				//由于id为非空, 将会更新该id所指向的时间段以及引用该时间段的课程的时间
 	 *			}
 	 * 	}
+	 * 	@apiDescription 接口说明:
+	 * 	 前端应该传入一个List<TimeVO>列表
 	 */
 	@RequestMapping("/time_update")
 	public String time_update(HttpServletRequest request, HttpSession session, List<TimeVO> timeVOList) {
 		if( timeVOList.size() == 0 ) {
 			request.setAttribute("result", new Result< Void >(ResultCode.ERROR_PARAM, null) );
+			System.out.println("已拦截 - 参数错误");
 			return "error/404";
 		}
-		Subject subject = subjectDao.get_subject_by_id( timeVOList.get(0).getSubject() );
+		Subject subject = subjectServer.get_subject_by_id( timeVOList.get(0).getSubject() );
 		User requestUser = (User) session.getAttribute("loggedUser");
 		if ( subject.getTeacher() != requestUser.getId() ) {
-			request.setAttribute("result", new Result<Boolean>( ResultCode.ERROR_PERMISSION, null) );
+			request.setAttribute("result", new Result< Void >( ResultCode.ERROR_PERMISSION, null) );
+			System.out.println("已拦截 - 用户权限不足");
 			return "error/403";
 		}
 		List<Time> timeList = new LinkedList<Time>();
-		List<Course> courseList = courseDao.get_course_list_by_subject(subject.getId());
-		List<Course> insertCoureseList = new LinkedList<Course>();
-		Iterator<Course> courseIterator = courseList.listIterator();
-		Calendar calendar = Calendar.getInstance(), calendarTemp = Calendar.getInstance();
-		boolean flag = true;
-		Course courseCache;
-		calendar.setTime( Cache.currTerm.getStartTime() );
 		for ( TimeVO timeVOIter : timeVOList ) {
 			timeList.add( new Time(timeVOIter) );
 		}
-		
-		int startWeek = 0, 
-			endWeek = subject.getTerm() == Cache.currTerm.getId() ? 
-						Cache.currTerm.getWeeks() : 
-						termDao.get_term_by_id( subject.getTerm() ).getWeeks() ;
-		while (startWeek < endWeek ) {
-			for (Time time : timeList) {
-				//对某一周进行检测
-				if( (time.getWeeksValue() & 1 << startWeek++) != 0) {
-					if( flag && calendar.get(Calendar.DAY_OF_WEEK ) > time.getWeek() ) {
-						continue;
-					}
-					calendarTemp.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_YEAR) );
-					calendarTemp.set(Calendar.DAY_OF_WEEK, time.getWeek() );
-					//如果课程列表中还存在课程,则修改, 否则,将新增课程到新增列表当中
-					if ( courseIterator.hasNext() ) {
-						courseCache = courseIterator.next();
-						courseCache.setSpecificTime(new Date( calendarTemp.getTime().getTime() ) );
-					} else {
-						insertCoureseList.add( new Course( time, new Date( calendarTemp.getTime().getTime() ) ) );
-					}
-				}
-			}
-			if(flag) {
-				//第一次运行将calendar格式化为周一
-				int addDay = 8 - calendar.get(Calendar.DAY_OF_WEEK );
-				calendar.add(Calendar.DAY_OF_WEEK, addDay);
-				flag = false;
-			}else {
-				//向后快进一周
-				calendar.add(Calendar.DAY_OF_WEEK, 7);
-			}
-		}
-		Result< List<Time> > result = timeList.size() * Constant.COURSE_LENGTH > subject.getTimeTotal() ? 
-				new Result< List<Time> >(ResultCode.WARNING_SUBJECT_TIME_ERROR, timeList) :
-				new Result< List<Time> >(ResultCode.SUCCESS, timeList);
-		subjectServer.update_time(timeList, courseList,insertCoureseList);
-		request.setAttribute("result",  result);
-		return "timeList";
+		List<Course> courseList = subjectServer.time_update(subject, timeList);
+		System.out.println("请求成功 - 已更新时间表和课程表");
+		request.setAttribute("result", new Result< List<Course> >( ResultCode.SUCCESS, courseList) );
+		return "redirect:/course/courseList";
 	}
 	
 	/**
-	 * @api {post} /TeacherHelper/subject/time/time_update 删除时间表
+	 * @api {post} /TeacherHelper/subject/time/time_list 查看时间列表
 	 * @apiVersion 1.0.0
 	 * @apiGroup Time
-	 * @apiName 更新时间表
+	 * @apiName 查看时间列表
 	 * @apiSuccess {Boolean} success true表示请求成功，false表示请求失败
 	 * @apiSuccess {number} code 错误代码
 	 * @apiSuccess {string} message 错误信息
-	 * @apiParam {string} name 学期名
+	 * @apiSuccess {list} data 错误信息
+	 * @apiParam {number} subjectId 需要查看的科目id
 	 * 	@apiSuccessExample {json} 请求成功例子:
 	 * 	{
-	 *     	"success" : true,
+	 * 		"success" : true,
 	 *      "code" : 20000,
 	 *      "message" : "请求成功",
-	 *      "data" : null
+	 *      "data" :
+	 * 			{
+	 *				"id" : 112,
+	 *				"weeks" : "第1周到第7周, 第9周到第11周"
+	 *				"week" : 1,
+	 *				"howTime" : 1
+	 *			},
+	 *			{
+	 *	 			"id" : 113,
+	 *				"weeks" : "第1周到第7周, 第9周到第11周"
+	 *				"week" : 2,
+	 *				"howTime" : 1
+	 *			}
 	 *	}
 	 * @apiParamExample {json} 请求示例:
 	 * 	{
-	 *		"timeId" : 112
-	 * 	}
+	 * 		"subjectId" : 889
+	 *	}
 	 */
-	@RequestMapping("/time_delete")
-	public String time_delete(HttpServletRequest request, HttpSession session, Integer timeId) {
-		Subject subject = subjectServer.get_subject_by_time(timeId);
+	@RequestMapping("/time_list")
+	public String time_list(HttpServletRequest request, HttpSession session, Integer subjectId) {
+		if ( subjectId == null ) {
+			request.setAttribute("result", new Result<Boolean>( ResultCode.ERROR_PARAM, null) );
+		}
+		Subject subject = subjectServer.get_subject_by_id(subjectId);
 		User requestUser = (User) session.getAttribute("loggedUser");
-		if ( subject.getTeacher() != requestUser.getId() ) {
+		if ( subject.getTeacher() != requestUser.getId() && 
+				requestUser.getPermission() == Constant.USER_PERMISSION_NORMAL) {
 			request.setAttribute("result", new Result<Boolean>( ResultCode.ERROR_PERMISSION, null) );
 			return "error/403";
 		}
+
 		List<Course> courseList = subjectServer.get_course_by_time(timeId);
 		if ( courseList != null ) {
 			request.setAttribute("result", new Result<Boolean>( ResultCode.ERROR_TIME_NOT_EMPTY, null) );
@@ -205,6 +176,10 @@ public class TimeController {
 		}
 		return null;
 	}
+
+		request.setAttribute("result", new Result< List<Time> >( ResultCode.SUCCESS, subjectServer.get_time_by_subject(subjectId) ) );
+		return "timeList";
+	}
 	
-	
+
 }

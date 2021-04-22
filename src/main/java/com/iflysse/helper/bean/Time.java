@@ -4,7 +4,13 @@ import com.iflysse.helper.controller.Cache;
 
 public class Time extends TimeBase{
 
+	/**
+	 * 一学期中要上课的周数
+	 */
 	private Integer weeks;
+	/**
+	 * 一周中要上课的时间段, 这是一个两位的十进制数(个位和十位), 十位表示周几上课, 个位表示一天中的第几大节课
+	 */
 	private Byte timeQuantum;
 
 	public Time(Integer id, Integer subject, Byte timeQuantum, String classroom, Integer weeks) {

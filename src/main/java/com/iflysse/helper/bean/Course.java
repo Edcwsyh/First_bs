@@ -5,35 +5,35 @@ import java.sql.Date;
 import com.iflysse.helper.tools.Constant;
 
 public class Course {
-	private Integer id;
+	protected Integer id;
 	/**
 	 * 科目表的外键
 	 */
-	private Integer subject;
+	protected Integer subject;
 	/**
 	 * 时间表的外键
 	 */
-	private Integer time;
+	protected Integer time;
 	/**
 	 * 教学目标
 	 */
-	private String goal;
+	protected String goal;
 	/**
 	 * 教学内容
 	 */
-	private String content;
+	protected String content;
 	/**
 	 * 教学模式
 	 */
-	private Byte mode;
+	protected Byte mode;
 	/**
 	 * 家庭作业
 	 */
-	private Boolean isHomework;
+	protected Boolean isHomework;
 	/**
 	 * 上课的具体时间
 	 */
-	private Date specificTime;
+	protected Date specificTime;
 	
 	public Course(Time time, Date specificTime) {
 		this.subject = time.getSubject();

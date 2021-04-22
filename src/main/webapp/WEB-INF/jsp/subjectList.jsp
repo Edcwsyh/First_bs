@@ -66,9 +66,9 @@
 		<div class="row">
 			<div class="col-md-2">
 				<div class="list-group">
-					<a href="content.html" class="list-group-item active">课表管理</a> <a
-						href="${pageContext.request.contextPath}/report/goto_report_add"
-						class="list-group-item">添加课表</a>
+					<a href="content.html" class="list-group-item active">课表管理</a> 
+					<a href="${pageContext.request.contextPath}/report/goto_report_add"
+						class="list-group-item">时间表管理</a>
 				</div>
 			</div>
 			<div class="col-md-10">
@@ -79,7 +79,7 @@
 					<li class="active"><a href="content.html">课表管理</a></li>
 					<li>
 						<a href="" role="button" data-toggle="modal"
-						data-target="#subjectAdd">添加课表</a>
+						data-target="#subjectAdd">时间表管理</a>
 					</li>
 					<li ><a href="${pageContext.request.contextPath}/subject/time/goto_time_add">添加时间表</a></li>
 				</ul>

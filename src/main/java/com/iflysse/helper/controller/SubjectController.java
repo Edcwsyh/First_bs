@@ -26,19 +26,10 @@ import com.iflysse.helper.tools.ResultCode;
 public class SubjectController {
 	
 	@Autowired
-	private SubjectDao subjectDao;
-	
-	@Autowired
 	private TermDao termDao;
 	
 	@Autowired
 	private UserDao userDao;
-	
-	@Autowired 
-	private CourseDao courseDao;
-	
-	@Autowired 
-	private TimeDao timeDao;
 	
 	@Autowired 
 	private SubjectServer subjectServer;
@@ -89,7 +80,7 @@ public class SubjectController {
 			System.out.println(ResultCode.ERROR_PARAM.getMessage());
 			return "error/400";
 		}
-		subjectDao.insert_subject(newSubject);
+		subjectServer.insert_subject(newSubject);
 		System.out.println(newSubject.getId());
 		request.setAttribute("result", new Result<Void>(ResultCode.SUCCESS, null ) );
 		return "timeAdd";
@@ -135,7 +126,7 @@ public class SubjectController {
 			request.setAttribute("result", new Result<Subject>(ResultCode.ERROR_PARAM, null) );
 			return "error/400";
 		}
-		subjectDao.update_subject(subject);
+		subjectServer.update_subject(subject);
 		request.setAttribute("result", new Result<Subject>(ResultCode.SUCCESS, null) );
 		return "redirect:subject_list";
 	}
@@ -186,7 +177,7 @@ public class SubjectController {
 	@RequestMapping("/subject_info")
 	public String subject_info(HttpServletRequest request, HttpSession session, Integer subjectId) {
 		User requestUser = (User) session.getAttribute("loggedUser");
-		Subject dbSubject = subjectDao.get_subject_by_id(subjectId);
+		Subject dbSubject = subjectServer.get_subject_by_id(subjectId);
 		if(dbSubject == null) {
 			request.setAttribute( "result", new Result<Subject>( ResultCode.ERROR_SUBJECT_NOT_FOUND, null ) );
 			return "error/404";
@@ -286,7 +277,7 @@ public class SubjectController {
 		request.setAttribute( "result", 
 								new Result< List<Subject> >( 
 									ResultCode.SUCCESS,  
-									subjectDao.get_subject_list(userId, termId)
+									subjectServer.get_subject_list(userId, termId)
 								) 
 							);
 		return "subjectList";
@@ -321,7 +312,7 @@ public class SubjectController {
 			request.setAttribute("result", new Result<Subject>(ResultCode.ERROR_PARAM, null) );
 			return "error/403";
 		}
-		Subject subject = subjectDao.get_subject_by_id(subjectId);
+		Subject subject = subjectServer.get_subject_by_id(subjectId);
 		//权限验证
 		if(subject.getTeacher() != requestUser.getId() ) {
 			if(requestUser.getPermission() == Constant.USER_PERMISSION_NORMAL ) {
@@ -331,13 +322,13 @@ public class SubjectController {
 			}
 		}
 		//验证被删除的科目是否非空
-		if ( timeDao.get_time_list_by_subject(subjectId).size() != 0 || 
-				courseDao.get_course_list_by_subject(subjectId).size() != 0 ) {
+		if ( subjectServer.get_time_by_subject(subjectId).size() != 0 || 
+				subjectServer.get_course_by_subject(subjectId).size() != 0 ) {
 			System.out.println("已拦截 - 试图删除非空科目");
 			request.setAttribute("result", new Result<Subject>(ResultCode.ERROR_SUBJECT_NOT_EMPTY, null) );
 
 		}
-		subjectDao.delete_subject(subjectId);
+		subjectServer.delete_subject(subjectId);
 		request.setAttribute("result", new Result<Subject>(ResultCode.SUCCESS, null) );
 		System.out.println("请求成功 - 已删除空的科目");
 		return "redirect:subject_list?userId=" + requestUser.getId();
