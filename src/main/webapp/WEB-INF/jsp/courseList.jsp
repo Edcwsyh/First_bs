@@ -66,9 +66,9 @@
 		<div class="row">
 			<div class="col-md-2">
 				<div class="list-group">
-					<a href="content.html" class="list-group-item active">课表管理</a> 
+					<a href="content.html" class="list-group-item ">课表管理</a> 
 					<a href="${pageContext.request.contextPath}/subject/course/course_list"
-						class="list-group-item">课程·1管理</a>
+						class="list-group-item active">课程管理</a>
 				</div>
 			</div>
 			<div class="col-md-10">
@@ -76,36 +76,35 @@
 					<h1>课表管理</h1>
 				</div>
 				<ul class="nav nav-tabs">
-					<li class="active"><a href="content.html">课表管理</a></li>
+					<li class="active"><a href="content.html">课程管理</a></li>
 					<li>
 						<a href="" role="button" data-toggle="modal"
-						data-target="#subjectAdd">时间表管理</a>
+						data-target="#courseAdd">添加课程</a>
 					</li>
-					<li ><a href="${pageContext.request.contextPath}/subject/time/goto_time_add">添加时间表</a></li>
+					
 				</ul>
 				<table class="table">
 					<thead>
 						<tr>
-							<th>课程名称</th>
-							<th>课程类型</th>
-							<th>助教</th>
-							<th>授课班级</th>
-							<th>总课时</th>
-							<th>理论课时</th>
-							<th>实践课时</th>
+							<th>上课时间</th>
+							<th>教学目标</th>
+							<th>教学内容</th>
+							<th>教学模式</th>
+							<th>是否有作业</th>
+							<th>具体上课时间</th>
 						</tr>
 					</thead>
 					<tbody>
-						<c:forEach items="${result.data }" var="subject">
+						<c:forEach items="${result.data }" var="course">
 							<tr>
 
-								<th scope="row">${subject.name}</th>
-								<td>${subject.type }</td>
-								<td>${subject.ta }</td>
-								<td>${subject.klass }</td>
-								<td>${subject.timeTotal}</td>
-								<td>${subject.timeTheory}</td>
-								<td>${subject.timePractice}</td>
+								<th scope="row">${course.time}</th>
+								<td>${course.teachingGoal }</td>
+								<td>${course.teachingContent }</td>
+								<td>${course.teachingMode }</td>
+								<td>${course.isHomework}</td>
+								<td>${course.specificTime}</td>
+
 								<td>
 									<div role="presentation" class="dropdown">
 										<button class="btn btn-default dropdown-toggle"
@@ -116,7 +115,7 @@
 										<ul class="dropdown-menu">
 											<li><a href="${pageContext.request.contextPath}/subject/subject_info?subjectId=${subject.id}">编辑</a></li>
 											<li><a href="${pageContext.request.contextPath}/subject/subject_delete?subjectId=${subject.id}">删除</a></li>
-											<li><a href="#">全局置顶</a></li>
+
 										</ul>
 									</div>
 								</td>
@@ -152,7 +151,7 @@
 		</div>
 	</footer>
 	<!--footer-->
-	<div class="modal fade" id="subjectAdd" tabindex="-1" role="dialog"
+	<div class="modal fade" id="courseAdd" tabindex="-1" role="dialog"
 		aria-labelledby="myModalLabel">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
@@ -164,51 +163,45 @@
 					<h4 class="modal-title" id="myModalLabel">添加科目</h4>
 				</div>
 				<div class="modal-body">
-					<form action="${pageContext.request.contextPath}/subject/subject_add"  method="post">
+					<form action="${pageContext.request.contextPath}/subject/course/course_add"  method="post">
 						<input type="hidden" name="teacher" value="${loggedUser.id }">
 						<div class="form-group">
-							<label for="name">课程名</label> <input type="text" id="name"
-								name="name" class="form-control" placeholder="请输入课程名">
-						</div>
-
-						
-						<div class="form-group">
-							<label for="ta">课程助教</label> <input type="text" id="ta" name="ta"
-								class="form-control" placeholder="请输入课程助教">
+							<label for="time">时间</label> <input type="date" id="time"
+								name="time" class="form-control" placeholder="请选择时间">
 						</div>
 						
 						<div class="form-group">
-							<label for="klass">授课班级</label> 
-								<input type="text" id="klass" name="klass" class="form-control" placeholder="请输入授课班级">
+							<label for="teachingGoal">教学内容</label> 
+							<textarea id="teachingGoal" name="teachingGoal" class="form-control" rows="15" cols="10" ></textarea>
 						</div>
 						
 						<div class="form-group">
-							<label for="timeTotal">总课时</label> <input type="number"
-								id="timeTotal" name="timeTotal" class="form-control"
-								placeholder="">
+							<label for="teachingContent">教学目标</label> 
+							<textarea id="teachingContent" name="teachingContent" class="form-control" rows="15" cols="10" ></textarea>
 						</div>
+						
+						<div class="form-group">
+	                        <label for="teachingMode">教学模式</label>
+	                        <div>
+		                        <input type="radio" name="teachingMode" value="1" > 线上
+		                        <input type="radio" name="teachingMode" value="0" > 线下
+	                        </div>
+                        </div>
+                        
+                      	<div class="form-group">
+	                        <label for="isHomework">教学模式</label>
+	                        <div>
+		                        <input type="radio" name="isHomework" value="1" > 是
+		                        <input type="radio" name="isHomework" value="0" > 否
+	                        </div>
+                        </div>                    					
 
 						<div class="form-group">
-							<label for="timeTheory">理论课时</label> <input type="number"
-								id="timeTheory" name="timeTheory" class="form-control"
-								placeholder="">
+							<label for="specificTime">具体上课时间</label> 
+							<input type="time" id="specificTime" name="specificTime" class="form-control"
+								placeholder="请选择具体上课时间">
 						</div>
-
-						<div class="form-group">
-							<label for="timePractice">实践课时</label> <input type="number"
-								id="timePractice" name="timePractice" class="form-control"
-								placeholder="">
-						</div>
-
-						<div class="form-group">
-							<label for="type">课程类型</label>
-							<div>
-								<input type="radio" id="type" name="type" value="1">
-								 理论课<input type="radio" id="type" name="type" value="0">
-								方向课
-							</div>
-
-						</div>
+					
 
 						<div class="modal-footer">
 							<button type="button" class="btn btn-default"
