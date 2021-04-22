@@ -13,6 +13,7 @@ import com.iflysse.helper.bean.Subject;
 import com.iflysse.helper.bean.Term;
 import com.iflysse.helper.dao.SubjectDao;
 import com.iflysse.helper.dao.TermDao;
+import com.iflysse.helper.tools.CacheUtil;
 import com.iflysse.helper.tools.Constant;
 import com.iflysse.helper.tools.Result;
 import com.iflysse.helper.tools.ResultCode;
@@ -58,7 +59,7 @@ public class TermController {
 	@ResponseBody
 	@RequestMapping("/term_current")
 	public Result<Term> term_current(HttpServletRequest request) {
-		return new Result<Term>(ResultCode.SUCCESS, Cache.currTerm);
+		return new Result<Term>(ResultCode.SUCCESS, CacheUtil.currTerm);
 	}
 	
 	/**
@@ -130,8 +131,8 @@ public class TermController {
 		//判断新增的是否是激活的学期
 		if(newTerm.getIsCurrent() ) {
 			//关闭原激活学期,并更改当前缓存学期
-			termDao.update_term_state( Cache.currTerm.getId(), false ); 
-			Cache.currTerm = newTerm;
+			termDao.update_term_state( CacheUtil.currTerm.getId(), false ); 
+			CacheUtil.currTerm = newTerm;
 		}
 		termDao.insert_term(newTerm);
 		request.setAttribute("result", new Result<Void>(ResultCode.SUCCESS, null) ); 
@@ -165,7 +166,7 @@ public class TermController {
 	 */
 	@RequestMapping("/term_delete")
 	public String term_delete(HttpServletRequest request, Integer termId) {
-		if (Cache.currTerm.getId() == termId) {
+		if (CacheUtil.currTerm.getId() == termId) {
 			System.out.println("已拦截  - 删除当前学期");
 			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_TERM_DELETE_ACTION, null) ); 
 			return "redirect:term_list";
@@ -293,7 +294,7 @@ public class TermController {
 	 */
 	@RequestMapping("/term_activate")
 	public String term_activate(HttpServletRequest request, Integer termId) {
-		if(termId == Cache.currTerm.getId() ) {
+		if(termId == CacheUtil.currTerm.getId() ) {
 			System.out.println("已拦截  - 当前学期已被激活");
 			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_TERM_ACTIVATE, null) );
 			return "error/403";
@@ -305,8 +306,8 @@ public class TermController {
 			return "error/404";
 		} else {
 			termDao.update_term_state(term.getId(), true);
-			termDao.update_term_state(Cache.currTerm.getId(), false);
-			Cache.currTerm = term;
+			termDao.update_term_state(CacheUtil.currTerm.getId(), false);
+			CacheUtil.currTerm = term;
 			System.out.println("请求通过 - 已更改当前激活学期");
 			request.setAttribute("result", new Result<Void>(ResultCode.SUCCESS, null) );
 			return "redirect:term_list";

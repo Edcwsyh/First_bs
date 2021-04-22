@@ -60,4 +60,10 @@ public interface UserServer {
 	 * @return
 	 */
 	public Result<Void> user_delete(Integer userId);
+	/**
+	 * 通过id获取用户信息
+	 * @param id
+	 * @return
+	 */
+	public User get_user_by_id(Integer id);
 }

@@ -218,7 +218,7 @@ public class CourseController {
 				return "error/403";
 			}
 		}
-		List<CourseVO> result = subjectServer.get_course_by_subject(subjectId);
+		List<CourseVO> result = subjectServer.get_courseVO_by_subject(subjectId);
 		request.setAttribute("result", new Result< List <CourseVO> >(ResultCode.SUCCESS, result));
 		return "courseList"; 
 	}

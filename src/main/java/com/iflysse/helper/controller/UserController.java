@@ -253,7 +253,7 @@ public class UserController {
 			request.setAttribute("result", new Result<User>(ResultCode.ERROR_NOT_LOGIN, null));
 			return "error/403";
 		}
-		else if( (user = userDao.get_user_by_id(id) ) == null) {
+		else if( (user = userServer.get_user_by_id(id) ) == null) {
 			request.setAttribute("result", new Result<User>(ResultCode.ERROR_USER_NOT_FOUND, null));
 			return "error/404";
 		}

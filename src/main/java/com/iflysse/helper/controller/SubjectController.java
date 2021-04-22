@@ -17,6 +17,7 @@ import com.iflysse.helper.dao.TermDao;
 import com.iflysse.helper.dao.TimeDao;
 import com.iflysse.helper.dao.UserDao;
 import com.iflysse.helper.service.SubjectServer;
+import com.iflysse.helper.tools.CacheUtil;
 import com.iflysse.helper.tools.Constant;
 import com.iflysse.helper.tools.Result;
 import com.iflysse.helper.tools.ResultCode;
@@ -73,7 +74,7 @@ public class SubjectController {
 	@RequestMapping("/subject_add")
 	public String subject_add(HttpServletRequest request, Subject newSubject) {
 		if (newSubject.getTerm() == null) {
-			newSubject.setTerm( Cache.currTerm.getId() );
+			newSubject.setTerm( CacheUtil.currTerm.getId() );
 		}
 		if(newSubject.check( Constant.CHECK_ALL ^ Constant.CHECK_TERM ^ Constant.CHECK_ID ) != 0 ) {
 			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_PARAM, null) );
@@ -265,7 +266,7 @@ public class SubjectController {
 		
 		//验证传入的学期id
 		if(termId == null) {
-			termId = Cache.currTerm.getId();
+			termId = CacheUtil.currTerm.getId();
 		}else {
 			if(termDao.get_term_by_id(termId) == null ) {
 				request.setAttribute( "result", new Result< List<Subject> >( ResultCode.ERROR_TERM_NOT_FOUND, null ) );
@@ -323,7 +324,7 @@ public class SubjectController {
 		}
 		//验证被删除的科目是否非空
 		if ( subjectServer.get_time_by_subject(subjectId).size() != 0 || 
-				subjectServer.get_course_by_subject(subjectId).size() != 0 ) {
+				subjectServer.get_courseVO_by_subject(subjectId).size() != 0 ) {
 			System.out.println("已拦截 - 试图删除非空科目");
 			request.setAttribute("result", new Result<Subject>(ResultCode.ERROR_SUBJECT_NOT_EMPTY, null) );
 
@@ -331,6 +332,64 @@ public class SubjectController {
 		subjectServer.delete_subject(subjectId);
 		request.setAttribute("result", new Result<Subject>(ResultCode.SUCCESS, null) );
 		System.out.println("请求成功 - 已删除空的科目");
+		return "redirect:subject_list?userId=" + requestUser.getId();
+	}
+	
+	/**
+	 * @api {post} /TeacherHelper/subject/export_excel 导出-excel
+	 * @apiVersion 1.0.0
+	 * @apiGroup Subject
+	 * @apiName 导出-excel
+	 * @apiSuccess {Boolean} success true表示请求成功，false表示请求失败
+	 * @apiSuccess {number} code 错误代码
+	 * @apiSuccess {string} message 错误信息
+	 * @apiParam {number} subjectId 科目id
+	 * @apiSuccessExample {json} 请求成功例子:
+	 * 	{
+	 *     	"success" : true,
+	 *      "code" : 20000,
+	 *      "message" : "请求成功",
+	 *      "data" : null
+	 *	}
+	 * @apiParamExample {json} 请求示例:
+	 * 	{
+	 * 		"subjectId":"1167"
+	 * 	}
+	 * @apiDescription 接口说明:
+	 * 	 调用成功后返回到科目列表
+	 */
+	@RequestMapping("/export_excel")
+	public String export_excel(HttpServletRequest request, HttpSession session, Integer subjectId) {
+		User requestUser = (User) session.getAttribute("loggedUser");
+		return "redirect:subject_list?userId=" + requestUser.getId();
+	}
+	
+	/**
+	 * @api {post} /TeacherHelper/subject/export_word 导出-word
+	 * @apiVersion 1.0.0
+	 * @apiGroup Subject
+	 * @apiName 导出-word
+	 * @apiSuccess {Boolean} success true表示请求成功，false表示请求失败
+	 * @apiSuccess {number} code 错误代码
+	 * @apiSuccess {string} message 错误信息
+	 * @apiParam {number} subjectId 科目id
+	 * @apiSuccessExample {json} 请求成功例子:
+	 * 	{
+	 *     	"success" : true,
+	 *      "code" : 20000,
+	 *      "message" : "请求成功",
+	 *      "data" : null
+	 *	}
+	 * @apiParamExample {json} 请求示例:
+	 * 	{
+	 * 		"subjectId":"1167"
+	 * 	}
+	 * @apiDescription 接口说明:
+	 * 	 调用成功后返回到科目列表
+	 */
+	@RequestMapping("/export_word")
+	public String export_word(HttpServletRequest request, HttpSession session, Integer subjectId) {
+		User requestUser = (User) session.getAttribute("loggedUser");
 		return "redirect:subject_list?userId=" + requestUser.getId();
 	}
 	

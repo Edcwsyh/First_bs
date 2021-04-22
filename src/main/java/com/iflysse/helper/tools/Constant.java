@@ -35,15 +35,15 @@ public interface Constant {
 	/**
 	 * 用户权限-普通用户
 	 */
-	byte USER_PERMISSION_NORMAL = 0;
+	byte USER_PERMISSION_NORMAL = 1 << 1;
 	/**
 	 * 用户权限-经理
 	 */
-	byte USER_PERMISSION_MANAGER = 2;
+	byte USER_PERMISSION_MANAGER = 1 << 2;
 	/**
 	 * 用户权限-未知
 	 */
-	byte USER_PERMISSION_UNKNOW = 127;
+	byte USER_PERMISSION_UNKNOW = 0;
 	/**
 	 * 用户性别-未知
 	 */
