@@ -100,8 +100,16 @@ public class Course {
 		this.content = content;
 	}
 
-	public Byte getMode() {
+	public Byte getModeValue() {
 		return mode;
+	}
+
+	public String getMode() {
+		switch ( mode) {
+			case Constant.COURSE_TYPE_LEARN_AND_PRACTIVE : return "线下-学练";
+			case Constant.COURSE_TYPE_TEACHE : return "授课-现场";
+			default : return null; //实际上为不可达语句
+		}
 	}
 
 	public void setMode(Byte mode) {

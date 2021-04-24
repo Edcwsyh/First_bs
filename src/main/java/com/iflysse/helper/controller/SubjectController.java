@@ -1,14 +1,22 @@
 package com.iflysse.helper.controller;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.iflysse.helper.bean.CourseVO;
 import com.iflysse.helper.bean.Subject;
 import com.iflysse.helper.bean.User;
 import com.iflysse.helper.dao.CourseDao;
@@ -19,6 +27,7 @@ import com.iflysse.helper.dao.UserDao;
 import com.iflysse.helper.service.SubjectServer;
 import com.iflysse.helper.tools.CacheUtil;
 import com.iflysse.helper.tools.Constant;
+import com.iflysse.helper.tools.ExcelUtil;
 import com.iflysse.helper.tools.Result;
 import com.iflysse.helper.tools.ResultCode;
 
@@ -84,7 +93,7 @@ public class SubjectController {
 		subjectServer.insert_subject(newSubject);
 		System.out.println(newSubject.getId());
 		request.setAttribute("result", new Result<Void>(ResultCode.SUCCESS, null ) );
-		return "timeAdd";
+		return "timeList";
 	}
 	
 	/**
@@ -359,9 +368,31 @@ public class SubjectController {
 	 * 	 调用成功后返回到科目列表
 	 */
 	@RequestMapping("/export_excel")
-	public String export_excel(HttpServletRequest request, HttpSession session, Integer subjectId) {
-		User requestUser = (User) session.getAttribute("loggedUser");
-		return "redirect:subject_list?userId=" + requestUser.getId();
+	public ResponseEntity<byte[]> export_excel(HttpServletRequest request, HttpSession session, Integer subjectId) {
+		try {
+			User requestUser = (User) session.getAttribute("loggedUser");
+			Subject subject = subjectServer.get_subject_by_id(subjectId);
+			if ( requestUser.getId() != subject.getTeacher() && requestUser.getPermission() == Constant.USER_PERMISSION_NORMAL ) {
+				System.out.println("已拦截 - 请求用户权限不足");
+				throw new Exception(ResultCode.ERROR_PERMISSION.getMessage() );
+			}
+			List<CourseVO> courseList = subjectServer.get_courseVO_by_subject(subjectId);
+			SXSSFWorkbook excel = ExcelUtil.create_excel(requestUser.getRealName(), subject, courseList);
+			String fileName = "《" + subject.getName() + "》博思课表_" + subject.getKlass() + ".xlsx";
+			String downloadFileName = new String(fileName.getBytes(StandardCharsets.UTF_8.name()),StandardCharsets.ISO_8859_1.name());
+			HttpHeaders headers = new HttpHeaders();
+			ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+			excel.write(byteOut);
+			headers.setContentDispositionFormData("attachment", downloadFileName);
+			headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+			
+			return new ResponseEntity<byte[]>(byteOut.toByteArray(), headers, HttpStatus.CREATED);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return null;
+
 	}
 	
 	/**

@@ -25,12 +25,10 @@ public interface CourseDao {
 	 * @param subjectId 科目id
 	 * @return
 	 */
-	@Select("select tc.id id, tc.goal goal, tc.content content, tc.mode mode,"
-			+ "tc.isHomework isHomework, tc.specificTime specificTime, tc.classroom classroom, "
-			+ "tc.timeQuantum timeQuantum "
-			+ "from t_course tc "
-			+ "inner join t_time tt"
-			+ "on tc.time=tt.time"
+	@Select("select tc.id id, tc.goal goal, tc.content content, tc.mode mode, tc.isHomework isHomework,"
+			+ "tc.specificTime specificTime, tt.classroom classroom, tt.timeQuantum timeQuantum "
+			+ "from t_course tc inner join t_time tt "
+			+ "on tc.time=tt.id "
 			+ "where tc.subject=#{subjectId}")
 	public List<CourseVO> get_courseVO_list_by_subject(Integer subjectId);
 	
