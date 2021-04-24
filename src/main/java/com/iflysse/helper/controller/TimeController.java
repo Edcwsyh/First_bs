@@ -168,15 +168,6 @@ public class TimeController {
 			request.setAttribute("result", new Result<Boolean>( ResultCode.ERROR_PERMISSION, null) );
 			return "error/403";
 		}
-
-		List<Course> courseList = subjectServer.get_course_by_time(timeId);
-		if ( courseList != null ) {
-			request.setAttribute("result", new Result<Boolean>( ResultCode.ERROR_TIME_NOT_EMPTY, null) );
-			return "timeList";
-		}
-		return null;
-	}
-
 		request.setAttribute("result", new Result< List<Time> >( ResultCode.SUCCESS, subjectServer.get_time_by_subject(subjectId) ) );
 		return "timeList";
 	}
