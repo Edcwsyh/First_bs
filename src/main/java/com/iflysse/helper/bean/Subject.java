@@ -81,11 +81,22 @@ public class Subject {
 		this.name = name;
 	}
 
-	public Byte getType() {
+	public Byte getTypeData() {
 		return type;
 	}
+	
+	public String getType() {
+		switch ( type) {
+			case Constant.SUBJECT_TYPE_DIRECTION : return "方向课";
+			case Constant.SUBJECT_TYPE_THEORY : return "实验课";
+			default : return null; //实际上为不可达语句
+		}
+	}
 
-	public void setType(Byte type) {
+	public void setType(Byte type) throws Exception {
+		if ( type != Constant.COURSE_TYPE_LEARN_AND_PRACTIVE && type != Constant.COURSE_TYPE_TEACHE) {
+			throw new Exception("传入参数有误!");
+		}
 		this.type = type;
 	}
 
