@@ -252,7 +252,7 @@ public class ExcelUtil {
 				row.createCell(0).setCellValue( iter.getSpecificTime() );
 				row.createCell(1).setCellValue( iter.getTimeQuamtumString() );
 				row.createCell(2).setCellValue( iter.getTimeCourseIndex() );
-				row.createCell(3).setCellValue( subect.getType() );
+				row.createCell(3).setCellValue( subect.getTypeString() );
 				row.createCell(4).setCellValue( iter.getMode() );
 				row.createCell(5).setCellValue( iter.getClassroom() );
 				row.createCell(6).setCellValue( teacher );

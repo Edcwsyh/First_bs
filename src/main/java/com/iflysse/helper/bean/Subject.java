@@ -81,11 +81,11 @@ public class Subject {
 		this.name = name;
 	}
 
-	public Byte getTypeData() {
+	public Byte getType() {
 		return type;
 	}
 	
-	public String getType() {
+	public String getTypeString() {
 		switch ( type) {
 			case Constant.SUBJECT_TYPE_DIRECTION : return "方向课";
 			case Constant.SUBJECT_TYPE_THEORY : return "实验课";
