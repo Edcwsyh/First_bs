@@ -1,3 +1,4 @@
+/*
 $('#checkedLevel').multipleSelect({
 　　　　addTitle: true, //鼠标点悬停在下拉框时是否显示被选中的值
 　　　　selectAll: false, //是否显示全部复选框，默认显示
@@ -11,4 +12,4 @@ $('#checkedLevel').multipleSelect({
 //设置默认选中:其中数组中多个值用逗号分隔，值是option的value
 $("#checkedLevel").multipleSelect('setSelects', [1001,1002]);
 
- $('#selectJcjb').multipleSelect("close");//其他的方法，可到js中去查看方法名，根据实际情况进行调用。
+ $('#selectJcjb').multipleSelect("close");//其他的方法，可到js中去查看方法名，根据实际情况进行调用。*/
