@@ -96,6 +96,30 @@
         <artifactId>poi-ooxml-schemas</artifactId>
         <version>4.1.2</version>
      </dependency>
+     
+     <dependency>
+         <groupId>com.itextpdf</groupId>
+         <artifactId>itextpdf</artifactId>
+         <version>5.4.3</version>
+     </dependency>
+
+     <dependency>
+         <groupId>freemarker</groupId>
+         <artifactId>freemarker</artifactId>
+         <version>2.3.23</version>
+     </dependency>
+
+     <dependency>
+         <groupId>org.docx4j</groupId>
+         <artifactId>docx4j</artifactId>
+         <version>6.1.2</version>
+     </dependency>
+     
+     <dependency>
+         <groupId>org.docx4j</groupId>
+         <artifactId>docx4j-export-fo</artifactId>
+         <version>6.0.0</version>
+     </dependency>    
     
   </dependencies>
 </project>

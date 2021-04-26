@@ -8,7 +8,10 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.iflysse.helper.bean.Report;
 import com.iflysse.helper.bean.User;
 import com.iflysse.helper.dao.ReportDao;
@@ -110,7 +113,7 @@ public class ReportController {
 	 *     }
 	 */
 	@RequestMapping("/submit_report_list")
-	public String submit_report_list(HttpServletRequest request, HttpSession session) {
+	public String submit_report_list(HttpServletRequest request, HttpSession session, @RequestParam(defaultValue = "1")Integer pageIndex) {
 		User requestUser = (User) session.getAttribute("loggedUser");
 		//判断发出请求的用户的权限
 		switch ( requestUser.getPermission() ) {
@@ -124,6 +127,8 @@ public class ReportController {
 					ResultCode.SUCCESS, 
 					reportDao.get_report_list())
 				);
+		Page<Report> subjectPage = PageHelper.startPage(pageIndex, Constant.PAGE_NUMBER);
+		request.setAttribute("page", subjectPage.toPageInfo() );
 		return "submitReportList";
 	}
 	
@@ -170,13 +175,15 @@ public class ReportController {
 	 *     }
 	 */
 	@RequestMapping("/user_report_list")
-	public String user_report_list(HttpServletRequest request, HttpSession session) {
+	public String user_report_list(HttpServletRequest request, HttpSession session, @RequestParam(defaultValue = "1")Integer pageIndex) {
 		User requestUser = (User) session.getAttribute("loggedUser");
 		request.setAttribute("result", new Result< List <Report> >(
 					ResultCode.SUCCESS, 
 					reportDao.get_report_list_by_user( requestUser.getId() )
 					)
 				);
+		Page<Report> subjectPage = PageHelper.startPage(pageIndex, Constant.PAGE_NUMBER);
+		request.setAttribute("page", subjectPage.toPageInfo() );
 		return "userReportList";
 	}
 	

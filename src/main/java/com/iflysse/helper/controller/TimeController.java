@@ -16,7 +16,10 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.iflysse.helper.bean.Course;
 import com.iflysse.helper.bean.Subject;
 import com.iflysse.helper.bean.Term;
@@ -157,7 +160,7 @@ public class TimeController {
 	 *	}
 	 */
 	@RequestMapping("/time_list")
-	public String time_list(HttpServletRequest request, HttpSession session, Integer subjectId) {
+	public String time_list(HttpServletRequest request, HttpSession session, Integer subjectId, @RequestParam(defaultValue = "1")Integer pageIndex) {
 		if ( subjectId == null ) {
 			request.setAttribute("result", new Result<Boolean>( ResultCode.ERROR_PARAM, null) );
 		}
@@ -169,6 +172,8 @@ public class TimeController {
 			return "error/403";
 		}
 		request.setAttribute("result", new Result< List<Time> >( ResultCode.SUCCESS, subjectServer.get_time_by_subject(subjectId) ) );
+		Page<TimeVO> subjectPage = PageHelper.startPage(pageIndex, Constant.PAGE_NUMBER);
+		request.setAttribute("page", subjectPage.toPageInfo() );
 		return "timeList";
 	}
 	

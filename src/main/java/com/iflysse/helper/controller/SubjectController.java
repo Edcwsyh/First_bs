@@ -15,7 +15,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.iflysse.helper.bean.CourseVO;
 import com.iflysse.helper.bean.Subject;
 import com.iflysse.helper.bean.User;
@@ -256,7 +259,8 @@ public class SubjectController {
 	 * 	}
 	 */
 	@RequestMapping("/subject_list")
-	public String subject_list(HttpServletRequest request, HttpSession session, Integer userId, Integer termId) {
+	public String subject_list(HttpServletRequest request, HttpSession session, Integer userId, Integer termId, 
+			@RequestParam(defaultValue = "1")Integer pageIndex ) {
 		User requestUser = (User) session.getAttribute("loggedUser");
 		//判断用户请求的是否为自己的科目表, 若不是则需验证用户权限
 		if(userId == null) {
@@ -282,7 +286,7 @@ public class SubjectController {
 				return "error/404";
 			}
 		}
-
+		Page<Subject> subjectPage = PageHelper.startPage(pageIndex, Constant.PAGE_NUMBER);
 		//请求成功, 返回数据
 		request.setAttribute( "result", 
 								new Result< List<Subject> >( 
@@ -290,6 +294,7 @@ public class SubjectController {
 									subjectServer.get_subject_list(userId, termId)
 								) 
 							);
+		request.setAttribute("page", subjectPage.toPageInfo() );
 		return "subjectList";
 	}
 	
