@@ -50,5 +50,6 @@ public class CacheUtil {
 			admin = new User("admin", "123456", "null", "null", "null");
 			userServer.user_add(admin);
 		}
+		WordUtil.init();
 	}
 }

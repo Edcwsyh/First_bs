@@ -78,6 +78,14 @@ public interface Constant {
 	 * 课程 - 单次课程的时长
 	 */
 	byte COURSE_LENGTH = 2;
+	/**
+	 * 单个页面所显示的数据数量
+	 */
+	byte PAGE_NUMBER = 10;
+	/**
+	 * 默认开始的页面
+	 */
+	String PAGE_START = "1";
 	
 	/**
 	 * 检测-id

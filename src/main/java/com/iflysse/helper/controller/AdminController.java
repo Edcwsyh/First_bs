@@ -5,9 +5,13 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.iflysse.helper.bean.User;
 import com.iflysse.helper.service.UserServer;
+import com.iflysse.helper.tools.Constant;
 import com.iflysse.helper.tools.Result;
 
 @Controller
@@ -64,8 +68,10 @@ public class AdminController {
 	 *     }
 	 */
 	@RequestMapping("/user_list")
-	public String user_list(HttpServletRequest request) {
+	public String user_list(HttpServletRequest request, @RequestParam(defaultValue = "1")Integer pageIndex) {
 		request.setAttribute("result",  userServer.user_list() );
+		Page<User> subjectPage = PageHelper.startPage(pageIndex, Constant.PAGE_NUMBER);
+		request.setAttribute("page", subjectPage.toPageInfo() );
 		return "userList";
 	}
 	

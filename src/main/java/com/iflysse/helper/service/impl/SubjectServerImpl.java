@@ -91,10 +91,11 @@ public class SubjectServerImpl implements SubjectServer {
 					//如果课程列表中还存在课程,则修改, 否则,将新增课程到新增列表当中
 					if ( courseIterator.hasNext() ) {
 						Course courseCache = courseIterator.next();
+						courseCache.setWeek( (byte) (startWeek + 1) );
 						courseCache.setSpecificTime(new Date( calendarTemp.getTime().getTime() ) );
 						courseCache.setTime(time.getId() );
 					} else {
-						insertList.add( new Course( time, new Date( calendarTemp.getTime().getTime() ) ) );
+						insertList.add( new Course( time, new Date( calendarTemp.getTime().getTime() ), (byte) (startWeek + 1) ) );
 					}
 				}
 			}

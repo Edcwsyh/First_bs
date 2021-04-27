@@ -3,7 +3,9 @@ package com.iflysse.helper.controller;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
@@ -15,9 +17,13 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.iflysse.helper.bean.CourseVO;
 import com.iflysse.helper.bean.Subject;
+import com.iflysse.helper.bean.Term;
 import com.iflysse.helper.bean.User;
 import com.iflysse.helper.dao.CourseDao;
 import com.iflysse.helper.dao.SubjectDao;
@@ -25,11 +31,16 @@ import com.iflysse.helper.dao.TermDao;
 import com.iflysse.helper.dao.TimeDao;
 import com.iflysse.helper.dao.UserDao;
 import com.iflysse.helper.service.SubjectServer;
+import com.iflysse.helper.service.TermServer;
 import com.iflysse.helper.tools.CacheUtil;
 import com.iflysse.helper.tools.Constant;
 import com.iflysse.helper.tools.ExcelUtil;
 import com.iflysse.helper.tools.Result;
 import com.iflysse.helper.tools.ResultCode;
+import com.iflysse.helper.tools.Word;
+import com.iflysse.helper.tools.WordUtil;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.pdf.PdfWriter;
 
 @Controller
 @RequestMapping("/subject")
@@ -43,6 +54,9 @@ public class SubjectController {
 	
 	@Autowired 
 	private SubjectServer subjectServer;
+	
+	@Autowired 
+	private TermServer termServer;
 	
 	/**
 	 * @api {post} /TeacherHelper/subject/subject_add 新增科目
@@ -256,7 +270,8 @@ public class SubjectController {
 	 * 	}
 	 */
 	@RequestMapping("/subject_list")
-	public String subject_list(HttpServletRequest request, HttpSession session, Integer userId, Integer termId) {
+	public String subject_list(HttpServletRequest request, HttpSession session, Integer userId, Integer termId, 
+			@RequestParam(defaultValue = "1")Integer pageIndex ) {
 		User requestUser = (User) session.getAttribute("loggedUser");
 		//判断用户请求的是否为自己的科目表, 若不是则需验证用户权限
 		if(userId == null) {
@@ -282,7 +297,7 @@ public class SubjectController {
 				return "error/404";
 			}
 		}
-
+		Page<Subject> subjectPage = PageHelper.startPage(pageIndex, Constant.PAGE_NUMBER);
 		//请求成功, 返回数据
 		request.setAttribute( "result", 
 								new Result< List<Subject> >( 
@@ -290,6 +305,7 @@ public class SubjectController {
 									subjectServer.get_subject_list(userId, termId)
 								) 
 							);
+		request.setAttribute("page", subjectPage.toPageInfo() );
 		return "subjectList";
 	}
 	
@@ -385,8 +401,7 @@ public class SubjectController {
 			excel.write(byteOut);
 			headers.setContentDispositionFormData("attachment", downloadFileName);
 			headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-			
-			return new ResponseEntity<byte[]>(byteOut.toByteArray(), headers, HttpStatus.CREATED);
+			return new ResponseEntity<byte[]>( byteOut.toByteArray(), headers, HttpStatus.CREATED );
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -419,9 +434,31 @@ public class SubjectController {
 	 * 	 调用成功后返回到科目列表
 	 */
 	@RequestMapping("/export_word")
-	public String export_word(HttpServletRequest request, HttpSession session, Integer subjectId) {
-		User requestUser = (User) session.getAttribute("loggedUser");
-		return "redirect:subject_list?userId=" + requestUser.getId();
+	public void export_word(HttpServletRequest request, HttpSession session, HttpServletResponse response, Integer subjectId) {
+		try {
+			User requestUser = (User) session.getAttribute("loggedUser");
+			Subject subject = subjectServer.get_subject_by_id(subjectId);
+			if ( requestUser.getId() != subject.getTeacher() && requestUser.getPermission() == Constant.USER_PERMISSION_NORMAL ) {
+				System.out.println("已拦截 - 请求用户权限不足");
+				throw new Exception(ResultCode.ERROR_PERMISSION.getMessage() );
+			}
+			List<CourseVO> courseList = subjectServer.get_courseVO_by_subject(subjectId);
+			Term term = CacheUtil.currTerm;
+			if ( subject.getTerm() != term.getId() ) {
+				term = termServer.get_term_by_subject(subject );
+			}
+			Word word = WordUtil.create_document(requestUser, subject,term.getName(), courseList);
+			String fileName = "《" + subject.getName() + "》教学计划进度表_" + subject.getKlass() + ".docx";
+			String downloadFileName = new String(fileName.getBytes(StandardCharsets.UTF_8.name()),StandardCharsets.ISO_8859_1.name());
+			ServletOutputStream servletOutputStream = response.getOutputStream();
+			word.getByteOut().writeTo(servletOutputStream);
+			response.setContentType("application/octet-stream"); 
+			response.setHeader("Content-Disposition", "attachment;filename=\"" + downloadFileName + "\""); 
+			word.close();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
 	}
 	
 	/**

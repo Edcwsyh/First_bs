@@ -7,8 +7,11 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.iflysse.helper.bean.Subject;
 import com.iflysse.helper.bean.Term;
 import com.iflysse.helper.dao.SubjectDao;
@@ -90,8 +93,10 @@ public class TermController {
 	 * 该接口没有参数，但只允许登录后调用
 	 */
 	@RequestMapping("/term_list")
-	public String term_list(HttpServletRequest request) {
+	public String term_list(HttpServletRequest request , @RequestParam(defaultValue = "1")Integer pageIndex) {
 		request.setAttribute("result", new Result<List<Term>>(ResultCode.SUCCESS, termDao.get_term_list()));
+		Page<Term> termPage = PageHelper.startPage(pageIndex, Constant.PAGE_NUMBER);
+		request.setAttribute("page", termPage.toPageInfo() );
 		return "termList";
 	}
 	

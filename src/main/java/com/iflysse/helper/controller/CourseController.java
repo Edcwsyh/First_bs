@@ -7,7 +7,10 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.iflysse.helper.bean.Course;
 import com.iflysse.helper.bean.CourseVO;
 import com.iflysse.helper.bean.Report;
@@ -204,7 +207,8 @@ public class CourseController {
 	 * 	}
 	 */
 	@RequestMapping("/course_list")
-	public String course_list(HttpServletRequest request, HttpSession session, Integer subjectId) {
+	public String course_list(HttpServletRequest request, HttpSession session, Integer subjectId,
+			@RequestParam(defaultValue = "1")Integer pageIndex ) {
 		User requestUser = (User) session.getAttribute("loggedUser");
 		if(subjectId == null) {
 			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_PARAM, null));
@@ -219,7 +223,9 @@ public class CourseController {
 			}
 		}
 		List<CourseVO> result = subjectServer.get_courseVO_by_subject(subjectId);
+		Page<CourseVO> subjectPage = PageHelper.startPage(pageIndex, Constant.PAGE_NUMBER);
 		request.setAttribute("result", new Result< List <CourseVO> >(ResultCode.SUCCESS, result));
+		request.setAttribute("page", subjectPage.toPageInfo() );
 		return "courseList"; 
 	}
 	
