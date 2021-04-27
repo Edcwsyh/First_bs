@@ -15,6 +15,10 @@ public class Course {
 	 */
 	protected Integer time;
 	/**
+	 * 表示第几周上课
+	 */
+	protected Byte week;
+	/**
 	 * 教学目标
 	 */
 	protected String goal;
@@ -35,7 +39,7 @@ public class Course {
 	 */
 	protected Date specificTime;
 	
-	public Course(Time time, Date specificTime) {
+	public Course(Time time, Date specificTime, Byte week) {
 		this.subject = time.getSubject();
 		this.time = time.getId();
 		this.goal = null;
@@ -140,6 +144,14 @@ public class Course {
 		this.time = time;
 	}
 	
+	public Byte getWeek() {
+		return week;
+	}
+
+	public void setWeek(Byte week) {
+		this.week = week;
+	}
+
 	/**
 	 * 用于检测对象中的某些属性是否为空, 检测参数应使用Constant中提供的check常量(CHECK_*)
 	 * 若有多个检测字段则应使用"按位或(异或)运算"来传递参数, 列入检测id和状态是否为空 : Constant.CHECK_ID | Constant.CHECK_STATE

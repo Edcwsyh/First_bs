@@ -31,8 +31,17 @@ public class CourseVO extends Course {
 		this.classroom = classroom;
 	}
 	
-	public Byte getWeek() {
-		return (byte) (timeQuantum / 10);
+	public String getDayOfWeek() throws Exception {
+		switch ( timeQuantum / 10 ) {
+			case 1 : return "一";
+			case 2 : return "二";
+			case 3 : return "三";
+			case 4 : return "四";
+			case 5 : return "五";
+			case 6 : return "六";
+			case 7 : return "日";
+			default : throw new Exception("数据错误");
+		}
 	}
 	
 	public Byte getHowTime() {

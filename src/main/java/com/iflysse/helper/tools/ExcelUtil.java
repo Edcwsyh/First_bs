@@ -27,29 +27,46 @@ import com.iflysse.helper.bean.Subject;
 import com.iflysse.helper.bean.Term;
 
 public class ExcelUtil {
-	
+	/**
+	 * 填表注意
+	 */
 	private static final String WARNING = "填表注意：\r\n" + 
 			"1.每半天最多4节课，上午：1,2,3,4节课；下午：5,6,7,8节课；晚上：9,10,11,12节课。多节连堂，需用英文状态下逗号隔开。\r\n" + 
 			"2.日期格式，如：2020年3月12日。\r\n" + 
 			"3.“授课内容”栏是课表审核的重点之一，要求填写每堂课详细的教学内容。\r\n" + 
 			"4.“教学模式”栏是课表审核的重点之一，其中；“授课-直播”是指通过博思直播平台进行的授课；“授课-现场”是指正常理论课课堂教学，非边讲边练模式，该模式需录制教学视频；“学练-平台”是指辅导学生在博思平台或实验平台进行实践练习或实验；“学练-线下”是指辅导学生进行课程实践或者项目实践；“实训模式”是指讲师授课和学生动手实践一体的教学模式，边讲边练。\r\n" + 
 			"5.“要求布置作业”是指在博思平台上布置在线作业，如选择“要求”，则讲师必须按计划布置，学生必须按时完成并上传至平台，讲师必须在规定时间内完成批阅。";
-	//默认列宽为
+	/**
+	 * 默认列宽为
+	 */
 	private static final int WIDTH_DEFAULT_COLUMN = 11; 
-	//默认列高为
+	/**
+	 * 默认列高为
+	 */
 	private static final short HIGHT_DEFAULT_ROW = 200;
-	//列的总数量
+	/**
+	 * 列的总数量
+	 */
 	private static final short NUMBER_COLUMN = 10;
-	//字体类型
+	/**
+	 * 字体类型
+	 */
 	private static final String FONT_TYPE = "微软雅黑";
-	//字体大小-标题
+	/**
+	 * 字体大小-标题
+	 */
 	private static final short FONT_TITLE_SIZE = 14;
-	//字体大小-字段
+	/**
+	 * 字体大小-字段
+	 */
 	private static final short FONT_FIELD_SIZE = 12;
-	//字体大小-正文
+	/**
+	 * 字体大小-正文
+	 */
 	private static final short FONT_TEXT_SIZT = 10;
-	
-	//初始行的数量
+	/**
+	 * 初始行的数量
+	 */
 	private static final int NUMBER_INIT_ROW = 4;
 	
 	/**
@@ -66,7 +83,7 @@ public class ExcelUtil {
 		return style;
 	}
 	/**
-	 * 创建标题字体
+	 * 创建标题样式模板
 	 * @param excel 需要创建的excel对象
 	 * @return
 	 */
@@ -91,7 +108,7 @@ public class ExcelUtil {
 	}
 
 	/**
-	 * 创建标题字体
+	 * 创建字段样式模板
 	 * @param excel 需要创建的excel对象
 	 * @return
 	 */
@@ -115,7 +132,7 @@ public class ExcelUtil {
 	}
 	
 	/**
-	 * 创建正文字体
+	 * 创建正文样式模板
 	 * @param excel 需要创建的excel对象
 	 * @return
 	 */
@@ -240,7 +257,6 @@ public class ExcelUtil {
 			SXSSFWorkbook excel = get_excel_template();
 			SXSSFSheet sheet = excel.getSheet("课表");
 			int index;
-			List<SXSSFRow> rowList = new LinkedList<SXSSFRow>();
 			CellStyle textStyle = create_style_text(excel);
 			//设置课程名称和教授班级
 			sheet.getRow(2).getCell(1).setCellValue( subect.getName() );
@@ -259,13 +275,12 @@ public class ExcelUtil {
 				row.createCell(7).setCellValue( subect.getTa() );
 				row.createCell(8).setCellValue( iter.getIsHomework() ? "要求" : "不要钱");
 				row.createCell(9).setCellValue( iter.getContent() );
-				rowList.add(row);
 			}
-			for ( SXSSFRow rowIter : rowList ) {
+			for ( int rowIndex = NUMBER_INIT_ROW; rowIndex < courseList.size(); ++rowIndex ) {
 				for ( index = 0; index < NUMBER_COLUMN - 1; ++index ) {
-					rowIter.getCell(index).setCellStyle(textStyle);
+					sheet.getRow(rowIndex).getCell(index).setCellStyle(textStyle);
 				}
-				rowIter.getCell(index).setCellStyle( rowList.get(0).getCell(0).getCellStyle() );
+				sheet.getRow(rowIndex).getCell(index).setCellStyle( sheet.getRow(0).getCell(0).getCellStyle() );
 			}
 			return excel;
 		} catch (Exception e) {
