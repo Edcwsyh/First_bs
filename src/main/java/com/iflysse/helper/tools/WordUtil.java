@@ -1,182 +1,192 @@
 package com.iflysse.helper.tools;
 
-import java.awt.Color;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.util.HashMap;
+import java.math.BigInteger;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
-import org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream;
+import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
+import org.apache.poi.xwpf.usermodel.TableRowAlign;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.apache.poi.xwpf.usermodel.XWPFTable;
+import org.apache.poi.xwpf.usermodel.XWPFTableCell;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblGrid;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblGridCol;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblWidth;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTcPr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STMerge;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTblWidth;
 
-import com.iflysse.helper.bean.Course;
 import com.iflysse.helper.bean.CourseVO;
 import com.iflysse.helper.bean.Subject;
-import com.iflysse.helper.bean.Time;
 import com.iflysse.helper.bean.User;
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.pdf.BaseFont;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
 
 public class WordUtil {
+	
+	private XWPFDocument docx;
+	
+	private WordUtil() {
+		docx = new XWPFDocument();
+	}
+	
+	public XWPFDocument get_docx() {
+		return docx;
+	}
+
 	/**
-	 * 支持中文字体
+	 * 标题字体大小
 	 */
-	private static BaseFont bfChinese = null; 
+	private static final int FONT_TITLE_SIZE = 16;
+	
 	/**
-	 * 标题的字体大小
-	 */
-	private static final int FONT_TITLE_SIZE = 15;
-	/**
-	 * 正文的字体大小
+	 * 正文字体大小
 	 */
 	private static final int FONT_TEXT_SIZE = 12;
 	/**
-	 * 表格的字体大小
+	 * 列的数量
 	 */
-	private static final int FONT_TABLE_SIZE = 10;
-	
+	private static final int NUMBER_COLUMN = 11;
 	/**
-	 * 标题字体类型
+	 * 行的模板数量
 	 */
-	private static final Font TITLE_FONT = new Font(bfChinese, FONT_TITLE_SIZE, Font.BOLD, BaseColor.BLACK);
+	private static final int NUMBER_ROW_TEMPLATE = 6;
 	/**
-	 * 正文字体类型
+	 * 表格的列宽度
 	 */
-	private static final Font TEXT_FONT = new Font(bfChinese, FONT_TEXT_SIZE, Font.NORMAL, BaseColor.BLACK);
+	private static final int WIDTHS[] = {1,1,1,8,1,1,1,1,1,1,2};
 	/**
-	 * 表格字体类型
+	 * 表格的字段
 	 */
-	private static final Font TABLE_FONT = new Font(bfChinese, FONT_TABLE_SIZE, Font.NORMAL, BaseColor.BLACK);
-	
-	private ByteArrayOutputStream byteOut;
-	private Document document;
-
-	public void setDocument(Document document) {
-		this.document = document;
-	}
-
-	public static void init() {
-		try {
-			bfChinese = BaseFont.createFont("STSongStd-Light", "UniGB-UCS2-H", BaseFont.NOT_EMBEDDED);
-		} catch (DocumentException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+	private static final String FIELD[] = {
+			"周次", "星期","节次", "授课内容", "讲课",
+			"习题讨论", "实验上机", "作业安排", "辅导安排", 
+			"其他", "执行情况"
+	};
 	
 	/**
 	 * 创建一个标题段落
-	 * @param text 标题文本
+	 * @param text
 	 * @return
 	 */
-	private static Paragraph create_title_paragraph( String text) {
-		Paragraph paragraph = new Paragraph(text);
-		paragraph.setAlignment(Element.ALIGN_CENTER);
-		paragraph.setFont(TITLE_FONT);
+	private XWPFParagraph create_title_paragraph( String text ) {
+		XWPFParagraph paragraph = docx.createParagraph();
+		XWPFRun run = paragraph.createRun();
+		run.setBold(true);
+		run.setFontSize(FONT_TITLE_SIZE);
+		run.setFontFamily("宋体");
+		run.setText( text );
+		paragraph.setAlignment(ParagraphAlignment.CENTER);
 		return paragraph;
 	}
 	
 	/**
 	 * 创建一个正文段落
-	 * @param text 正文文本
+	 * @param text
 	 * @return
 	 */
-	private static Paragraph create_text_paragraph( String text) {
-		Paragraph paragraph = new Paragraph(text);
-		paragraph.setAlignment(Element.ALIGN_CENTER);
-		paragraph.setFont(TEXT_FONT);
+	private XWPFParagraph create_text_paragraph( String text ) {
+		XWPFParagraph paragraph = docx.createParagraph();
+		XWPFRun run = paragraph.createRun();
+		run.setFontSize(FONT_TEXT_SIZE);
+		run.setFontFamily("宋体");
+		run.setText( text );
+		paragraph.setAlignment(ParagraphAlignment.CENTER);
 		return paragraph;
+	}
+	
+	public void create_word_template( User user, Subject subject, String termName ) {
+		create_title_paragraph(termName);
+		create_text_paragraph(
+				"课程名称 : " + subject.getName() + 
+				"  课程性质 : " + subject.getTypeString() + 
+				"  授课教师 : " + user.getRealName() 
+				);
+		create_text_paragraph( 
+				"授课班级 : " + subject.getKlass() + 
+				"  授课总学时 : " + subject.getTimeTotal() + 
+				" 联系电话" + user.getPhone() 
+				);
 	}
 	
 	/**
-	 * 创建一个表格段落
-	 * @param text 表格文本
-	 * @return
+	 * 跨列合并表格
+	 * @param table 需要合并的表格
+	 * @param row 表格所在行数
+	 * @param fromRow 合并起始单元格位置
+	 * @param toRow 合并结束单元格位置
 	 */
-	private static Paragraph create_table_paragraph( String text) {
-		Paragraph paragraph = new Paragraph(text);
-		paragraph.setAlignment(Element.ALIGN_CENTER);
-		paragraph.setFont(TABLE_FONT);
-		return paragraph;
-	}
+	public  void merge_cells_column(XWPFTable table, int row, int fromCell, int toCell) {  
+        for (int cellIndex = fromCell; cellIndex <= toCell; cellIndex++) {  
+            XWPFTableCell cell = table.getRow(row).getCell(cellIndex);  
+            if ( cellIndex == fromCell ) {  
+                // The first merged cell is set with RESTART merge value  
+                cell.getCTTc().addNewTcPr().addNewHMerge().setVal(STMerge.RESTART);  
+            } else {  
+                // Cells which join (merge) the first one, are set with CONTINUE  
+                cell.getCTTc().addNewTcPr().addNewHMerge().setVal(STMerge.CONTINUE);  
+            }  
+        }  
+    }  
 	
-	public static Word create_document_template( User user, Subject subject, String termName ) throws DocumentException {
-		Document document = new Document(PageSize.A4);
-		ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
-		PdfWriter.getInstance(document, byteOut);
-		document.open();
-		document.addAuthor( user.getRealName() );
-		document.addAuthor( user.getUsername() );
-		//创建标题并添加到文档中
-		document.add( create_title_paragraph(termName) );
-		//添加课程基本信息
-		document.add ( create_text_paragraph( 
-				"课程名称:"  + subject.getName() + 
-				"  课程性质:" + subject.getTypeString() + 
-				"  授课教师:" + user.getRealName() 
-				));
-		document.add ( create_text_paragraph( 
-				"授课班级:"  + subject.getKlass() + 
-				"  授课总学时:" + subject.getTimeTotal() + 
-				"  联系电话:" + user.getPhone()
-				));
-		Word word = new Word(document, byteOut);
-		return word;
-	}
+	/**
+	 * 跨行合并表格
+	 * @param table 需要合并的表格
+	 * @param col 表格所在列数
+	 * @param fromRow 合并起始单元格位置
+	 * @param toRow 合并结束单元格位置
+	 */
+	public void merge_cells_row(XWPFTable table, int col, int fromRow, int toRow) {  
+        for (int rowIndex = fromRow; rowIndex <= toRow; rowIndex++) {  
+            XWPFTableCell cell = table.getRow(rowIndex).getCell(col);  
+            if ( rowIndex == fromRow ) {  
+                // The first merged cell is set with RESTART merge value  
+                cell.getCTTc().addNewTcPr().addNewVMerge().setVal(STMerge.RESTART);  
+            } else {  
+                // Cells which join (merge) the first one, are set with CONTINUE  
+                cell.getCTTc().addNewTcPr().addNewVMerge().setVal(STMerge.CONTINUE);  
+            }  
+        }  
+    }
 	
-	public static PdfPTable create_table ( List<CourseVO> courseList) throws Exception {
-		//定义一个指向时间对象的临时指针
-		Time time = null;
-		//创建一个表格
-		PdfPTable table = new PdfPTable(new float[] {1,1,1,8,1,1,1,1,1,1,2.25f});
-		//设置表格为水平居中
-		table.setHorizontalAlignment(Element.ALIGN_CENTER);
-		//表格的宽度百分比 
-		table.setWidthPercentage(100);
-		//填入表格字段
-		table.addCell("周\r\n次");
-		table.addCell("星\r\n期");
-		table.addCell("节\r\n次");
-		table.addCell("授课内容");
-		table.addCell("讲课");
-		table.addCell("习题讨论");
-		table.addCell("实验上机");
-		table.addCell("作业安排");
-		table.addCell("辅导安排");
-		table.addCell("其他");
-		table.addCell("执行情况");
-		for ( CourseVO course : courseList ) {
-			table.addCell( course.getWeek().toString() );
-			table.addCell( course.getDayOfWeek() );
-			table.addCell( course.getTimeCourseIndex() );
-			table.addCell( course.getContent() );
-			table.addCell(""); 	//讲课
-			table.addCell("");	//习题讨论
-			table.addCell("");	//实验上机
-			table.addCell( course.getIsHomework() ? "✔" : "" );  //作业安排
-			table.addCell(""); //辅导安排
-			table.addCell(""); //其他
-			table.addCell("执行情况"); //良好
+	private XWPFTable create_table_template(int courseNumber) {
+		//创建表格
+		int rowNumber = NUMBER_ROW_TEMPLATE + courseNumber;
+		XWPFTable table = docx.createTable(rowNumber, NUMBER_COLUMN);
+		table.setTableAlignment(TableRowAlign.CENTER);
+		table.setWidth(5 * 1440);
+		merge_cells_column(table, 1, 4, 9);
+		for ( int i = 0; i < 4; ++i) {
+			merge_cells_row(table, i, 0, 1);
+		}
+		merge_cells_column(table, rowNumber - 1, 0, NUMBER_COLUMN - 1);
+		merge_cells_column(table, rowNumber - 2, 0, 2);
+		merge_cells_column(table, rowNumber - 2, 3, NUMBER_COLUMN - 1);
+		merge_cells_column(table, rowNumber - 3, 0, 2);
+		merge_cells_column(table, rowNumber - 3, 3, NUMBER_COLUMN - 1);
+		CTTbl ttbl = table.getCTTbl(); 
+		CTTblGrid tblGrid = ttbl.addNewTblGrid();
+		CTTblGridCol gridCol = null;
+		XWPFTableCell cell = null;
+		for (int index = 0; index < NUMBER_COLUMN; ++index) {
+			cell = table.getRow(0).getCell(index);
+			cell.setText(FIELD[index]);
+			
 		}
 		return table;
 	}
 	
-	public static Word create_document( User user, Subject subject, String termName, List<CourseVO> courseList) throws Exception {
-		Word word = create_document_template(user, subject, termName);
-		Document document = word.getDocument();
-		document.add( create_table(courseList) );
-		return word;
+	private void create_table(List<CourseVO> courseList) {
+		XWPFTable table = create_table_template(courseList.size() );
+		
+	}
+	
+	public static XWPFDocument create_word( User user, Subject subject, String termName, List<CourseVO> courseList ) {
+		WordUtil wordUtil = new WordUtil();
+		wordUtil.create_word_template(user, subject, termName);
+		wordUtil.create_table(courseList);
+		return  wordUtil.get_docx();
 	}
 
 }

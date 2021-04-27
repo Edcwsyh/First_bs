@@ -5,10 +5,10 @@ import java.util.List;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -37,10 +37,7 @@ import com.iflysse.helper.tools.Constant;
 import com.iflysse.helper.tools.ExcelUtil;
 import com.iflysse.helper.tools.Result;
 import com.iflysse.helper.tools.ResultCode;
-import com.iflysse.helper.tools.Word;
 import com.iflysse.helper.tools.WordUtil;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.pdf.PdfWriter;
 
 @Controller
 @RequestMapping("/subject")
@@ -434,7 +431,7 @@ public class SubjectController {
 	 * 	 调用成功后返回到科目列表
 	 */
 	@RequestMapping("/export_word")
-	public void export_word(HttpServletRequest request, HttpSession session, HttpServletResponse response, Integer subjectId) {
+	public ResponseEntity<byte[]> export_word(HttpServletRequest request, HttpSession session, Integer subjectId) {
 		try {
 			User requestUser = (User) session.getAttribute("loggedUser");
 			Subject subject = subjectServer.get_subject_by_id(subjectId);
@@ -447,18 +444,21 @@ public class SubjectController {
 			if ( subject.getTerm() != term.getId() ) {
 				term = termServer.get_term_by_subject(subject );
 			}
-			Word word = WordUtil.create_document(requestUser, subject,term.getName(), courseList);
+			XWPFDocument word = WordUtil.create_word(requestUser, subject, term.getName(), courseList);
 			String fileName = "《" + subject.getName() + "》教学计划进度表_" + subject.getKlass() + ".docx";
 			String downloadFileName = new String(fileName.getBytes(StandardCharsets.UTF_8.name()),StandardCharsets.ISO_8859_1.name());
-			ServletOutputStream servletOutputStream = response.getOutputStream();
-			word.getByteOut().writeTo(servletOutputStream);
-			response.setContentType("application/octet-stream"); 
-			response.setHeader("Content-Disposition", "attachment;filename=\"" + downloadFileName + "\""); 
+			ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+			HttpHeaders headers = new HttpHeaders();
+			word.write(byteOut);
+			headers.setContentDispositionFormData("attachment", downloadFileName);
+			headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 			word.close();
+			return new ResponseEntity<byte[]>( byteOut.toByteArray(), headers, HttpStatus.CREATED );
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
 		}
+		return null;
 	}
 	
 	/**
