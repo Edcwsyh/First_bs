@@ -51,7 +51,7 @@
                         <li><a href="index.html"><span class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;个人设置</a></li>                      
                     </ul>
                 </li>
-                <li><a href="${pageContext.request.contextPath}/login/login"><span class="glyphicon glyphicon-off"></span>&nbsp;&nbsp;退出</a></li>
+                
             </ul>
         </div>
 
@@ -88,14 +88,13 @@
                         <input type="text" id="gender" name="gender" class="form-control" value="${result.data.gender}">
                     </div>                                 
                     
-                    <div class="form-group">
-                		<button type="submit" class="btn btn-primary">修改</button>
-                		               		               		
+                    <div class="modal-footer">
+		                <a href="${pageContext.request.contextPath}/user/goto_user_update_password" class="btn btn-primary">
+		                修改密码</a>
+		                <button type="submit" class="btn btn-primary">保存修改</button>
             		</div>
                 </form>
-                <div class="form-group">                		                		               		
-                		<a href="${pageContext.request.contextPath}/user/goto_user_update_password"><button style="text-align: right;" class="btn btn-primary">修改密码</button></a>
-            	</div>
+                
            </div>
 
 

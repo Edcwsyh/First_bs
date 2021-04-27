@@ -97,11 +97,10 @@
 					<tbody>
 						<c:forEach items="${result.data }" var="course">
 							<tr>
-
 								<th scope="row">${course.time}</th>
-								<td>${course.teachingGoal }</td>
+								<td>${course.goal }</td>
 								<td>${course.teachingContent }</td>
-								<td>${course.teachingMode }</td>
+								<td>${course.mode }</td>
 								<td>${course.isHomework}</td>
 								<td>${course.specificTime}</td>
 
@@ -114,7 +113,7 @@
 										</button>
 										<ul class="dropdown-menu">
 											<li><a href="${pageContext.request.contextPath}/subject/subject_info?subjectId=${subject.id}">编辑</a></li>
-											<li><a href="${pageContext.request.contextPath}/subject/subject_delete?subjectId=${subject.id}">删除</a></li>
+											<li><a href="${pageContext.request.contextPath}/subject/course/course_delete_single?courseId=${course.id}">删除</a></li>
 
 										</ul>
 									</div>
@@ -176,20 +175,20 @@
 						</div>
 						
 						<div class="form-group">
-							<label for="teachingContent">教学目标</label> 
-							<textarea id="teachingContent" name="teachingContent" class="form-control" rows="15" cols="10" ></textarea>
+							<label for="goal">教学目标</label> 
+							<textarea id="goal" name="goal" class="form-control" rows="15" cols="10" ></textarea>
 						</div>
 						
 						<div class="form-group">
-	                        <label for="teachingMode">教学模式</label>
+	                        <label for="mode">教学模式</label>
 	                        <div>
-		                        <input type="radio" name="teachingMode" value="1" > 线上
-		                        <input type="radio" name="teachingMode" value="0" > 线下
+		                        <input type="radio" name="mode" value="1" > 线上
+		                        <input type="radio" name="mode" value="0" > 线下
 	                        </div>
                         </div>
                         
                       	<div class="form-group">
-	                        <label for="isHomework">教学模式</label>
+	                        <label for="isHomework">是否有作业</label>
 	                        <div>
 		                        <input type="radio" name="isHomework" value="1" > 是
 		                        <input type="radio" name="isHomework" value="0" > 否
