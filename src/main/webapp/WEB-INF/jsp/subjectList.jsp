@@ -35,11 +35,12 @@
 					<li><a
 						href="${pageContext.request.contextPath}/login/goto_index"><span
 							class="glyphicon glyphicon-home"></span>&nbsp;&nbsp;首页</a></li>
-					<li><a href=""><span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp;用户管理</a></li>
+					<li><a href="${pageContext.request.contextPath}/admin/user_list"><span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp;用户管理</a></li>
 					<li class="active"><a href=""><span
 							class="glyphicon glyphicon-list-alt"></span>&nbsp;&nbsp;课表管理</a></li>
-					<li><a href=""><span class="glyphicon glyphicon-tags"></span>&nbsp;&nbsp;我的周报</a></li>
-					<li><a href=""><span class="glyphicon glyphicon-tags"></span>&nbsp;&nbsp;学期管理</a></li>
+			
+	                <li><a href="${pageContext.request.contextPath}/report/user_report_list"><span class="glyphicon glyphicon-tags"></span>&nbsp;&nbsp;我的周报</a></li>
+	                <li><a href="${pageContext.request.contextPath}/term/term_list"><span class="glyphicon glyphicon-tags"></span>&nbsp;&nbsp;学期管理</a></li>
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
 					<li class="dropdown"><a id="dLabel" type="button"
@@ -53,7 +54,7 @@
 							<li><a href="index.html"><span
 									class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;个人设置</a></li>
 						</ul></li>
-					<li><a href="#bbs"><span class="glyphicon glyphicon-off"></span>&nbsp;&nbsp;退出</a></li>
+					<li><a href="${pageContext.request.contextPath}/login/logout"><span class="glyphicon glyphicon-off"></span>&nbsp;&nbsp;退出</a></li>
 				</ul>
 			</div>
 			<!--导航-->
@@ -79,7 +80,7 @@
 					<li class="active"><a href="content.html">课表管理</a></li>
 					<li>
 						<a href="" role="button" data-toggle="modal"
-						data-target="#subjectAdd">添加课表</a>
+						data-target="#subjectAdd">添加科目</a>
 					</li>
 					<li ><a href="${pageContext.request.contextPath}/subject/time/goto_time_add">添加时间表</a></li>
 				</ul>
@@ -116,6 +117,8 @@
 										<ul class="dropdown-menu">
 											<li><a href="${pageContext.request.contextPath}/subject/subject_info?subjectId=${subject.id}">编辑</a></li>
 											<li><a href="${pageContext.request.contextPath}/subject/subject_delete?subjectId=${subject.id}">删除</a></li>
+											<li><a href="${pageContext.request.contextPath}/subject/export_word?subjectId=${subject.id}">导出word表</a></li>
+											<li><a href="${pageContext.request.contextPath}/subject/export_excel?subjectId=${subject.id}">导出excel表</a></li>
 											<li><a href="#">全局置顶</a></li>
 										</ul>
 									</div>
