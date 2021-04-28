@@ -97,9 +97,9 @@
 					<tbody>
 						<c:forEach items="${result.data }" var="course">
 							<tr>
-								<th scope="row">${course.time}</th>
+								<th scope="row">${course.week}</th>
 								<td>${course.goal }</td>
-								<td>${course.teachingContent }</td>
+								<td>${course.content }</td>
 								<td>${course.mode }</td>
 								<td>${course.isHomework}</td>
 								<td>${course.specificTime}</td>
@@ -153,8 +153,8 @@
 					<form action="${pageContext.request.contextPath}/subject/course/course_add"  method="post">
 						<input type="hidden" name="teacher" value="${loggedUser.id }">
 						<div class="form-group">
-							<label for="time">时间</label> <input type="date" id="time"
-								name="time" class="form-control" placeholder="请选择时间">
+							<label for="week">周</label> <input type="date" id="week"
+								name="week" class="form-control" placeholder="请选择时间">
 						</div>
 						
 						<div class="form-group">

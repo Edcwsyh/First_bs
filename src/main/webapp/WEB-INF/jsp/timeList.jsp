@@ -46,7 +46,7 @@
                         <li><a href="index.html"><span class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;个人设置</a></li>  
                     </ul>
                 </li>
-                <li><a href="${pageContext.request.contextPath}/login/logout"><span class="glyphicon glyphicon-off"></span>&nbsp;&nbsp;退出</a></li>
+                <li><a href="#bbs"><span class="glyphicon glyphicon-off"></span>&nbsp;&nbsp;退出</a></li>
             </ul>
         </div>
         <!--导航-->
@@ -65,39 +65,53 @@
 						class="list-group-item">课程管理</a>
 				</div>
 			</div>
+			
 			<div class="col-md-10">
 				<div class="page-header">
 					<h1>课表管理</h1>
 				</div>
-				<ul class="nav nav-tabs">
-					<li class="active"><a href="content.html">课表管理</a></li>
-					<li>
-						<a href="" role="button" data-toggle="modal"
-						data-target="#subjectAdd">时间表管理</a>
-					</li>
-					<li ><a href="${pageContext.request.contextPath}/subject/time/goto_time_add">添加时间表</a></li>
-				</ul>
-				<table class="table">
+				
+					<ul class="nav nav-tabs">
+					<!--  
+						<li class="active"><a href="content.html">课表管理</a></li>
+						<li>
+							<a href="" role="button" data-toggle="modal"
+							data-target="#subjectAdd">时间表管理</a>
+						</li>
+						<li ><a href="${pageContext.request.contextPath}/subject/time/goto_time_add">添加时间表</a></li>
+						-->
+						
+							<li><button type="submit" class="btn btn-primary" onclick="adddate()">添加时间段</button></li>
+							<li>
+								<a href="" role="button" data-toggle="modal" data-target="#courseAdd">时间表管理</a>
+							</li>
+							<li>
+								<a href="${pageContext.request.contextPath}/subject/course/course_list" >时间表管理</a>
+							</li>
+					</ul>
+				<form action="${pageContext.request.contextPath}/subject/time/time_update"  method="post">
+				<table class="table" id="interfaceParam" >
 					<thead>
-						<tr>
-							<th>开始周</th>
-							<th>结束周</th>
-							<th>节次</th>
-							<th>天次</th>
-							<th>教室</th>
-							<th>添加周</th>
-							<th>删除周</th>
-							<th>上课间隔</th>
-						</tr>
-					</thead>
-					<tbody>
-						<c:forEach items="${result.data }" var="time">
 							<tr>
-
-								<th scope="row">${time.weeks}</th>
-								<td>${time.timeQuantum }</td>
-								<td>${time.classRoom }</td>
 								
+								<th>开始周</th>
+								<th>结束周</th>
+								<th>上课间隔</th>
+								<th>节次</th>
+								<th>天次</th>
+								<th>教室</th>
+								<th>添加周</th>
+								<th>删除周</th>
+								
+
+							</tr>
+					</thead>
+				<tbody>
+						<c:forEach items="${result.data }" var="time">
+							<tr class="typeface">														
+								<th scope="row">${time.weeks}</th>
+								<td>${time.timeQuantum}</td>
+								<td>${time.classRoom }</td>
 								<td>
 									<div role="presentation" class="dropdown">
 										<button class="btn btn-default dropdown-toggle"
@@ -115,8 +129,16 @@
 
 							</tr>
 						</c:forEach>
+						
 					</tbody>
 				</table>
+				 	<div class="modal-footer">
+		                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+		                <button type="submit" class="btn btn-primary">提交</button>
+            		</div>
+				</form>
+				
+				
 				<nav class="pull-right">
 					<ul class="pagination">
 						<li class="disabled"><a href="#" aria-label="Previous"><span
@@ -144,7 +166,7 @@
 		</div>
 	</footer>
 	<!--footer-->
-	<div class="modal fade" id="subjectAdd" tabindex="-1" role="dialog"
+	<div class="modal fade" id="courseAdd" tabindex="-1" role="dialog"
 		aria-labelledby="myModalLabel">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
@@ -156,7 +178,7 @@
 					<h4 class="modal-title" id="myModalLabel">添加科目</h4>
 				</div>
 				<div class="modal-body">
-					<form action="${pageContext.request.contextPath}/subject/subject_add"  method="post">
+					<form action="${pageContext.request.contextPath}/subject/"  method="post">
 						<input type="hidden" name="teacher" value="${loggedUser.id }">
 						<div class="form-group">
 							<label for="name">课程名</label> <input type="text" id="name"
@@ -208,17 +230,45 @@
 							<button type="submit" class="btn btn-primary" >提交</button>
 						</div>
 					</form>
-					
-					
 				</div>
-
 			</div>
 		</div>
 	</div>
-		
 	<script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
 	<script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
 	<script src="${pageContext.request.contextPath}/js/multiple.js"></script>
-
+	<script type="text/javascript">
+			function adddate() {
+				// alert(1);
+				var Table = document.getElementById("interfaceParam");
+				var rowsNum = Table.rows.length - 1;
+				NewRow = Table.insertRow(); //添加行
+				NewRow.setAttribute('class', 'typeface');
+				 //添加列
+				startweek = NewRow.insertCell();
+				endweek = NewRow.insertCell();
+				interval = NewRow.insertCell();
+				howTime = NewRow.insertCell();
+				week = NewRow.insertCell();
+				klass = NewRow.insertCell();
+				addWeek = NewRow.insertCell();
+				deleteWeek = NewRow.insertCell();
+				operate = NewRow.insertCell();
+				
+				
+				//属性赋值s
+			
+				startweek.innerHTML = "<select class='form-control' style='width: 60px;'><option value='1'>1</option><option value='2'>2</option><option value='3'>3</option><option value='4'>4</option><option value='5'>5</option><option value='6'>6</option><option value='7'>7</option><option value='8'>8</option><option value='9'>9</option><option value='10'>10</option><option value='11'>11</option><option value='12'>12</option><option value='13'>13</option><option value='14'>14</option><option value='15'>15</option><option value='16'>16</option><option value='17'>17</option><option value='18'>18</option><option value='19'>19</option><option value='20'>20</option></select>";
+				endweek.innerHTML = "<select class='form-control' style='width: 60px;'><option value='1'>1</option><option value='2'>2</option><option value='3'>3</option><option value='4'>4</option><option value='5'>5</option><option value='6'>6</option><option value='7'>7</option><option value='8'>8</option><option value='9'>9</option><option value='10'>10</option><option value='11'>11</option><option value='12'>12</option><option value='13'>13</option><option value='14'>14</option><option value='15'>15</option><option value='16'>16</option><option value='17'>17</option><option value='18'>18</option><option value='19'>19</option><option value='20'>20</option></select>";
+				interval.innerHTML = "<select class='form-control' style='width: 60px;'><option value='1'>1</option><option value='2'>2</option><option value='3'>3</option><option value='4'>4</option><option value='5'>5</option><option value='6'>6</option><option value='7'>7</option><option value='8'>8</option><option value='9'>9</option><option value='10'>10</option><option value='11'>11</option><option value='12'>12</option><option value='13'>13</option><option value='14'>14</option><option value='15'>15</option><option value='16'>16</option><option value='17'>17</option><option value='18'>18</option><option value='19'>19</option><option value='20'>20</option></select>";
+				howTime.innerHTML = "<input type='text' class='form-control'placeholder='必填' id=howTime" + (rowsNum +1) + "  style='width: 80px;' />";
+				week.innerHTML = "<input type='text' class='form-control'placeholder='必填' id=howTime" + (rowsNum +1) + "  style='width: 80px;' />";
+				klass.innerHTML = "<input type='text' class='form-control'placeholder='必填' id=howTime" + (rowsNum +1) + "  style='width: 80px;' />";
+				addWeek.innerHTML = "<input type='text' class='form-control'placeholder='非必填' id=howTime" + (rowsNum +1) + "  style='width: 80px;' />";
+				deleteWeek.innerHTML = "<input type='text' class='form-control'placeholder='非必填' id=howTime" + (rowsNum +1) + "  style='width: 80px;' />";
+				<!--operate.innerHTML = '<div id=operate' + (rowsNum +1) +'><a style="cursor:pointer;color:#007bff;"  onclick="saveInterfaceParam();">保存</a>&nbsp;&nbsp;<a style="cursor:pointer;color:#007bff;"  onclick="saveInterfaceParam();">取消</a></div>';
+				-->
+			}
+			</script>
 </body>
 </html>
