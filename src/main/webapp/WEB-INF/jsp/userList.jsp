@@ -127,18 +127,34 @@
                   
                 </tbody>
             </table>
-            <nav class="pull-right">
-                <ul class="pagination">
-                    <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
-                    <li class="active"><a href="#">1</a></li>
-                    <li><a href="#">2 </a></li>
-                    <li><a href="#">3 </a></li>
-                    <li><a href="#">4 </a></li>
-                    <li><a href="#">5 </a></li>
-                    <li><a href="#">6 </a></li>
-                    <li><a href="#"><span aria-hidden="true">&raquo;</span></a></li>
-                </ul>
-            </nav>
+            <nav aria-label="Page navigation">
+			  <ul class="pagination">
+			    <li ${page.pageNum == 1 ? 'class="disabled"' : '' }>
+			      <a href="${pageContext.request.contextPath}/admin/user_list?pageIndex=${page.pageNum - 1 < 1 ? 1 : page.pageNum - 1 }" aria-label="Previous">
+			        <span aria-hidden="true">&laquo;</span>
+			      </a>
+			    </li>
+			    
+			    <c:forEach begin="${page.pageNum - 2 < 1 ? 1 : page.pageNum - 2 }" 
+			    	end="${page.pageNum + 2 > page.pages ? page.pages : page.pageNum + 2 }" var="num">
+			    	
+			    	<li ${page.pageNum == num ? 'class="active"' : '' }>
+			    		<a href="${pageContext.request.contextPath}/admin/user_list?pageIndex=${num }">${num }</a>
+			    	</li>
+			    </c:forEach>
+			    
+			    <li ${page.pageNum == page.pages ? 'class="disabled"' : '' }>
+			      <a href="${pageContext.request.contextPath}/admin/user_list?pageIndex=${page.pageNum + 1 > page.pages ? page.pages : page.pageNum + 1 }" aria-label="Next">
+			        <span aria-hidden="true">&raquo;</span>
+			      </a>
+			    </li>
+			  </ul>
+			  <p>总条数：${page.total } 
+				总页数：${page.pages } 
+				当前页 ：${page.pageNum } 
+				每页大小：${page.pageSize }
+			  </p>
+			</nav>
         </div>
     </div>
 </div>
