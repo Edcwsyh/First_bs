@@ -65,21 +65,31 @@
 						class="list-group-item">课程·1管理</a>
 				</div>
 			</div>
+			
 			<div class="col-md-10">
 				<div class="page-header">
 					<h1>课表管理</h1>
 				</div>
-				<ul class="nav nav-tabs">
-				<!--  
-					<li class="active"><a href="content.html">课表管理</a></li>
-					<li>
-						<a href="" role="button" data-toggle="modal"
-						data-target="#subjectAdd">时间表管理</a>
-					</li>
-					<li ><a href="${pageContext.request.contextPath}/subject/time/goto_time_add">添加时间表</a></li>
-					-->
-					<li><button type="button" class="btn btn-primary" onclick="adddate()">添加时间段</button></li>
-				</ul>
+				
+					<ul class="nav nav-tabs">
+					<!--  
+						<li class="active"><a href="content.html">课表管理</a></li>
+						<li>
+							<a href="" role="button" data-toggle="modal"
+							data-target="#subjectAdd">时间表管理</a>
+						</li>
+						<li ><a href="${pageContext.request.contextPath}/subject/time/goto_time_add">添加时间表</a></li>
+						-->
+						
+							<li><button type="submit" class="btn btn-primary" onclick="adddate()">添加时间段</button></li>
+							<li>
+								<a href="" role="button" data-toggle="modal" data-target="#courseAdd">时间表管理</a>
+							</li>
+							<li>
+								<a href="${pageContext.request.contextPath}/subject/course/course_list" >时间表管理</a>
+							</li>
+					</ul>
+				<form action="${pageContext.request.contextPath}/subject/time/time_update"  method="post">
 				<table class="table" id="interfaceParam" >
 					<thead>
 							<tr>
@@ -96,12 +106,12 @@
 
 							</tr>
 					</thead>
-					<tbody>
+				<tbody>
 						<c:forEach items="${result.data }" var="time">
-							<tr class="typeface">
-							
-							
-							
+							<tr class="typeface">														
+								<th scope="row">${time.weeks}</th>
+								<td>${time.timeQuantum}</td>
+								<td>${time.classRoom }</td>
 								<td>
 									<div role="presentation" class="dropdown">
 										<button class="btn btn-default dropdown-toggle"
@@ -119,8 +129,16 @@
 
 							</tr>
 						</c:forEach>
+						
 					</tbody>
 				</table>
+				 	<div class="modal-footer">
+		                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+		                <button type="submit" class="btn btn-primary">提交</button>
+            		</div>
+				</form>
+				
+				
 				<nav class="pull-right">
 					<ul class="pagination">
 						<li class="disabled"><a href="#" aria-label="Previous"><span
@@ -148,7 +166,7 @@
 		</div>
 	</footer>
 	<!--footer-->
-	<div class="modal fade" id="subjectAdd" tabindex="-1" role="dialog"
+	<div class="modal fade" id="courseAdd" tabindex="-1" role="dialog"
 		aria-labelledby="myModalLabel">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
@@ -160,7 +178,7 @@
 					<h4 class="modal-title" id="myModalLabel">添加科目</h4>
 				</div>
 				<div class="modal-body">
-					<form action="${pageContext.request.contextPath}/subject/subject_add"  method="post">
+					<form action="${pageContext.request.contextPath}/subject/"  method="post">
 						<input type="hidden" name="teacher" value="${loggedUser.id }">
 						<div class="form-group">
 							<label for="name">课程名</label> <input type="text" id="name"

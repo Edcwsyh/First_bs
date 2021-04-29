@@ -100,7 +100,7 @@
 						</div>
 
 						<div class="form-group">
-	                        <label for="type">是否提交周报</label>
+	                        <label for="type">课程类型</label>
 	                        <div>
 		                        <input type="radio" name="type" value="1" ${result.data.type == 1 ? 'checked':''}> 理论课
 		                        <input type="radio" name="type" value="0" ${result.data.type == 0 ? 'checked':''}> 方向课
@@ -126,7 +126,7 @@
 	        <div class="row">
 	            <div class="col-md-12">
 	                <p>
-	                    Copyright&nbsp;©&nbsp;2012-2015&nbsp;&nbsp;www.maiziedu.com&nbsp;&nbsp;蜀ICP备13014270号-4
+	                    1
 	                </p>
 	            </div>
 	        </div>

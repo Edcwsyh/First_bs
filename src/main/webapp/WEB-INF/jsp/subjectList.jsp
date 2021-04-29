@@ -67,8 +67,10 @@
 		<div class="row">
 			<div class="col-md-2">
 				<div class="list-group">
-					<a href="content.html" class="list-group-item active">课表管理</a> 
-					<a href="${pageContext.request.contextPath}/subject/course/course_list"
+					<a href="content.html" class="list-group-item active">科目管理</a> 
+					<a href="${pageContext.request.contextPath}/subject/time/time_list"
+						class="list-group-item">时间表管理</a>
+					<a href="${pageContext.request.contextPath}/subject/course/course_list?"
 						class="list-group-item">课程管理</a>
 				</div>
 			</div>
@@ -77,12 +79,15 @@
 					<h1>课表管理</h1>
 				</div>
 				<ul class="nav nav-tabs">
-					<li class="active"><a href="content.html">课表管理</a></li>
+					<li class="active"><a href="content.html">科目列表</a></li>
 					<li>
 						<a href="" role="button" data-toggle="modal"
 						data-target="#subjectAdd">添加科目</a>
 					</li>
-					<li ><a href="${pageContext.request.contextPath}/subject/time/goto_time_add">添加时间表</a></li>
+					<li>
+						<a href="" role="button" data-toggle="modal"
+						data-target="#courseAdd">添加课程</a>
+					</li>
 				</ul>
 				<table class="table">
 					<thead>
@@ -227,6 +232,81 @@
 							</div>
 
 						</div>
+
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default"
+								data-dismiss="modal">关闭</button>
+							<button type="submit" class="btn btn-primary" >提交</button>
+						</div>
+					</form>
+					
+					
+				</div>
+
+			</div>
+		</div>
+	</div>
+	
+	
+	<div class="modal fade" id="courseAdd" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel">添加科目</h4>
+				</div>
+				<div class="modal-body">
+					<form action="${pageContext.request.contextPath}/subject/course/course_add"  method="post">
+						<input type="hidden" name="teacher" value="${loggedUser.id }">
+						<div class="form-group">
+							<label for="week">周次</label>
+							<select id="week" name="courseList.week" class="form-control">
+                        	  
+                        	<option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                                                  
+                        	</select>
+						</div>
+						
+						<div class="form-group">
+							<label for="teachingGoal">教学内容</label> 
+							<textarea id="teachingGoal" name="courseList.teachingGoal" class="form-control" rows="15" cols="10" ></textarea>
+						</div>
+						
+						<div class="form-group">
+							<label for="goal">教学目标</label> 
+							<textarea id="goal" name="courseList.goal" class="form-control" rows="15" cols="10" ></textarea>
+						</div>
+						
+						<div class="form-group">
+	                        <label for="mode">教学模式</label>
+	                        <div>
+		                        <input type="radio" name="courseList.mode" value="1" > 线上
+		                        <input type="radio" name="courseList.mode" value="0" > 线下
+	                        </div>
+                        </div>
+                        
+                      	<div class="form-group">
+	                        <label for="isHomework">是否有作业</label>
+	                        <div>
+		                        <input type="radio" name="courseList.isHomework" value="1" > 是
+		                        <input type="radio" name="courseList.isHomework" value="0" > 否
+	                        </div>
+                        </div>                    					
+
+						<div class="form-group">
+							<label for="specificTime">具体上课时间</label> 
+							<input type="time" id="specificTime" name="courseList.specificTime" class="form-control"
+								placeholder="请选择具体上课时间">
+						</div>
+					
 
 						<div class="modal-footer">
 							<button type="button" class="btn btn-default"
