@@ -62,7 +62,7 @@
 				<div class="list-group">
 					<a href="content.html" class="list-group-item active">课表管理</a> 
 					<a href="${pageContext.request.contextPath}/subject/course/course_list"
-						class="list-group-item">课程管理</a>
+						class="list-group-item">课程·1管理</a>
 				</div>
 			</div>
 			

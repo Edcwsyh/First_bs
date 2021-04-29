@@ -1,14 +1,8 @@
 package com.iflysse.helper.tools;
 
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
@@ -20,13 +14,21 @@ import org.apache.poi.xssf.streaming.SXSSFCell;
 import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.iflysse.helper.bean.CourseVO;
 import com.iflysse.helper.bean.Subject;
-import com.iflysse.helper.bean.Term;
 
 public class ExcelUtil {
+	
+	SXSSFWorkbook excel;
+	
+	private ExcelUtil() {
+		excel = new SXSSFWorkbook();
+	}
+	
+	public SXSSFWorkbook get_excel() {
+		return excel;
+	}
 	/**
 	 * 填表注意
 	 */
@@ -74,7 +76,7 @@ public class ExcelUtil {
 	 * @param excel
 	 * @return
 	 */
-	private static CellStyle create_style_base(SXSSFWorkbook excel) {
+	private CellStyle create_style_base() {
 		CellStyle style = excel.createCellStyle();
 		style.setBorderBottom(BorderStyle.THIN);
 		style.setBorderLeft(BorderStyle.THIN);
@@ -87,8 +89,8 @@ public class ExcelUtil {
 	 * @param excel 需要创建的excel对象
 	 * @return
 	 */
-	private static CellStyle create_style_title(SXSSFWorkbook excel) {
-		CellStyle style = create_style_base(excel);
+	private CellStyle create_style_title() {
+		CellStyle style = create_style_base();
 		style.setAlignment(HorizontalAlignment.CENTER);
 		style.setVerticalAlignment(VerticalAlignment.CENTER);
 		style.setFillForegroundColor(IndexedColors.LIGHT_TURQUOISE.getIndex());// 设置背景色
@@ -112,8 +114,8 @@ public class ExcelUtil {
 	 * @param excel 需要创建的excel对象
 	 * @return
 	 */
-	private static CellStyle create_style_field(SXSSFWorkbook excel) {
-		CellStyle style = create_style_base(excel);
+	private CellStyle create_style_field() {
+		CellStyle style = create_style_base();
 		style.setAlignment(HorizontalAlignment.CENTER);
 		style.setVerticalAlignment(VerticalAlignment.CENTER);
 		style.setFillForegroundColor(IndexedColors.LIGHT_TURQUOISE.getIndex());// 设置背景色
@@ -136,8 +138,8 @@ public class ExcelUtil {
 	 * @param excel 需要创建的excel对象
 	 * @return
 	 */
-	private static CellStyle create_style_text(SXSSFWorkbook excel) {
-		CellStyle style = create_style_base(excel);
+	private CellStyle create_style_text() {
+		CellStyle style = create_style_base();
 		style.setAlignment(HorizontalAlignment.CENTER);
 		style.setVerticalAlignment(VerticalAlignment.CENTER);
 		Font font = excel.createFont();
@@ -175,50 +177,42 @@ public class ExcelUtil {
 	 * 创建一个excel模板
 	 * @return
 	 */
-	public static SXSSFWorkbook get_excel_template() {
-		SXSSFWorkbook excel = new SXSSFWorkbook();
+	public static ExcelUtil get_excel_template() {
+		ExcelUtil excelUtil = new ExcelUtil();
+		SXSSFWorkbook excel = excelUtil.get_excel();
 		SXSSFSheet sheet = excel.createSheet("课表");
-		CellStyle titleStyle = create_style_title(excel), fieldStyle = create_style_field(excel), warningStyle = create_style_text(excel);
+		CellStyle titleStyle = excelUtil.create_style_title(), fieldStyle = excelUtil.create_style_field(), warningStyle = excelUtil.create_style_text();
 		warningStyle.setAlignment(HorizontalAlignment.LEFT);
 		//设置单元格默认列宽和行高
 		sheet.setDefaultColumnWidth(WIDTH_DEFAULT_COLUMN);
 		sheet.setDefaultRowHeightInPoints(HIGHT_DEFAULT_ROW);
-		//创建单元格样式
-		
-        List<SXSSFRow> rowList = null;
-        //创建4行10列的表格
-        try {
-        	rowList = new ArrayList<SXSSFRow>(NUMBER_INIT_ROW);
-		} catch (Exception e) {
-			System.out.println("初始化错误");
-		}
-        
-        System.out.println(rowList.size());
-        rowList.add(sheet.createRow(0));
-        rowList.add(sheet.createRow(1));
-        rowList.add(sheet.createRow(2));
-        rowList.add(sheet.createRow(3));
-        SXSSFCell cell;
-        for ( SXSSFRow iter : rowList ) {
+        sheet.createRow(0);
+        sheet.createRow(1);
+        sheet.createRow(2);
+        sheet.createRow(3);
+        SXSSFCell cell = null;
+        SXSSFRow row = null;
+        for ( int rowIndex = 0; rowIndex < 4; ++rowIndex ) {
+        	row = sheet.getRow(rowIndex);
         	for ( int index = 0; index < NUMBER_COLUMN; ++index ) {
-        		cell = iter.createCell(index);
+        		cell = row.createCell(index);
         		cell.setCellStyle(fieldStyle);
         	}
         }
         //设置填表注意单元格的格式
-        rowList.get(0).getCell(0).setCellStyle(warningStyle);
+        sheet.getRow(0).getCell(0).setCellStyle(warningStyle);
         //设置标题单元格的格式
-        rowList.get(1).getCell(0).setCellStyle(titleStyle);
+        sheet.getRow(1).getCell(0).setCellStyle(titleStyle);
 		//设置各列列宽
 		sheet.setColumnWidth(0, 21 * 255);
 		sheet.setColumnWidth(5, 14 * 255);
 		sheet.setColumnWidth(8, 19 * 255);
 		sheet.setColumnWidth(9, 120 * 255);
 		//设置各行行高
-		rowList.get(0).setHeightInPoints(150);
-		rowList.get(1).setHeightInPoints(31);
-		rowList.get(2).setHeightInPoints(25);
-		rowList.get(3).setHeightInPoints(25);
+		sheet.getRow(0).setHeightInPoints(150);
+		sheet.getRow(1).setHeightInPoints(31);
+		sheet.getRow(2).setHeightInPoints(25);
+		sheet.getRow(3).setHeightInPoints(25);
 		//合并单元格
 		CellRangeAddress region = new CellRangeAddress(0, 0, 0, 0);
 		merge_cell(sheet, region, 0, 0, 0, 9);
@@ -226,22 +220,22 @@ public class ExcelUtil {
 		merge_cell(sheet, region, 2, 2, 1, 6);
 		merge_cell(sheet, region, 2, 2, 7, 8);
 		//将"填表注意"写入第一行并设置其行高
-		rowList.get(0).getCell(0).setCellValue(WARNING);
+		sheet.getRow(0).getCell(0).setCellValue(WARNING);
 		//填入表的字段
-		rowList.get(1).getCell(0).setCellValue("开课课表");
-		rowList.get(2).getCell(0).setCellValue("开课名称");
-		rowList.get(2).getCell(7).setCellValue("班级名称");
-		rowList.get(3).getCell(0).setCellValue("日期");
-		rowList.get(3).getCell(1).setCellValue("时段");
-		rowList.get(3).getCell(2).setCellValue("节次");
-		rowList.get(3).getCell(3).setCellValue("课程类型");
-		rowList.get(3).getCell(4).setCellValue("教学模式");
-		rowList.get(3).getCell(5).setCellValue("教室");
-		rowList.get(3).getCell(6).setCellValue("讲师");
-		rowList.get(3).getCell(7).setCellValue("助教");
-		rowList.get(3).getCell(8).setCellValue("是否要求布置作业");
-		rowList.get(3).getCell(9).setCellValue("授课内容");
-		return excel;
+		sheet.getRow(1).getCell(0).setCellValue("开课课表");
+		sheet.getRow(2).getCell(0).setCellValue("开课名称");
+		sheet.getRow(2).getCell(7).setCellValue("班级名称");
+		sheet.getRow(3).getCell(0).setCellValue("日期");
+		sheet.getRow(3).getCell(1).setCellValue("时段");
+		sheet.getRow(3).getCell(2).setCellValue("节次");
+		sheet.getRow(3).getCell(3).setCellValue("课程类型");
+		sheet.getRow(3).getCell(4).setCellValue("教学模式");
+		sheet.getRow(3).getCell(5).setCellValue("教室");
+		sheet.getRow(3).getCell(6).setCellValue("讲师");
+		sheet.getRow(3).getCell(7).setCellValue("助教");
+		sheet.getRow(3).getCell(8).setCellValue("是否要求布置作业");
+		sheet.getRow(3).getCell(9).setCellValue("授课内容");
+		return excelUtil;
 	}
 
 	/**
@@ -254,10 +248,11 @@ public class ExcelUtil {
 	 */
 	public static SXSSFWorkbook create_excel(String teacher, Subject subect, List<CourseVO> courseList) {
 		try {
-			SXSSFWorkbook excel = get_excel_template();
+			ExcelUtil excelUtil = get_excel_template();
+			SXSSFWorkbook excel = excelUtil.get_excel();
 			SXSSFSheet sheet = excel.getSheet("课表");
 			int index;
-			CellStyle textStyle = create_style_text(excel);
+			CellStyle textStyle = excelUtil.create_style_text();
 			//设置课程名称和教授班级
 			sheet.getRow(2).getCell(1).setCellValue( subect.getName() );
 			sheet.getRow(2).getCell(9).setCellValue( subect.getKlass() );
