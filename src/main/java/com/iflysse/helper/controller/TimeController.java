@@ -110,16 +110,40 @@ public class TimeController {
 		}
 		Subject subject = subjectServer.get_subject_by_id( timeVOList.get(0).getSubject() );
 		User requestUser = (User) session.getAttribute("loggedUser");
+		if ( subject == null ) {
+			request.setAttribute("result", new Result< Void >( ResultCode.ERROR_SUBJECT_NOT_FOUND, null) );
+			System.out.println("已拦截 - 找不到该科目");
+			return "error/403";
+		}
 		if ( subject.getTeacher() != requestUser.getId() ) {
 			request.setAttribute("result", new Result< Void >( ResultCode.ERROR_PERMISSION, null) );
 			System.out.println("已拦截 - 用户权限不足");
 			return "error/403";
 		}
-		List<Time> timeList = new LinkedList<Time>();
+		List<Time> timeList = subjectServer.get_time_by_subject( subject.getId() );
+		Map<Integer, Time> map = new HashMap<Integer, Time>();
+		Time temp;
+		for ( Time time: timeList) {
+			map.put( time.getId(), time );
+		}
 		for ( TimeVO timeVOIter : timeVOList ) {
-			timeList.add( new Time(timeVOIter) );
+			if ( timeVOIter.getId() == null ) {
+				timeList.add( new Time(timeVOIter) );
+			} else {
+				if ( ( temp = map.get( timeVOIter.getId() ) ) == null ) {
+					request.setAttribute("result", new Result< Void >( ResultCode.ERROR_TIME_NOT_FOUNT, null) );
+					System.out.println("已拦截 - 未找到时间对象");
+					return "error/404";
+				} else {
+					temp.addWeeks( timeVOIter.getAddWeek() );
+					temp.deleteWeeks( timeVOIter.getDeleteWeek() );
+				}
+			}
 		}
 		List<Course> courseList = subjectServer.time_update(subject, timeList);
+		for ( Course course : courseList) {
+			System.out.println( "第 " + course.getWeek() + " " +  course.getSpecificTime() + "周" + course.getSpecificTime().getDay() );
+		}
 		System.out.println("请求成功 - 已更新时间表和课程表");
 		request.setAttribute("result", new Result< List<Course> >( ResultCode.SUCCESS, courseList) );
 		return "redirect:/course/courseList";
@@ -177,5 +201,12 @@ public class TimeController {
 		return "timeList";
 	}
 	
+	@RequestMapping("/time_test")
+	public void time_test(HttpServletRequest request, HttpSession session, Integer subjectId) {
+		List<TimeVO> timeList = new LinkedList<TimeVO>();
+		timeList.add( new TimeVO(null, 5, "九班", null, (byte) 1, (byte) 10,(byte) 1, null, null, (byte)1, (byte)2) );
+		timeList.add( new TimeVO(null, 5, "九班", null, (byte) 12, (byte) 13,(byte) 1, null, null, (byte)1, (byte)2) );
+		time_update(request, session, timeList);
+	}
 
 }

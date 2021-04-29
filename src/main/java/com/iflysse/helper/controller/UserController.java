@@ -21,9 +21,6 @@ import com.iflysse.helper.tools.ResultCode;
 public class UserController {
 	
 	@Autowired
-	private UserDao userDao;
-	
-	@Autowired
 	private UserServer userServer;
 	
 	@RequestMapping("/goto_user_update_password")
@@ -178,11 +175,11 @@ public class UserController {
 		}
 		
 		//查询用户名、邮箱、电话号码是否已经被注册
-		if (userDao.get_user_by_ump(user).size() != 0) {
+		if ( userServer.get_user_by_ump(user).size() != 0) {
 			request.setAttribute("result", new Result<Boolean>(ResultCode.ERROR_USER_EXIST, null));
 			return  "error/409";
 		}
-		userDao.insert_user(user);
+		userServer.insert_user(user);
 		request.setAttribute("result", new Result<Boolean>(ResultCode.SUCCESS, null));
 		return "login";
 	}
@@ -315,7 +312,7 @@ public class UserController {
 				return "error/403";
 			}
 			//判断被锁定的用户是否存在
-			if ( ( lockUser = userDao.get_user_by_id(lockUserId) ) == null ) {
+			if ( ( lockUser = userServer.get_user_by_id(lockUserId) ) == null ) {
 				request.setAttribute("result", new Result<Boolean>( ResultCode.ERROR_USER_NOT_FOUND,null));
 				return "error/404";
 			}
@@ -324,7 +321,7 @@ public class UserController {
 				request.setAttribute("result", new Result<Boolean>( ResultCode.ERROR_PERMISSION,null));
 				return "error/403";
 			}
-			userDao.update_user_state(lockUserId, Constant.USER_STATE_FREEZE);
+			userServer.update_user_state(lockUserId, Constant.USER_STATE_FREEZE);
 			return "redirect:/userList";
 		}
 		//判断该用户的权限 (管理员用户不可被冻结！)
@@ -332,7 +329,7 @@ public class UserController {
 			request.setAttribute("result", new Result<Boolean>( ResultCode.ERROR_PERMISSION,null));
 			return "error/403";
 		}
-		userDao.update_user_state(lockUserId, Constant.USER_STATE_FREEZE);
+		userServer.update_user_state(lockUserId, Constant.USER_STATE_FREEZE);
 		return "redirect:/userInfo" + lockUserId;
 	}
 	

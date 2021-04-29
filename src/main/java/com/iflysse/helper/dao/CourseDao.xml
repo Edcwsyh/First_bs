@@ -5,24 +5,24 @@
 	
 	<insert id="insert_course_list" parameterType="com.iflysse.helper.bean.Course" >
     insert into t_course
-        (subject, time, goal, content, mode, isHomework, specificTime)
+        (subject, time, goal, content, week, mode, isHomework, specificTime)
     values
-    <foreach collection="courseList" item="item" index="index" separator=",">
-        (#{item.subject}, #{item.time},#{item.goal}, #{item.content}, 
+    <foreach collection="list" item="item" index="index" separator=",">
+        (#{item.subject}, #{item.time},#{item.goal}, #{item.content},#{item.week},
         #{item.mode}, #{item.isHomework}, #{item.specificTime} )
     </foreach>
 	</insert>
 	
 	<insert id="update_course_list" parameterType="com.iflysse.helper.bean.Course" >
     	insert into t_course
-        	(id, goal, content, mode, isHomework, specificTime)
+        	(id, subject, time, week, goal, content, mode, isHomework, specificTime)
     	VALUES
-    	<foreach collection="courseList" item="item" index="index" separator=",">
-        	(#{id},#{item.goal}, #{item.content},#{item.mode}, #{item.isHomework}, #{item.specificTime} ) 
+    	<foreach collection="list" item="item" index="index" separator=",">
+        	(#{id}, #{item.subject}, #{item.time}, #{item.week}, #{item.goal}, #{item.content}, #{item.mode}, #{item.isHomework}, #{item.specificTime} ) 
     	</foreach>
-    	on duplicate key update 
-       	goal=values(goal), content=values(content), mode=values(mode), isHomework=values(isHomework),
-       	specificTime=values(specificTime)
+    	ON DUPLICATE KEY UPDATE 
+       	time=values(time), week=values(week), goal=values(goal), content=values(content), 
+       	mode=values(mode), isHomework=values(isHomework), specificTime=values(specificTime)
 	</insert>
 	
 </mapper>

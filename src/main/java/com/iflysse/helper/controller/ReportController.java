@@ -15,6 +15,7 @@ import com.github.pagehelper.PageHelper;
 import com.iflysse.helper.bean.Report;
 import com.iflysse.helper.bean.User;
 import com.iflysse.helper.dao.ReportDao;
+import com.iflysse.helper.service.ReportServer;
 import com.iflysse.helper.tools.Constant;
 import com.iflysse.helper.tools.Result;
 import com.iflysse.helper.tools.ResultCode;
@@ -24,14 +25,14 @@ import com.iflysse.helper.tools.ResultCode;
 public class ReportController {
 	
 	@Autowired
-	private ReportDao reportDao;
+	private ReportServer reportServer;
 	
 	/**
 	 * 通过id获取指定报告
 	 * @return
 	 */
 	private Result<Report> get_report_by_id(User requestUser, Integer reportId) {
-		Report dbReport = reportDao.get_report_by_id( reportId );
+		Report dbReport = reportServer.get_report_by_id( reportId );
 		if ( dbReport == null ) {
 			return new Result<Report>(ResultCode.ERROR_REPORT_NOT_FOUNT, null);
 		} else if( requestUser.getId() != dbReport.getAuthor() && 
@@ -62,7 +63,7 @@ public class ReportController {
 	@RequestMapping("/goto_report_update")
 	public String goto_report_update(HttpServletRequest request, HttpSession session, Integer reportId) {
 		User requestUser = (User) session.getAttribute("loggedUser");
-		Report dbReport = reportDao.get_report_by_id( reportId );
+		Report dbReport = reportServer.get_report_by_id( reportId );
 		//通过封装的方法获取数据库中的周报
 		Result<Report> result = get_report_by_id(requestUser, reportId);
 		request.setAttribute("result", result);
@@ -125,7 +126,7 @@ public class ReportController {
 		}
 		request.setAttribute("result", new Result< List <Report> >(
 					ResultCode.SUCCESS, 
-					reportDao.get_report_list())
+					reportServer.get_report_list_by_submit())
 				);
 		Page<Report> subjectPage = PageHelper.startPage(pageIndex, Constant.PAGE_NUMBER);
 		request.setAttribute("page", subjectPage.toPageInfo() );
@@ -179,7 +180,7 @@ public class ReportController {
 		User requestUser = (User) session.getAttribute("loggedUser");
 		request.setAttribute("result", new Result< List <Report> >(
 					ResultCode.SUCCESS, 
-					reportDao.get_report_list_by_user( requestUser.getId() )
+					reportServer.get_report_list_by_user( requestUser.getId() )
 					)
 				);
 		Page<Report> subjectPage = PageHelper.startPage(pageIndex, Constant.PAGE_NUMBER);
@@ -267,7 +268,7 @@ public class ReportController {
 			request.setAttribute("result", new Result<Boolean>(ResultCode.ERROR_PARAM, null));
 			return "error/404";
 		}
-		reportDao.insert_report(report);
+		reportServer.insert_report(report);
 		request.setAttribute("result", new Result<Boolean>(ResultCode.SUCCESS, null));
 		return "redirect:user_report_list";
 	}
@@ -311,7 +312,7 @@ public class ReportController {
 			return "error/400";
 		}
 		//检测数据库中是否存在该周报
-		if( (dbReport = reportDao.get_report_by_id( report.getId() ) ) == null ) {
+		if( (dbReport = reportServer.get_report_by_id( report.getId() ) ) == null ) {
 			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_REPORT_NOT_FOUNT, null));
 			return "error/404";
 		//判断该周报是否属于请求用户
@@ -327,7 +328,7 @@ public class ReportController {
 			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_REPORT_CONTENT_EMPTY, null));
 			return "";
 		}
-		reportDao.update_report(report);;
+		reportServer.update_report(report);;
 		return "redirect:user_report_list";
 	}
 	
@@ -364,7 +365,7 @@ public class ReportController {
 	public String report_delete(HttpServletRequest request, HttpSession session, Integer reportId) {
 		User requestUser = (User) session.getAttribute("loggedUser");
 		//通过封装的方法获取数据库中的周报
-		Report dbReport = reportDao.get_report_by_id(reportId);
+		Report dbReport = reportServer.get_report_by_id(reportId);
 		if( dbReport == null ) {
 			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_REPORT_NOT_FOUNT, null) );
 			return "error/404";
@@ -382,9 +383,48 @@ public class ReportController {
 			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_PERMISSION, null) );
 			return "error/403";
 		}
-		reportDao.delete_report(reportId);
+		reportServer.delete_report(reportId);
 		request.setAttribute("result", new Result<Void>(ResultCode.SUCCESS, null) );
 		return "redirect:report_list";
+	}
+	
+	/**
+	 * @api {post} /TeacherHelper/report/report_submit 提交某一周报
+	 * @apiVersion 1.0.0
+	 * @apiGroup Report
+	 * @apiName 提交周报
+	 * @apiSuccess {Boolean} Success true表示请求成功，false表示请求失败
+	 * @apiSuccess {number} code 错误代码
+	 * @apiSuccess {string} message 错误信息
+	 * @apiParam {number} reportId 所要提交周报的id
+	 * @apiSuccessExample {json} 请求成功例子:
+	 *     {
+	 *     	"Success" : true,
+	 *      "code" : 20000,
+	 *      "message" : "请求成功",
+	 *      "data" : null
+	 *     }
+	 * @apiParamExample {json} 请求示例:
+	 *	{
+	 *		"reportId" : 1334
+	 * 	}
+	 */
+	@RequestMapping("/report_submit")
+	public String report_submit(HttpServletRequest request,HttpSession session, Integer reportId) {
+		//检测report中除id外是否存在空字段(time不进行检测)
+		User requestUser = (User) session.getAttribute("loggedUser");
+		Report dbReport = reportServer.get_report_by_id(reportId);
+		if ( dbReport == null) {
+			request.setAttribute("result", new Result<Void>( ResultCode.ERROR_REPORT_NOT_FOUNT, null) );
+			return "error/404";
+		}
+		if ( requestUser.getId() != dbReport.getAuthor() ) {
+			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_PERMISSION, null));
+			return "error/403";
+		}
+		reportServer.update_report_state(reportId, true);
+		request.setAttribute("result", new Result<Void>(ResultCode.SUCCESS, null));
+		return "redirect:user_report_list";
 	}
 	
 }

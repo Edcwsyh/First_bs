@@ -48,7 +48,7 @@ public class TimeVO extends TimeBase{
 	
 	public TimeVO(Time time) {
 		super(time.getId(), time.getSubject(), time.getClassroom() );
-		weeks = time.getWeeks();
+		weeks = time.getWeekString();
 	}
 
 	public Byte getStarWeek() {

@@ -86,6 +86,10 @@ public interface Constant {
 	 * 默认开始的页面
 	 */
 	String PAGE_START = "1";
+	/**
+	 * 所支持的最大周数
+	 */
+	byte MAX_WEEK = 32;
 	
 	/**
 	 * 检测-id

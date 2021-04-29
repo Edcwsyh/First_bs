@@ -3,7 +3,6 @@ package com.iflysse.helper.controller;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -25,10 +24,7 @@ import com.iflysse.helper.bean.CourseVO;
 import com.iflysse.helper.bean.Subject;
 import com.iflysse.helper.bean.Term;
 import com.iflysse.helper.bean.User;
-import com.iflysse.helper.dao.CourseDao;
-import com.iflysse.helper.dao.SubjectDao;
 import com.iflysse.helper.dao.TermDao;
-import com.iflysse.helper.dao.TimeDao;
 import com.iflysse.helper.dao.UserDao;
 import com.iflysse.helper.service.SubjectServer;
 import com.iflysse.helper.service.TermServer;
@@ -473,6 +469,4 @@ public class SubjectController {
 	public String goto_subject_add() {
 		return "subjectAdd";
 	}
-	
-	
 }

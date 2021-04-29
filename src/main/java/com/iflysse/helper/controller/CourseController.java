@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -21,6 +22,7 @@ import com.iflysse.helper.tools.Constant;
 import com.iflysse.helper.tools.Result;
 import com.iflysse.helper.tools.ResultCode;
 
+@Controller
 @RequestMapping("/subject/course")
 public class CourseController {
 	
@@ -71,7 +73,7 @@ public class CourseController {
 	 */
 	@RequestMapping("/course_add")
 	public String course_add(HttpServletRequest request, HttpSession session, List<Course> courseList) {
-		if(courseList.size() == 0) {
+		if(courseList == null || courseList.size() == 0) {
 			request.setAttribute("result", new Result< List <Report> >(ResultCode.ERROR_PARAM, null));
 			return "error/400";
 		}
@@ -140,7 +142,7 @@ public class CourseController {
 	 */
 	@RequestMapping("/course_update")
 	public String course_update(HttpServletRequest request, HttpSession session, List<Course> courseList) {
-		if(courseList.size() == 0) {
+		if(courseList == null || courseList.size() == 0) {
 			request.setAttribute("result", new Result< Void >(ResultCode.ERROR_PARAM, null));
 			return "error/400";
 		}

@@ -25,8 +25,8 @@ public interface CourseDao {
 	 * @param subjectId 科目id
 	 * @return
 	 */
-	@Select("select tc.id id, tc.goal goal, tc.content content, tc.mode mode, tc.isHomework isHomework,"
-			+ "tc.specificTime specificTime, tt.classroom classroom, tt.timeQuantum timeQuantum "
+	@Select("select tc.id id, tc.week week, tt.subject subject, tt.id id, tc.goal goal, tc.content content, tc.mode mode, tc.isHomework isHomework,"
+			+ "tc.specificTime specificTime, tt.timeQuantum timeQuantum, tt.classroom classroom "
 			+ "from t_course tc inner join t_time tt "
 			+ "on tc.time=tt.id "
 			+ "where tc.subject=#{subjectId}")

@@ -127,4 +127,19 @@ public class UserServerImpl implements UserServer {
 		return userDao.get_user_by_id(id);
 	}
 
+	@Override
+	public List<User> get_user_by_ump(User user) {
+		return userDao.get_user_by_ump(user);
+	}
+
+	@Override
+	public void insert_user(User user) {
+		userDao.insert_user(user);
+	}
+
+	@Override
+	public void update_user_state(Integer userId, byte state) {
+		userDao.update_user_state(userId, state);
+	}
+
 }
