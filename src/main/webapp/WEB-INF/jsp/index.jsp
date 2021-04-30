@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
     
+ <%@page import="java.util.*"%>
+<%@page import="java.text.SimpleDateFormat"%>      
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -90,7 +92,13 @@
         <div class="row">
             <div class="col-md-12">
                 <p>
-                    2021-4-9                    
+                    <%
+						Date d = new Date();
+						SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+						String now = df.format(d);
+					%>
+	
+					当前时间：<%=now %>                
                 </p>
             </div>
         </div>

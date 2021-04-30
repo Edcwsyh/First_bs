@@ -91,9 +91,9 @@
                      <div class="form-group">
                         <label for="permission">用户权限</label>
                         <div>
-	                        <input type="radio" id="permission" name="permission" value="1" ${result.data.gender == 1 ? 'checked':''}> 普通用户
-	                        <input type="radio" id="permission" name="permission" value="0" ${result.data.gender == 0 ? 'checked':''}> 管理员
-	                        <input type="radio" id="permission" name="permission" value="2" ${result.data.gender == 2 ? 'checked':''}> 经理
+	                        <input type="radio" id="permission" name="permission" value="0" ${result.data.permission == 0 ? 'checked':''}> 管理员
+	                        <input type="radio" id="permission" name="permission" value="1" ${result.data.permission == 1 ? 'checked':''}> 普通用户
+	                        <input type="radio" id="permission" name="permission" value="2" ${result.data.permission == 2 ? 'checked':''}> 经理
                         </div>
                     </div>
                     

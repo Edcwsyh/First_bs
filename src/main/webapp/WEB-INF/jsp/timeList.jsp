@@ -61,8 +61,7 @@
 			<div class="col-md-2">
 				<div class="list-group">
 					<a href="content.html" class="list-group-item active">课表管理</a> 
-					<a href="${pageContext.request.contextPath}/subject/course/course_list"
-						class="list-group-item">课程·1管理</a>
+					
 				</div>
 			</div>
 			
@@ -72,43 +71,36 @@
 				</div>
 				
 					<ul class="nav nav-tabs">
-					<!--  
-						<li class="active"><a href="content.html">课表管理</a></li>
+					 
+						
 						<li>
 							<a href="" role="button" data-toggle="modal"
-							data-target="#subjectAdd">时间表管理</a>
+							data-target="#timeAdd">添加时间</a>
 						</li>
-						<li ><a href="${pageContext.request.contextPath}/subject/time/goto_time_add">添加时间表</a></li>
-						-->
 						
+						
+						<!-- 
 							<li><button type="submit" class="btn btn-primary" onclick="adddate()">添加时间段</button></li>
-							<li>
-								<a href="" role="button" data-toggle="modal" data-target="#courseAdd">时间表管理</a>
-							</li>
-							<li>
-								<a href="${pageContext.request.contextPath}/subject/course/course_list" >时间表管理</a>
-							</li>
+							<li><button type="submit" value="" class="btn btn-primary" onclick="javascript:window.location.href='${pageContext.request.contextPath}/subject/time/time_update'">完成添加</button></li>
+						-->
+							
 					</ul>
 				<form action="${pageContext.request.contextPath}/subject/time/time_update"  method="post">
 				<table class="table" id="interfaceParam" >
 					<thead>
 							<tr>
 								
-								<th>开始周</th>
-								<th>结束周</th>
-								<th>上课间隔</th>
-								<th>节次</th>
-								<th>天次</th>
+								<th>周次</th>
+								<th>时间段</th>
 								<th>教室</th>
-								<th>添加周</th>
-								<th>删除周</th>
+								
 								
 
 							</tr>
 					</thead>
 				<tbody>
 						<c:forEach items="${result.data }" var="time">
-							<tr class="typeface">														
+							<tr class="typeface">													
 								<th scope="row">${time.weeks}</th>
 								<td>${time.timeQuantum}</td>
 								<td>${time.classRoom }</td>
@@ -166,7 +158,7 @@
 		</div>
 	</footer>
 	<!--footer-->
-	<div class="modal fade" id="courseAdd" tabindex="-1" role="dialog"
+	<div class="modal fade" id="timeAdd" tabindex="-1" role="dialog"
 		aria-labelledby="myModalLabel">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
@@ -175,55 +167,88 @@
 						aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
-					<h4 class="modal-title" id="myModalLabel">添加科目</h4>
+					<h4 class="modal-title" id="myModalLabel">添加时间</h4>
 				</div>
 				<div class="modal-body">
-					<form action="${pageContext.request.contextPath}/subject/"  method="post">
+					<form action="${pageContext.request.contextPath}/subject/time/time_update"  method="post">
 						<input type="hidden" name="teacher" value="${loggedUser.id }">
 						<div class="form-group">
-							<label for="name">课程名</label> <input type="text" id="name"
-								name="name" class="form-control" placeholder="请输入课程名">
-						</div>
-
-						
-						<div class="form-group">
-							<label for="ta">课程助教</label> <input type="text" id="ta" name="ta"
-								class="form-control" placeholder="请输入课程助教">
-						</div>
-						
-						<div class="form-group">
-							<label for="klass">授课班级</label> 
-								<input type="text" id="klass" name="klass" class="form-control" placeholder="请输入授课班级">
+							<label for="startWeek">开始周</label>
+							<select id="startWeek" name="timeVOList[0].startWeek" class="form-control">
+                        	
+                        	<option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                                                  
+                        	</select>
+                        	
 						</div>
 						
 						<div class="form-group">
-							<label for="timeTotal">总课时</label> <input type="number"
-								id="timeTotal" name="timeTotal" class="form-control"
-								placeholder="">
+							<label for="endWeek">结束周</label>
+							<select id="endWeek" name="timeVOList[0].endWeek" class="form-control">
+                        	
+                        	<option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                                                  
+                        	</select>
+                        	
 						</div>
-
+						
 						<div class="form-group">
-							<label for="timeTheory">理论课时</label> <input type="number"
-								id="timeTheory" name="timeTheory" class="form-control"
-								placeholder="">
+							<label for="week">星期</label>
+							<select id="week" name="timeVOList[0].week" class="form-control">
+                        	
+                        	<option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                            <option>6</option>
+                            <option>7</option>
+                                                  
+                        	</select>
+                        	
 						</div>
-
+						
 						<div class="form-group">
-							<label for="timePractice">实践课时</label> <input type="number"
-								id="timePractice" name="timePractice" class="form-control"
-								placeholder="">
+							<label for="howTime">节次</label>
+							<select id="howTime" name="timeVOList[0].howTime" class="form-control">
+                        	
+                        	<option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                            <option>6</option>
+                                                  
+                        	</select>
+                        	
 						</div>
-
+						
 						<div class="form-group">
-							<label for="type">课程类型</label>
-							<div>
-								<input type="radio" id="type" name="type" value="1">
-								 理论课<input type="radio" id="type" name="type" value="0">
-								方向课
-							</div>
-
+							<label for="interval">间隔周</label> 
+							<input type="number" id="interval" name="timeVOList[0].interval" class="form-control"
+								placeholder="非必填">
 						</div>
-
+						
+						<div class="form-group">
+							<label for="addWeek">加课周</label> 
+							<input type="number" id="addWeek" name="timeVOList[0].addWeek" class="form-control"
+								placeholder="非必填">
+						</div>
+						
+						<div class="form-group">
+							<label for="deleteWeek">放假周</label> 
+							<input type="number" id="deleteWeek" name="timeVOList[0].deleteWeek" class="form-control"
+								placeholder="非必填">
+						</div>												            					
+						
 						<div class="modal-footer">
 							<button type="button" class="btn btn-default"
 								data-dismiss="modal">关闭</button>
