@@ -110,12 +110,13 @@ public class UserController {
 		User loggedUser = (User) session.getAttribute("loggedUser");
 		String oldPassword = request.getParameter("oldPassword");
 		String newPassword = request.getParameter("newPassword");
+		User dbUser = userServer.get_user_by_id( loggedUser.getId() );
 		//判断前端参数是否为空
 		if(oldPassword == null || newPassword == null) {
 			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_PARAM, null) );
 		}
 		//校验用户密码
-		else if ( !oldPassword.equals( loggedUser.getPassword() ) ) {
+		else if ( !oldPassword.equals( dbUser.getPassword() ) ) {
 			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_USER_PASSWORD, null) );
 		}
 		//检测新密码是否与旧密码一致

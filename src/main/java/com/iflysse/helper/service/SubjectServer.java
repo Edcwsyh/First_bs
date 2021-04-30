@@ -96,4 +96,11 @@ public interface SubjectServer {
 	 */
 	public void update_subject(Subject subject);
 
+	/**
+	 * 通过学期获取科目列表
+	 * @param termId 学期id
+	 * @return
+	 */
+	public List<Subject> get_subject_list_by_term(Integer termId);
+
 }

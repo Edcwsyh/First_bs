@@ -48,7 +48,7 @@ public interface SubjectDao {
 	 * 获取指定用户及指定学期的科目列表
 	 */
 	@Select("select * from t_subject where term=#{termId}")
-	public List<Subject> get_subject_list_by_term(int teamId);
+	public List<Subject> get_subject_list_by_term(int termId);
 	
 	/*
 	 * 获取指定科目的信息

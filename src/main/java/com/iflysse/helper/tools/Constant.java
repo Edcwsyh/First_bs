@@ -43,7 +43,7 @@ public interface Constant {
 	/**
 	 * 用户权限-未知
 	 */
-	byte USER_PERMISSION_UNKNOW = 0;
+	byte USER_PERMISSION_UNKNOW = -1;
 	/**
 	 * 用户性别-未知
 	 */

@@ -1,5 +1,7 @@
 package com.iflysse.helper.controller;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +18,7 @@ import com.iflysse.helper.bean.Report;
 import com.iflysse.helper.bean.User;
 import com.iflysse.helper.dao.ReportDao;
 import com.iflysse.helper.service.ReportServer;
+import com.iflysse.helper.tools.CacheUtil;
 import com.iflysse.helper.tools.Constant;
 import com.iflysse.helper.tools.Result;
 import com.iflysse.helper.tools.ResultCode;
@@ -88,6 +91,8 @@ public class ReportController {
 	 * @apiSuccess {String} content 周报的内容
 	 * @apiSuccess {Timestamp} time 周报的创建时间
 	 * @apiSuccess {isSubmit} id 周报的提交状态
+	 * @apiParam {number} pageIndex 分页页数
+	 * @apiParam {number} week=-1 本学期的第几周, 若不指定则表示本周
 	 * @apiSuccessExample {json} 请求成功例子:
 	 *     {
 	 *     	"Success" : true,
@@ -113,7 +118,8 @@ public class ReportController {
 	 *     }
 	 */
 	@RequestMapping("/submit_report_list")
-	public String submit_report_list(HttpServletRequest request, HttpSession session, @RequestParam(defaultValue = "1")Integer pageIndex) {
+	public String submit_report_list(HttpServletRequest request, HttpSession session, 
+			@RequestParam(defaultValue = "1")Integer pageIndex, @RequestParam(defaultValue = "-1")Byte week) {
 		User requestUser = (User) session.getAttribute("loggedUser");
 		//判断发出请求的用户的权限
 		switch ( requestUser.getPermission() ) {
@@ -123,9 +129,18 @@ public class ReportController {
 				return "error/403";
 			default:break;
 		}
+		if ( week == -1 ) {
+			Calendar startTime = Calendar.getInstance(), currentTime = Calendar.getInstance();
+			startTime.setTime( CacheUtil.currTerm.getStartTime() );
+			startTime.setFirstDayOfWeek(Calendar.MONDAY);
+			currentTime.setTime( new Date() );
+			currentTime.setFirstDayOfWeek( Calendar.MONDAY );
+			week = (byte) (currentTime.get(	Calendar.WEEK_OF_YEAR) - startTime.get( Calendar.WEEK_OF_YEAR ) + 1 );
+			System.out.println(week);
+		}
 		request.setAttribute("result", new Result< List <Report> >(
 					ResultCode.SUCCESS, 
-					reportServer.get_report_list_by_submit())
+					reportServer.get_report_list_by_submit( CacheUtil.currTerm.getId(), week ) )
 				);
 		Page<Report> subjectPage = PageHelper.startPage(pageIndex, Constant.PAGE_NUMBER);
 		request.setAttribute("page", subjectPage.toPageInfo() );
@@ -267,6 +282,7 @@ public class ReportController {
 			request.setAttribute("result", new Result<Boolean>(ResultCode.ERROR_PARAM, null));
 			return "error/404";
 		}
+		report.setTerm(CacheUtil.currTerm.getId() );
 		reportServer.insert_report(report);
 		request.setAttribute("result", new Result<Boolean>(ResultCode.SUCCESS, null));
 		return "redirect:user_report_list";

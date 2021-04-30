@@ -122,6 +122,7 @@ public class LoginController {
 		//校验密码
 		else if(dbUser.getPassword().equals(user.getPassword())) {
 			request.setAttribute("result", new Result<Boolean>(ResultCode.SUCCESS, null));
+			dbUser.setPassword(null);
 			session.setAttribute("loggedUser", dbUser);
 			return "redirect:/login/goto_index";
 		} else {

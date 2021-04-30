@@ -106,7 +106,7 @@ public class UserServerImpl implements UserServer {
 	@Override
 	public Result<Void> user_update_password(User user) {
 		// TODO 自动生成的方法存根
-		
+		userDao.update_user_password(user);
 		return null;
 	}
 

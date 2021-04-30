@@ -211,5 +211,10 @@ public class SubjectServerImpl implements SubjectServer {
 		subjectDao.update_subject(subject);
 	}
 
+	@Override
+	public List<Subject> get_subject_list_by_term(Integer termId) {
+		return subjectDao.get_subject_list_by_term(termId);
+	}
+
 
 }

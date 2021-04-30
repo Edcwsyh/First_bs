@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.iflysse.helper.bean.Subject;
 import com.iflysse.helper.bean.Term;
@@ -26,10 +27,6 @@ public class TermServerImpl implements TermServer {
 		return termDao.get_term_list();
 	}
 
-	@Override
-	public void update_term_state(Integer id, boolean state) {
-		termDao.update_term_state(id, state);;
-	}
 
 	@Override
 	public void insert_term(Term newTerm) {
@@ -51,6 +48,20 @@ public class TermServerImpl implements TermServer {
 	@Override
 	public Term get_term_by_id(Integer termId) {
 		return termDao.get_term_by_id(termId);
+	}
+
+	@Transactional
+	@Override
+	public void term_activate(Term oldTerm, Term newTerm) {
+		// TODO 自动生成的方法存根
+		termDao.update_term_state(oldTerm.getId(), false);
+		termDao.update_term_state(newTerm.getId(), true);
+	}
+
+	@Override
+	public void update_term_state(Integer id, boolean state) {
+		// TODO 自动生成的方法存根
+		termDao.update_term_state(id, state);
 	}
 
 }

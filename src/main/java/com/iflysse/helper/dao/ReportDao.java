@@ -8,14 +8,18 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import com.iflysse.helper.bean.Report;
+import com.iflysse.helper.bean.Term;
 
 public interface ReportDao {
 
 	/*
-	 * 获取所有已提交的周报
+	 * 获取某一学期某一周的已提交周报
 	 */
-	@Select("select * from t_report where isSubmit=true")
-	public List<Report> get_report_list_by_submit();
+	@Select("select * from t_report where isSubmit=true and term=#{termId} and week=#{week}")
+	public List<Report> get_report_list_by_submit(Integer termId, Byte week);
+	
+	@Select("select * from t_term where term=#{termId}")
+	public List<Report> get_report_list_by_term(Integer termId);
 	
 	/*
 	 * 获取某用户的所有周报
@@ -32,8 +36,8 @@ public interface ReportDao {
 	/*
 	 * 新增一条周报数据
 	 */
-	@Insert("insert into t_report(author, week, content, isSubmit)"
-			+ " value(#{author}, #{week}, #{content}, #{isSubmit})")
+	@Insert("insert into t_report(author, term, week, content, isSubmit)"
+			+ " value(#{author}, #{term}, #{week}, #{content}, #{isSubmit})")
 	public void insert_report (Report report);
 	
 	/*
