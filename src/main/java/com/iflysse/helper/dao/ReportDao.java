@@ -15,7 +15,7 @@ public interface ReportDao {
 	 * 获取所有已提交的周报
 	 */
 	@Select("select * from t_report where isSubmit=true")
-	public List<Report> get_report_list();
+	public List<Report> get_report_list_by_submit();
 	
 	/*
 	 * 获取某用户的所有周报
@@ -58,7 +58,7 @@ public interface ReportDao {
 	 * 更改某周报的提交状态
 	 */
 	@Update("update t_report set isSubmit=#{isSubmit} where id=#{id}")
-	public void update_report_state(Report report);
+	public void update_report_state(Integer reportId, boolean state);
 
 }
 

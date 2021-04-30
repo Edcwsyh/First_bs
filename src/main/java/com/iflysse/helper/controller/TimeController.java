@@ -110,14 +110,38 @@ public class TimeController {
 		}
 		Subject subject = subjectServer.get_subject_by_id( timeVOList.get(0).getSubject() );
 		User requestUser = (User) session.getAttribute("loggedUser");
+		if ( subject == null ) {
+			request.setAttribute("result", new Result< Void >( ResultCode.ERROR_SUBJECT_NOT_FOUND, null) );
+			System.out.println("已拦截 - 找不到该科目");
+			return "error/403";
+		}
 		if ( subject.getTeacher() != requestUser.getId() ) {
 			request.setAttribute("result", new Result< Void >( ResultCode.ERROR_PERMISSION, null) );
 			System.out.println("已拦截 - 用户权限不足");
 			return "error/403";
 		}
-		List<Time> timeList = new LinkedList<Time>();
+		List<Time> timeList = subjectServer.get_time_by_subject( subject.getId() );
+		Map<Integer, Time> map = new HashMap<Integer, Time>();
+		Time temp;
+		for ( Time time: timeList) {
+			System.out.println("构建map");
+			System.out.println(time.getId() );
+			map.put( time.getId(), time );
+			System.out.println( map.get(time.getId() ) );
+		}
 		for ( TimeVO timeVOIter : timeVOList ) {
-			timeList.add( new Time(timeVOIter) );
+			if ( timeVOIter.getId() == null ) {
+				timeList.add( new Time(timeVOIter) );
+			} else {
+				if ( ( temp = map.get( timeVOIter.getId() ) ) == null ) {
+					request.setAttribute("result", new Result< Void >( ResultCode.ERROR_TIME_NOT_FOUNT, null) );
+					System.out.println("已拦截 - 未找到时间对象");
+					return "error/404";
+				} else {
+					System.out.println("更新时间表");
+					temp.setTime(timeVOIter);
+				}
+			}
 		}
 		List<Course> courseList = subjectServer.time_update(subject, timeList);
 		System.out.println("请求成功 - 已更新时间表和课程表");
@@ -177,5 +201,13 @@ public class TimeController {
 		return "timeList";
 	}
 	
+//	测试用的代码
+//	@RequestMapping("/time_test")
+//	public void time_test(HttpServletRequest request, HttpSession session, Integer subjectId) {
+//		List<TimeVO> timeList = new LinkedList<TimeVO>();
+//		timeList.add( new TimeVO(34, 5, "九班", null, (byte) 1, (byte) 10,(byte) 1, null, null, (byte)2, (byte)2) );
+//		timeList.add( new TimeVO(null, 5, "七班", null, (byte) 1, (byte) 10,(byte) 1, null, null, (byte)1, (byte)2) );
+//		time_update(request, session, timeList);
+//	}
 
 }

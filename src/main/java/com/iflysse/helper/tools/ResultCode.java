@@ -64,9 +64,13 @@ public enum ResultCode{
 	ERROR_SUBJECT_NOT_FOUND(false, 22002, "科目不存在"),
 	
 	/**
-	 * 请求失败 - 学期所属科目不为空
+	 * 请求失败 - 时间所属课程不为空
 	 */
 	ERROR_TIME_NOT_EMPTY(false, 22100, "当前时间被其他课程引用, 若要删除该时间段, 请先删除引用该时间段的所有课程!"),
+	/**
+	 * 请求失败 - 未找到时间对象
+	 */
+	ERROR_TIME_NOT_FOUNT(false, 22101, "未找到时间表"),
 	
 	/**
 	 * 请求失败 - 当前学期已激活

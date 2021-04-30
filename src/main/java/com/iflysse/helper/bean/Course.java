@@ -47,13 +47,15 @@ public class Course {
 		this.mode = Constant.COURSE_TYPE_LEARN_AND_PRACTIVE;
 		this.isHomework = false;
 		this.specificTime = specificTime;
+		this.week = week;
 	}
 
-	public Course(Integer id, Integer subject, Integer time, String goal, String content, Byte mode, Boolean isHomework,
+	public Course(Integer id, Integer subject, Integer time, Byte week, String goal, String content, Byte mode, Boolean isHomework,
 			Date specificTime) {
 		this.id = id;
 		this.subject = subject;
 		this.time = time;
+		this.week = week;
 		this.goal = goal;
 		this.content = content;
 		this.mode = mode;
@@ -108,12 +110,16 @@ public class Course {
 		return mode;
 	}
 
-	public String getMode() {
+	public String getModeString() {
 		switch ( mode) {
 			case Constant.COURSE_TYPE_LEARN_AND_PRACTIVE : return "线下-学练";
 			case Constant.COURSE_TYPE_TEACHE : return "授课-现场";
 			default : return null; //实际上为不可达语句
 		}
+	}
+	
+	public Byte getMode() {
+		return mode;
 	}
 
 	public void setMode(Byte mode) {

@@ -8,9 +8,9 @@ public class CourseVO extends Course {
 	private Byte timeQuantum;
 	private String classroom;
 	
-	public CourseVO(Integer id, Integer subject, Integer time, String goal, String content, Byte mode,
+	public CourseVO(Integer id, Byte week, Integer subject, Integer time, String goal, String content, Byte mode,
 			Boolean isHomework, Date specificTime, Byte timeQuantum, String classroom) {
-		super(id, subject, time, goal, content, mode, isHomework, specificTime);
+		super(id, subject, time, week, goal, content, mode, isHomework, specificTime);
 		this.timeQuantum = timeQuantum;
 		this.classroom = classroom;
 	}

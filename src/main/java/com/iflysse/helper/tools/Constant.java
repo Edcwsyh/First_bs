@@ -31,15 +31,15 @@ public interface Constant {
 	/**
 	 * 用户权限-管理员
 	 */
-	byte USER_PERMISSION_ADMIN = 1;
+	byte USER_PERMISSION_ADMIN = 0;
 	/**
 	 * 用户权限-普通用户
 	 */
-	byte USER_PERMISSION_NORMAL = 1 << 1;
+	byte USER_PERMISSION_NORMAL = 1;
 	/**
 	 * 用户权限-经理
 	 */
-	byte USER_PERMISSION_MANAGER = 1 << 2;
+	byte USER_PERMISSION_MANAGER = 2;
 	/**
 	 * 用户权限-未知
 	 */
@@ -86,6 +86,10 @@ public interface Constant {
 	 * 默认开始的页面
 	 */
 	String PAGE_START = "1";
+	/**
+	 * 所支持的最大周数
+	 */
+	byte MAX_WEEK = 32;
 	
 	/**
 	 * 检测-id

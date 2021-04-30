@@ -16,6 +16,7 @@ import com.iflysse.helper.bean.Subject;
 import com.iflysse.helper.bean.Term;
 import com.iflysse.helper.dao.SubjectDao;
 import com.iflysse.helper.dao.TermDao;
+import com.iflysse.helper.service.TermServer;
 import com.iflysse.helper.tools.CacheUtil;
 import com.iflysse.helper.tools.Constant;
 import com.iflysse.helper.tools.Result;
@@ -26,10 +27,10 @@ import com.iflysse.helper.tools.ResultCode;
 public class TermController {
 	
 	@Autowired
-	private TermDao termDao;
+	private SubjectDao subjectDao;
 	
 	@Autowired
-	private SubjectDao subjectDao;
+	private TermServer termServer;
 	
 	/**
 	 * @api {get} /term/term_current 获取当前学期信息
@@ -94,7 +95,7 @@ public class TermController {
 	 */
 	@RequestMapping("/term_list")
 	public String term_list(HttpServletRequest request , @RequestParam(defaultValue = "1")Integer pageIndex) {
-		request.setAttribute("result", new Result<List<Term>>(ResultCode.SUCCESS, termDao.get_term_list()));
+		request.setAttribute( "result", new Result<List<Term>>(ResultCode.SUCCESS, termServer.get_term_list() ) );
 		Page<Term> termPage = PageHelper.startPage(pageIndex, Constant.PAGE_NUMBER);
 		request.setAttribute("page", termPage.toPageInfo() );
 		return "termList";
@@ -136,10 +137,10 @@ public class TermController {
 		//判断新增的是否是激活的学期
 		if(newTerm.getIsCurrent() ) {
 			//关闭原激活学期,并更改当前缓存学期
-			termDao.update_term_state( CacheUtil.currTerm.getId(), false ); 
+			termServer.update_term_state( CacheUtil.currTerm.getId(), false ); 
 			CacheUtil.currTerm = newTerm;
 		}
-		termDao.insert_term(newTerm);
+		termServer.insert_term(newTerm);
 		request.setAttribute("result", new Result<Void>(ResultCode.SUCCESS, null) ); 
 		return "redirect:term_list";
 	}
@@ -182,7 +183,7 @@ public class TermController {
 			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_TERM_NOT_EMPTY, null) ); 
 			return "redirect:term_list";
 		}
-		termDao.delete_term(termId);
+		termServer.delete_term(termId);
 		System.out.println("请求通过  - 删除学期id : " + termId);
 		request.setAttribute("result", new Result<Void>(ResultCode.SUCCESS, null) ); 
 		return "redirect:term_list";
@@ -225,7 +226,7 @@ public class TermController {
 			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_PARAM, null) ); 
 			return "error/404";
 		}
-		termDao.update_term(term);
+		termServer.update_term_info(term);
 		request.setAttribute("result", new Result<Void>(ResultCode.SUCCESS, null) ); 
 		return "redirect:term_list";
 	}
@@ -263,7 +264,7 @@ public class TermController {
 	@RequestMapping("/goto_term_update")
 	public String goto_term_update(HttpServletRequest request, Integer termId) {
 		System.out.println("接口调用");
-		Term term = termDao.get_term_by_id(termId);
+		Term term = termServer.get_term_by_id(termId);
 		if ( term == null ) {
 			request.setAttribute("result", new Result<Term>(ResultCode.ERROR_TERM_NOT_FOUND, null) ); 
 			return "error/404";
@@ -304,14 +305,14 @@ public class TermController {
 			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_TERM_ACTIVATE, null) );
 			return "error/403";
 		}
-		Term term = termDao.get_term_by_id(termId);
+		Term term = termServer.get_term_by_id(termId);
 		if(term == null) {
 			System.out.println("已拦截  - 新的学期为空");
 			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_TERM_NOT_FOUND, null) );
 			return "error/404";
 		} else {
-			termDao.update_term_state(term.getId(), true);
-			termDao.update_term_state(CacheUtil.currTerm.getId(), false);
+			termServer.update_term_state(term.getId(), true);
+			termServer.update_term_state(CacheUtil.currTerm.getId(), false);
 			CacheUtil.currTerm = term;
 			System.out.println("请求通过 - 已更改当前激活学期");
 			request.setAttribute("result", new Result<Void>(ResultCode.SUCCESS, null) );

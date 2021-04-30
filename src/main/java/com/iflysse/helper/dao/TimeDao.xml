@@ -8,7 +8,7 @@
     INSERT INTO t_time
         (subject, classroom, weeks, timeQuantum)
     VALUES
-    <foreach collection="timeList" item="item" index="index" separator=",">
+    <foreach collection="list" item="item" index="index" separator=",">
         (#{item.subject}, #{item.classroom},#{item.weeks}, #{item.timeQuantum})
     </foreach>
 	</insert>
@@ -16,7 +16,7 @@
 	<select id="get_time_list_by_id" parameterType="com.iflysse.helper.bean.Time" >
     select * from t_time
     <where>
-    	<foreach collection="timeList" item="item" index="index" separator=",">
+    	<foreach collection="list" item="item" index="index" separator=",">
         	or id=#{item.id}
     	</foreach>
     </where>
@@ -26,7 +26,7 @@
    	insert into t_time
        	(id, classroom, weeks, timeQuantum)
    	VALUES
-   	<foreach collection="courseList" item="item" index="index" separator=",">
+   	<foreach collection="list" item="item" index="index" separator=",">
        	(#{item.id},#{item.classroom}, #{item.weeks},#{item.timeQuantum} ) 
    	</foreach>
    		on duplicate key update 

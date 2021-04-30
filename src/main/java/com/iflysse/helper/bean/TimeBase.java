@@ -7,6 +7,12 @@ public class TimeBase {
 	protected Integer subject;
 	protected String classroom;
 	
+	public TimeBase() {
+		id = null;
+		subject = null;
+		classroom = null;
+	}
+	
 	public TimeBase(Integer id, Integer subject, String classroom) {
 		super();
 		this.id = id;

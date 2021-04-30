@@ -1,6 +1,7 @@
 package com.iflysse.helper.bean;
 
 import com.iflysse.helper.tools.CacheUtil;
+import com.iflysse.helper.tools.Constant;
 
 public class Time extends TimeBase{
 
@@ -12,6 +13,12 @@ public class Time extends TimeBase{
 	 * 一周中要上课的时间段, 这是一个两位的十进制数(个位和十位), 十位表示周几上课, 个位表示一天中的第几大节课
 	 */
 	private Byte timeQuantum;
+	
+	public Time() {
+		super();
+		weeks = null;
+		timeQuantum = null;
+	}
 
 	public Time(Integer id, Integer subject, Byte timeQuantum, String classroom, Integer weeks) {
 		super(id, subject, classroom);
@@ -21,21 +28,36 @@ public class Time extends TimeBase{
 	
 	public Time(TimeVO timeVO) {
 		super(timeVO.getId(), timeVO.getSubject(), timeVO.getClassroom() );
+		this.weeks = 0;
+		this.timeQuantum = 0;
 		Byte startWeek = timeVO.getStarWeek();
 		Byte endWeek = CacheUtil.currTerm.getWeeks();
 		endWeek = endWeek <= timeVO.getEndWeek() ? endWeek : timeVO.getEndWeek();
 		do {
 			this.weeks |= 1 << (startWeek - 1);
-		} while (startWeek < endWeek );
+		} while (++startWeek <= endWeek );
 		//将额外周添加到this.weeks中
 		addWeeks( timeVO.getAddWeek() );
 		//删除weeks中的已存在周
-		deleteWeeks( timeVO.getDeleteWeek() );
+		addWeeks( timeVO.getDeleteWeek() );
 		//设置上课时间
 		setTimeQuantum(timeVO.getWeek(), timeVO.getHowTime());
 	}
+	/**
+	 * 通过timeVO对象来设置time的属性( 不支持设置开始周和结束周 )
+	 * @param timeVO
+	 */
+	public void setTime( TimeVO timeVO ) {
+		addWeeks( timeVO.getAddWeek() );
+		deleteWeeks( timeVO.getDeleteWeek() );
+		setTimeQuantum(timeVO.getWeek(), timeVO.getHowTime() );
+		this.classroom = timeVO.getClassroom();
+	}
 	
 	public void addWeeks(String weekStr) {
+		if ( weekStr == null) {
+			return ;
+		}
 		int temp = 0;
 		for( int index = 0; index < weekStr.length(); ++index ) {
 			switch ( weekStr.charAt(index) ) {
@@ -55,6 +77,9 @@ public class Time extends TimeBase{
 	}
 	
 	public void deleteWeeks(String weekStr) {
+		if ( weekStr == null) {
+			return ;
+		}
 		int temp = 0;
 		for( int index = 0; index < weekStr.length(); ++index ) {
 			switch ( weekStr.charAt(index) ) {
@@ -73,7 +98,7 @@ public class Time extends TimeBase{
 		}
 	}
 
-	public Integer getWeeksValue() {
+	public Integer getWeeks() {
 		return weeks;
 	}
 
@@ -81,15 +106,13 @@ public class Time extends TimeBase{
 		this.weeks = weeks;
 	}
 
-	public String getWeeks() {
+	public String getWeekString() {
 		StringBuilder result = new StringBuilder();
 		int startWeek = -1;
-		boolean flag = true;
-		for( int index = 0 ; index < 10; ++index) {
+		for( int index = 0 ; index < Constant.MAX_WEEK; ++index) {
 			if ( (weeks & (1 << index)) != 0 ) {
 				startWeek = startWeek == -1 ? index : startWeek;
 			} else if (startWeek != -1 ){
-				flag = false;
 				result.append("第" + ( startWeek + 1 ) + "周");
 				if ( index - 1  > startWeek ) {
 					result.append("到第" + (index) + "周");
@@ -116,7 +139,6 @@ public class Time extends TimeBase{
 	public Byte getHowTime() {
 		return (byte) (timeQuantum % 10);
 	}
-	
 	/**
 	 * 
 	 * @param time
@@ -125,7 +147,7 @@ public class Time extends TimeBase{
 	public int merage(Time time) {
 		int buf = this.timeQuantum - time.getTimeQuantum();
 		if( buf == 0 ) {
-			this.weeks |= time.getWeeksValue();
+			this.weeks |= time.getWeeks();
 		}
 		return buf;
 	}

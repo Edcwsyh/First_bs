@@ -68,6 +68,7 @@ public class UserServerImpl implements UserServer {
 		if ( dbUser == null ) {
 			return new Result<Void>(ResultCode.ERROR_USER_NOT_FOUND, null);
 		}
+		System.out.println( user.getPermission() );
 		userDao.update_user_all( user );
 		return new Result<Void>(ResultCode.SUCCESS, null);
 	}
@@ -125,6 +126,21 @@ public class UserServerImpl implements UserServer {
 	@Override
 	public User get_user_by_id(Integer id) {
 		return userDao.get_user_by_id(id);
+	}
+
+	@Override
+	public List<User> get_user_by_ump(User user) {
+		return userDao.get_user_by_ump(user);
+	}
+
+	@Override
+	public void insert_user(User user) {
+		userDao.insert_user(user);
+	}
+
+	@Override
+	public void update_user_state(Integer userId, byte state) {
+		userDao.update_user_state(userId, state);
 	}
 
 }

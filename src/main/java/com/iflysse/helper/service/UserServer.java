@@ -66,4 +66,21 @@ public interface UserServer {
 	 * @return
 	 */
 	public User get_user_by_id(Integer id);
+	/**
+	 * 通过用户名(u)、邮箱(m)、电话号码(p)查询用户
+	 * @param user
+	 * @return
+	 */
+	public List<User> get_user_by_ump(User user);
+	/**
+	 * 插入一个新的用户
+	 * @param user
+	 */
+	public void insert_user(User user);
+	/**
+	 * 更新用户的状态
+	 * @param userId
+	 * @param state 用户状态（应通过Constant中的宏常量设置）
+	 */
+	public void update_user_state(Integer userId, byte state);
 }

@@ -1,5 +1,6 @@
 package com.iflysse.helper.tools;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
@@ -185,7 +186,6 @@ public class ExcelUtil {
 		warningStyle.setAlignment(HorizontalAlignment.LEFT);
 		//设置单元格默认列宽和行高
 		sheet.setDefaultColumnWidth(WIDTH_DEFAULT_COLUMN);
-		sheet.setDefaultRowHeightInPoints(HIGHT_DEFAULT_ROW);
         sheet.createRow(0);
         sheet.createRow(1);
         sheet.createRow(2);
@@ -259,23 +259,30 @@ public class ExcelUtil {
 			index = NUMBER_INIT_ROW;
 			SXSSFRow row = null;
 			for ( CourseVO iter : courseList) {
-				row = sheet.createRow(index);
-				row.createCell(0).setCellValue( iter.getSpecificTime() );
+				row = sheet.createRow(index++);
+		        StringBuilder sb = new StringBuilder();
+		        sb.append("yyyy年MM月dd日");
+		        SimpleDateFormat sdf = new SimpleDateFormat(sb.toString());
+		        String dateString = sdf.format( iter.getSpecificTime() );
+				row.createCell(0).setCellValue( dateString );
 				row.createCell(1).setCellValue( iter.getTimeQuamtumString() );
 				row.createCell(2).setCellValue( iter.getTimeCourseIndex() );
 				row.createCell(3).setCellValue( subect.getTypeString() );
-				row.createCell(4).setCellValue( iter.getMode() );
+				row.createCell(4).setCellValue( iter.getModeString() );
 				row.createCell(5).setCellValue( iter.getClassroom() );
 				row.createCell(6).setCellValue( teacher );
 				row.createCell(7).setCellValue( subect.getTa() );
 				row.createCell(8).setCellValue( iter.getIsHomework() ? "要求" : "不要钱");
 				row.createCell(9).setCellValue( iter.getContent() );
 			}
-			for ( int rowIndex = NUMBER_INIT_ROW; rowIndex < courseList.size(); ++rowIndex ) {
+			for ( int rowIndex = NUMBER_INIT_ROW; rowIndex < courseList.size() + NUMBER_INIT_ROW; ++rowIndex ) {
+				row = sheet.getRow(rowIndex);
 				for ( index = 0; index < NUMBER_COLUMN - 1; ++index ) {
-					sheet.getRow(rowIndex).getCell(index).setCellStyle(textStyle);
+					row.getCell(index).setCellStyle(textStyle);
 				}
-				sheet.getRow(rowIndex).getCell(index).setCellStyle( sheet.getRow(0).getCell(0).getCellStyle() );
+				row.setHeightInPoints(HIGHT_DEFAULT_ROW);
+				//设置最后一列单元格的样式,不要移到上面的for循环中
+				row.getCell(index).setCellStyle( sheet.getRow(0).getCell(0).getCellStyle() );
 			}
 			return excel;
 		} catch (Exception e) {

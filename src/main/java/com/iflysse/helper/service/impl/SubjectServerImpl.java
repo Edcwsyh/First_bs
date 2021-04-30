@@ -1,6 +1,7 @@
 package com.iflysse.helper.service.impl;
 
 import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -46,15 +47,14 @@ public class SubjectServerImpl implements SubjectServer {
 	private static List<Time> time_merage(List<Time> timeList) {
 		//构建一个新的列表用于存放已被合并的数据
 		List<Time> result = new LinkedList<Time>();
-		int i, g;
-		for( i = 0, g = 0; i  < timeList.size(); i = g) {
-			for( g = i + 1; true; ++g) {
-				if( g >= timeList.size() || timeList.get(i).getTimeQuantum() != timeList.get(g).getTimeQuantum() ) {
-					result.add( timeList.get(i) ); //将已合并完成的数据添加至新的列表
-					break;
-				} else {
-					timeList.get(i).merage( timeList.get(g) );
-				}
+		Time temp = timeList.get(0);
+		result.add(temp);
+		for ( Time iter : timeList ) {
+			if ( iter.getTimeQuantum() == temp.getTimeQuantum() ) {
+				temp.merage(iter);
+			} else {
+				temp = iter;
+				result.add(temp);
 			}
 		}
 		return result;
@@ -68,46 +68,53 @@ public class SubjectServerImpl implements SubjectServer {
 	 * @return 
 	 */
 	private List< List<Course> > generate_course( Subject subject,  List<Time> timeList) {
-		int startWeek = 0, 
-				endWeek = subject.getTerm() == CacheUtil.currTerm.getId() ? 
-							CacheUtil.currTerm.getWeeks() : 
-							termDao.get_term_by_id( subject.getTerm() ).getWeeks() ;
+		Term term = CacheUtil.currTerm;
+		if ( term.getId() != subject.getTerm() ) {
+			term = termDao.get_term_by_id( subject.getTerm() );
+		}
 		//返回两个对象 : 需要插入的课程列表和需要更新的课程列表
 		List<Course> insertList = new LinkedList<Course>();
 		List<Course> updateList = courseDao.get_course_list_by_subject(subject.getId());
 		List< List<Course> > result = Arrays.asList( insertList, updateList );
 		Iterator<Course> courseIterator = updateList.listIterator();
-		Calendar calendar = Calendar.getInstance(), calendarTemp = Calendar.getInstance();
-		boolean flag = true;
-		while (startWeek < endWeek ) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime( term.getStartTime() );
+		calendar.setFirstDayOfWeek(Calendar.MONDAY);
+		int startWeek = 0, endWeek = term.getWeeks(),dayOfWeek = 0;
+		for (;startWeek < endWeek; ++startWeek ) {
 			for (Time time : timeList) {
 				//对某一周进行检测
-				if( (time.getWeeksValue() & 1 << startWeek++) != 0) {
-					if( flag && calendar.get(Calendar.DAY_OF_WEEK ) > time.getWeek() ) {
+				if ( ( dayOfWeek = time.getWeek() ) == 7 ) {
+					dayOfWeek = 1;
+				} else {
+					++dayOfWeek;
+				}
+				
+				if( (time.getWeeks() & 1 << startWeek) != 0) {
+					if( calendar.get(Calendar.DAY_OF_WEEK ) > dayOfWeek) {
 						continue;
 					}
-					calendarTemp.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_YEAR) );
-					calendarTemp.set(Calendar.DAY_OF_WEEK, time.getWeek() );
+					calendar.set(Calendar.DAY_OF_WEEK, dayOfWeek );
+					
 					//如果课程列表中还存在课程,则修改, 否则,将新增课程到新增列表当中
 					if ( courseIterator.hasNext() ) {
 						Course courseCache = courseIterator.next();
 						courseCache.setWeek( (byte) (startWeek + 1) );
-						courseCache.setSpecificTime(new Date( calendarTemp.getTime().getTime() ) );
+						courseCache.setSpecificTime(new Date( calendar.getTime().getTime() ) );
 						courseCache.setTime(time.getId() );
 					} else {
-						insertList.add( new Course( time, new Date( calendarTemp.getTime().getTime() ), (byte) (startWeek + 1) ) );
+						insertList.add( new Course( time, new Date( calendar.getTime().getTime() ), (byte) (startWeek + 1) ) );
 					}
 				}
 			}
-			if(flag) {
-				//第一次运行将calendar格式化为周一
-				int addDay = 8 - calendar.get(Calendar.DAY_OF_WEEK );
-				calendar.add(Calendar.DAY_OF_WEEK, addDay);
-				flag = false;
-			}else {
-				//向后快进一周
-				calendar.add(Calendar.DAY_OF_WEEK, 7);
+			//第一次运行将calendar格式化为周一
+			if ( ( dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK ) ) == 1 ) {
+				dayOfWeek = 7;
+			} else {
+				--dayOfWeek;
 			}
+			int addDay = 8 - dayOfWeek;
+			calendar.add(Calendar.DAY_OF_WEEK, addDay);
 		}
 		return result;
 	}
@@ -153,7 +160,7 @@ public class SubjectServerImpl implements SubjectServer {
 			}
 		} );
 		//合并相同时间段上课的数据
-		time_merage(timeList);
+		timeList = time_merage(timeList);
 		//先删除所有的时间表
 		timeDao.delete_time_by_subject( subject.getId() );
 		//先插入新的时间表获取其主键id
@@ -162,8 +169,13 @@ public class SubjectServerImpl implements SubjectServer {
 		 * [0]为待插入的列表, [1]为需要更新的列表
 		 */
 		List< List<Course> > courseList = generate_course(subject, timeList);
-		courseDao.insert_course_list(courseList.get(0)); //插入新的课程列表
-		courseDao.update_course_list(courseList.get(1)); //更新课程列表
+		if ( courseList.get(0) != null && courseList.get(0).size() != 0 ) {
+			courseDao.insert_course_list(courseList.get(0)); //插入新的课程列表
+		}
+		if ( courseList.get(1) != null && courseList.get(1).size() != 0 ) {
+			System.out.println("error");
+			courseDao.update_course_list(courseList.get(1)); //更新课程列表
+		}
 		List<Course> result = new ArrayList<Course>(courseList.get(0));
 		result.addAll(courseList.get(1));
 		return result;
