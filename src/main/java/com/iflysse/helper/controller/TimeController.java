@@ -124,7 +124,10 @@ public class TimeController {
 		Map<Integer, Time> map = new HashMap<Integer, Time>();
 		Time temp;
 		for ( Time time: timeList) {
+			System.out.println("构建map");
+			System.out.println(time.getId() );
 			map.put( time.getId(), time );
+			System.out.println( map.get(time.getId() ) );
 		}
 		for ( TimeVO timeVOIter : timeVOList ) {
 			if ( timeVOIter.getId() == null ) {
@@ -135,15 +138,12 @@ public class TimeController {
 					System.out.println("已拦截 - 未找到时间对象");
 					return "error/404";
 				} else {
-					temp.addWeeks( timeVOIter.getAddWeek() );
-					temp.deleteWeeks( timeVOIter.getDeleteWeek() );
+					System.out.println("更新时间表");
+					temp.setTime(timeVOIter);
 				}
 			}
 		}
 		List<Course> courseList = subjectServer.time_update(subject, timeList);
-		for ( Course course : courseList) {
-			System.out.println( "第 " + course.getWeek() + " " +  course.getSpecificTime() + "周" + course.getSpecificTime().getDay() );
-		}
 		System.out.println("请求成功 - 已更新时间表和课程表");
 		request.setAttribute("result", new Result< List<Course> >( ResultCode.SUCCESS, courseList) );
 		return "redirect:/course/courseList";
@@ -201,12 +201,13 @@ public class TimeController {
 		return "timeList";
 	}
 	
-	@RequestMapping("/time_test")
-	public void time_test(HttpServletRequest request, HttpSession session, Integer subjectId) {
-		List<TimeVO> timeList = new LinkedList<TimeVO>();
-		timeList.add( new TimeVO(null, 5, "九班", null, (byte) 1, (byte) 10,(byte) 1, null, null, (byte)1, (byte)2) );
-		timeList.add( new TimeVO(null, 5, "九班", null, (byte) 12, (byte) 13,(byte) 1, null, null, (byte)1, (byte)2) );
-		time_update(request, session, timeList);
-	}
+//	测试用的代码
+//	@RequestMapping("/time_test")
+//	public void time_test(HttpServletRequest request, HttpSession session, Integer subjectId) {
+//		List<TimeVO> timeList = new LinkedList<TimeVO>();
+//		timeList.add( new TimeVO(34, 5, "九班", null, (byte) 1, (byte) 10,(byte) 1, null, null, (byte)2, (byte)2) );
+//		timeList.add( new TimeVO(null, 5, "七班", null, (byte) 1, (byte) 10,(byte) 1, null, null, (byte)1, (byte)2) );
+//		time_update(request, session, timeList);
+//	}
 
 }

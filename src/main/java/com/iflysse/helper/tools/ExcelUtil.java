@@ -1,5 +1,6 @@
 package com.iflysse.helper.tools;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
@@ -259,7 +260,11 @@ public class ExcelUtil {
 			SXSSFRow row = null;
 			for ( CourseVO iter : courseList) {
 				row = sheet.createRow(index++);
-				row.createCell(0).setCellValue( iter.getSpecificTime().toString() );
+		        StringBuilder sb = new StringBuilder();
+		        sb.append("yyyy年MM月dd日");
+		        SimpleDateFormat sdf = new SimpleDateFormat(sb.toString());
+		        String dateString = sdf.format( iter.getSpecificTime() );
+				row.createCell(0).setCellValue( dateString );
 				row.createCell(1).setCellValue( iter.getTimeQuamtumString() );
 				row.createCell(2).setCellValue( iter.getTimeCourseIndex() );
 				row.createCell(3).setCellValue( subect.getTypeString() );

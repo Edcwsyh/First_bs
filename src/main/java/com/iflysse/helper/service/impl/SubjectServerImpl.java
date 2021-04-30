@@ -94,14 +94,7 @@ public class SubjectServerImpl implements SubjectServer {
 					if( calendar.get(Calendar.DAY_OF_WEEK ) > dayOfWeek) {
 						continue;
 					}
-					calendar.set(Calendar.DAY_OF_WEEK, 2 );
-
-			        StringBuilder sb = new StringBuilder();
-			        sb.append("yyyy年MM月dd日 HH:mm:ss")
-			                .append(" E");
-			        SimpleDateFormat sdf = new SimpleDateFormat(sb.toString());
-			        String dateString = sdf.format( calendar.getTime() );
-					System.out.println(dateString);
+					calendar.set(Calendar.DAY_OF_WEEK, dayOfWeek );
 					
 					//如果课程列表中还存在课程,则修改, 否则,将新增课程到新增列表当中
 					if ( courseIterator.hasNext() ) {
@@ -181,7 +174,7 @@ public class SubjectServerImpl implements SubjectServer {
 		}
 		if ( courseList.get(1) != null && courseList.get(1).size() != 0 ) {
 			System.out.println("error");
-			//courseDao.update_course_list(courseList.get(1)); //更新课程列表
+			courseDao.update_course_list(courseList.get(1)); //更新课程列表
 		}
 		List<Course> result = new ArrayList<Course>(courseList.get(0));
 		result.addAll(courseList.get(1));

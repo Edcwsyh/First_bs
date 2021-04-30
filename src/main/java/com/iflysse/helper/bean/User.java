@@ -33,15 +33,15 @@ public class User {
 	/*
 	 * 性别
 	 */
-	private Byte gender = Constant.USER_GENDER_UNKNOW;
+	private Byte gender;
 	/*
 	 * 权限
 	 */
-	private Byte permission = Constant.USER_PERMISSION_NORMAL;
+	private Byte permission;
 	/*
 	 * 状态
 	 */
-	private Byte state = Constant.USER_STATE_NORMAL;
+	private Byte state;
 	
 	User(){
 		

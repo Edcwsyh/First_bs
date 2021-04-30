@@ -68,6 +68,7 @@ public class UserServerImpl implements UserServer {
 		if ( dbUser == null ) {
 			return new Result<Void>(ResultCode.ERROR_USER_NOT_FOUND, null);
 		}
+		System.out.println( user.getPermission() );
 		userDao.update_user_all( user );
 		return new Result<Void>(ResultCode.SUCCESS, null);
 	}

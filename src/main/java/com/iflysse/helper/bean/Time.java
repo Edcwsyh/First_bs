@@ -43,6 +43,16 @@ public class Time extends TimeBase{
 		//设置上课时间
 		setTimeQuantum(timeVO.getWeek(), timeVO.getHowTime());
 	}
+	/**
+	 * 通过timeVO对象来设置time的属性( 不支持设置开始周和结束周 )
+	 * @param timeVO
+	 */
+	public void setTime( TimeVO timeVO ) {
+		addWeeks( timeVO.getAddWeek() );
+		deleteWeeks( timeVO.getDeleteWeek() );
+		setTimeQuantum(timeVO.getWeek(), timeVO.getHowTime() );
+		this.classroom = timeVO.getClassroom();
+	}
 	
 	public void addWeeks(String weekStr) {
 		if ( weekStr == null) {

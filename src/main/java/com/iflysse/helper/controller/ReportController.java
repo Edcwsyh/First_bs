@@ -63,7 +63,6 @@ public class ReportController {
 	@RequestMapping("/goto_report_update")
 	public String goto_report_update(HttpServletRequest request, HttpSession session, Integer reportId) {
 		User requestUser = (User) session.getAttribute("loggedUser");
-		Report dbReport = reportServer.get_report_by_id( reportId );
 		//通过封装的方法获取数据库中的周报
 		Result<Report> result = get_report_by_id(requestUser, reportId);
 		request.setAttribute("result", result);

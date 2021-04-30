@@ -18,7 +18,7 @@
         	(id, subject, time, week, goal, content, mode, isHomework, specificTime)
     	VALUES
     	<foreach collection="list" item="item" index="index" separator=",">
-        	(#{id}, #{item.subject}, #{item.time}, #{item.week}, #{item.goal}, #{item.content}, #{item.mode}, #{item.isHomework}, #{item.specificTime} ) 
+        	(#{item.id}, #{item.subject}, #{item.time}, #{item.week}, #{item.goal}, #{item.content}, #{item.mode}, #{item.isHomework}, #{item.specificTime} ) 
     	</foreach>
     	ON DUPLICATE KEY UPDATE 
        	time=values(time), week=values(week), goal=values(goal), content=values(content), 
