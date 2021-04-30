@@ -87,7 +87,7 @@ public enum ResultCode{
 	/**
 	 * 请求失败 - 学期所属科目不为空
 	 */
-	ERROR_TERM_NOT_EMPTY(false, 23003, "当前学期被其他科目引用, 不可删除!"),
+	ERROR_TERM_NOT_EMPTY(false, 23003, "当前学期已被引用, 不可删除!"),
 	
 	/**
 	 * 请求失败 - 周报内容为空

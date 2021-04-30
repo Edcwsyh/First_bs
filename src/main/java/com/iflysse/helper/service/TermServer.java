@@ -20,10 +20,10 @@ public interface TermServer {
 	public List<Term> get_term_list();
 	/**
 	 * 更新学期的激活状态
-	 * @param id 学期id
-	 * @param state 学期的状态(true表示激活, false表示关闭)
+	 * @param oldTerm 旧的学期(即要被关闭的学期)
+	 * @param newTerm 新的学期(即要被开启的学期)
 	 */
-	public void update_term_state(Integer id, boolean state);
+	public void term_activate(Term oldTerm, Term newTerm);
 	/**
 	 * 插入一个新学期
 	 * @param newTerm 新的学期对象
@@ -45,4 +45,10 @@ public interface TermServer {
 	 * @return
 	 */
 	public Term get_term_by_id(Integer termId);
+	/**
+	 * 更新某个学期的激活状态
+	 * @param id 要被更新的学期id
+	 * @param state(true表示激活, false表示关闭)
+	 */
+	public void update_term_state(Integer id, boolean state);
 }

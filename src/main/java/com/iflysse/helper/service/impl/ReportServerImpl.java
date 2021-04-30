@@ -21,8 +21,8 @@ public class ReportServerImpl implements ReportServer {
 	}
 
 	@Override
-	public List<Report> get_report_list_by_submit() {
-		return reportDao.get_report_list_by_submit();
+	public List<Report> get_report_list_by_submit(Integer termId, Byte week) {
+		return reportDao.get_report_list_by_submit(termId, week);
 	}
 
 	@Override
@@ -53,6 +53,11 @@ public class ReportServerImpl implements ReportServer {
 	@Override
 	public void update_report_state(Integer reportId, boolean state) {
 		reportDao.update_report_state(reportId, state);
+	}
+
+	@Override
+	public List<Report> get_report_list_by_term(Integer termId) {
+		return reportDao.get_report_list_by_term(termId);
 	}
 
 }

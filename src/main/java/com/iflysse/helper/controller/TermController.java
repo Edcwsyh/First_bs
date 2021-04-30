@@ -12,10 +12,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.iflysse.helper.bean.Report;
 import com.iflysse.helper.bean.Subject;
 import com.iflysse.helper.bean.Term;
 import com.iflysse.helper.dao.SubjectDao;
 import com.iflysse.helper.dao.TermDao;
+import com.iflysse.helper.service.ReportServer;
+import com.iflysse.helper.service.SubjectServer;
 import com.iflysse.helper.service.TermServer;
 import com.iflysse.helper.tools.CacheUtil;
 import com.iflysse.helper.tools.Constant;
@@ -27,11 +30,13 @@ import com.iflysse.helper.tools.ResultCode;
 public class TermController {
 	
 	@Autowired
-	private SubjectDao subjectDao;
+	private SubjectServer subjectServer;
 	
 	@Autowired
 	private TermServer termServer;
 	
+	@Autowired
+	private ReportServer reportServer;	
 	/**
 	 * @api {get} /term/term_current 获取当前学期信息
 	 * @apiVersion 1.0.0
@@ -130,7 +135,7 @@ public class TermController {
 	 */
 	@RequestMapping("/term_add")
 	public String term_add(HttpServletRequest request, Term newTerm) {
-		if(newTerm.check( Constant.CHECK_ALL ) != 0) {
+		if(newTerm.check( Constant.CHECK_ALL ^ Constant.CHECK_ID ) != 0) {
 			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_PARAM, null) ); 
 			return "error/400";
 		}
@@ -177,8 +182,10 @@ public class TermController {
 			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_TERM_DELETE_ACTION, null) ); 
 			return "redirect:term_list";
 		}
-		List<Subject> subjectList = subjectDao.get_subject_list_by_term(termId);
-		if ( subjectList != null && subjectList.size() != 0) {
+		List<Subject> subjectList = subjectServer.get_subject_list_by_term(termId);
+		List<Report> reportList = reportServer.get_report_list_by_term(termId);
+		if ( subjectList != null && subjectList.size() != 0 && 
+				reportList != null && reportList.size() != 0) {
 			System.out.println("已拦截  - 删除被引用学期");
 			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_TERM_NOT_EMPTY, null) ); 
 			return "redirect:term_list";
@@ -263,7 +270,10 @@ public class TermController {
 	 */
 	@RequestMapping("/goto_term_update")
 	public String goto_term_update(HttpServletRequest request, Integer termId) {
-		System.out.println("接口调用");
+		if ( termId == null ) {
+			request.setAttribute("result", new Result<Term>(ResultCode.ERROR_PARAM, null) ); 
+			return "error/404";
+		}
 		Term term = termServer.get_term_by_id(termId);
 		if ( term == null ) {
 			request.setAttribute("result", new Result<Term>(ResultCode.ERROR_TERM_NOT_FOUND, null) ); 
@@ -311,8 +321,7 @@ public class TermController {
 			request.setAttribute("result", new Result<Void>(ResultCode.ERROR_TERM_NOT_FOUND, null) );
 			return "error/404";
 		} else {
-			termServer.update_term_state(term.getId(), true);
-			termServer.update_term_state(CacheUtil.currTerm.getId(), false);
+			termServer.term_activate(CacheUtil.currTerm, term);
 			CacheUtil.currTerm = term;
 			System.out.println("请求通过 - 已更改当前激活学期");
 			request.setAttribute("result", new Result<Void>(ResultCode.SUCCESS, null) );

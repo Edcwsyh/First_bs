@@ -9,6 +9,7 @@ import com.iflysse.helper.tools.Constant;
 public class Report {
 	private Integer id;
 	private Integer author;
+	private Integer term;
 	private Byte week;
 	private String content;
 	private Timestamp time;
@@ -71,6 +72,14 @@ public class Report {
 
 	public void setWeek(Byte week) {
 		this.week = week;
+	}
+	
+	public Integer getTerm() {
+		return term;
+	}
+
+	public void setTerm(Integer term) {
+		this.term = term;
 	}
 
 	/**

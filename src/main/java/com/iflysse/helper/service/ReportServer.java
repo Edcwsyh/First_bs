@@ -18,7 +18,7 @@ public interface ReportServer {
 	 * 获取所有已提交的周报
 	 * @return
 	 */
-	List<Report> get_report_list_by_submit();
+	List<Report> get_report_list_by_submit(Integer termId, Byte week);
 	/**
 	 * 获取某用户的所有周报
 	 * @param id 用户id
@@ -46,10 +46,16 @@ public interface ReportServer {
 	 */
 	void delete_report_by_user( Integer userId );
 	/**
-	 * 
-	 * @param reportId
-	 * @param b
+	 * 更新周报的提交状态
+	 * @param reportId 周报id
+	 * @param state 状态, true为提交, false为未提交
 	 */
 	void update_report_state(Integer reportId, boolean state);
+	/**
+	 * 获取某学期的所有周报
+	 * @param termId 学期id
+	 * @return
+	 */
+	List<Report> get_report_list_by_term(Integer termId);
 
 }
