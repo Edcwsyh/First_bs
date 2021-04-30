@@ -68,17 +68,17 @@
                     </div>
                     <div class="form-group">
                         <label for="startTime">学期开始时间</label>
-                        <input type="date" id="startTime" name="startTime" class="form-control" placeholder="请选择学期开始时间">
+                        <input type="date" id="startTime" name="startTime" class="form-control" value="${result.data.startTime }">
                     </div>
                     <div class="form-group">
                         <label for="weeks">总周数</label>
-                        <input type="number" id="weeks" name="weeks" class="form-control" placeholder="请确认输入用户密码">
+                        <input type="number" id="weeks" name="weeks" class="form-control" value="${result.data.weeks }">
                     </div>
                     <div class="form-group">
                         <label for="isCurrent">是否为当前学期</label>
                         <div>
-	                        <input type="radio" name="isCurrent" value=true ${term.isCurrent == true ? 'checked':'' }> 是
-	                        <input type="radio" name="isCurrent" value=false ${term.isCurrent == true ? 'checked':'' }> 否
+	                        <input type="radio" name="isCurrent" value=true ${result.data.isCurrent == true ? 'checked':'' }> 是
+	                        <input type="radio" name="isCurrent" value=false ${result.data.isCurrent == false ? 'checked':'' }> 否
                         </div>
                         
                     </div>
@@ -100,7 +100,7 @@
 	        <div class="row">
 	            <div class="col-md-12">
 	                <p>
-	                    Copyright&nbsp;©&nbsp;2012-2015&nbsp;&nbsp;www.maiziedu.com&nbsp;&nbsp;蜀ICP备13014270号-4
+	                    
 	                </p>
 	            </div>
 	        </div>

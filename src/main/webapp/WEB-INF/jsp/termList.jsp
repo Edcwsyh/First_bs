@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-    
+ 
+<%@page import="java.util.*"%>
+<%@page import="java.text.SimpleDateFormat"%>   
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -95,7 +97,7 @@
 	                    操作<span class="caret"></span>
 	                </button>
 	                <ul class="dropdown-menu">
-	                    <li><a href="${pageContext.request.contextPath}/term/goto_term_update">编辑</a></li>
+	                    <li><a href="${pageContext.request.contextPath}/term/goto_term_update?termId=${term.id}">编辑</a></li>
 	                    <li><a href="${pageContext.request.contextPath}/term/term_delete?termId=${term.id}">删除</a></li>
 	                    <li><a href="${pageContext.request.contextPath}/term/term_activate?termId=${term.id}">激活为当前学期</a></li>
 	                </ul>
@@ -184,7 +186,13 @@
 	        <div class="row">
 	            <div class="col-md-12">
 	                <p>
-	                    Copyright&nbsp;©&nbsp;2012-2015&nbsp;&nbsp;www.maiziedu.com&nbsp;&nbsp;蜀ICP备13014270号-4
+	                    <%
+							Date d = new Date();
+							SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+							String now = df.format(d);
+						%>
+	
+						当前时间：<%=now %>
 	                </p>
 	            </div>
 	        </div>

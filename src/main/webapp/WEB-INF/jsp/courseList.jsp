@@ -14,8 +14,11 @@
 	href="${pageContext.request.contextPath}/css/bootstrap.min.css" />
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/css/bootstrap-maizi.css" />
+	
+	
 </head>
 <body>
+	
 	<!--导航-->
 	<nav class="navbar navbar-default">
 		<div class="container">
@@ -61,7 +64,7 @@
 		</div>
 	</nav>
 	<!--导航-->
-
+	
 	<div class="container">
 		<div class="row">
 			<div class="col-md-2">
@@ -112,7 +115,7 @@
 											操作<span class="caret"></span>
 										</button>
 										<ul class="dropdown-menu">
-											<li><a href="${pageContext.request.contextPath}/subject/subject_info?subjectId=${subject.id}">编辑</a></li>
+											<li><a href="${pageContext.request.contextPath}/subject/course/goto_course_update">编辑</a></li>
 											<li><a href="${pageContext.request.contextPath}/subject/course/course_delete_single?courseId=${course.id}">删除</a></li>
 
 										</ul>
@@ -138,6 +141,7 @@
 		</div>
 	</footer>
 	<!--footer-->
+	
 	<div class="modal fade" id="courseAdd" tabindex="-1" role="dialog"
 		aria-labelledby="myModalLabel">
 		<div class="modal-dialog" role="document">
@@ -150,42 +154,53 @@
 					<h4 class="modal-title" id="myModalLabel">添加科目</h4>
 				</div>
 				<div class="modal-body">
+									
 					<form action="${pageContext.request.contextPath}/subject/course/course_add"  method="post">
-						<input type="hidden" name="teacher" value="${loggedUser.id }">
-						<div class="form-group">
-							<label for="week">周</label> <input type="date" id="week"
-								name="week" class="form-control" placeholder="请选择时间">
-						</div>
+						
 						
 						<div class="form-group">
-							<label for="teachingGoal">教学内容</label> 
-							<textarea id="teachingGoal" name="teachingGoal" class="form-control" rows="15" cols="10" ></textarea>
+							<label for="week">周次</label>
+							<select id="week" name="courseList[0].week" class="form-control">
+                        	
+                        	<option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                                                  
+                        	</select>
+                        	
 						</div>
 						
 						<div class="form-group">
 							<label for="goal">教学目标</label> 
-							<textarea id="goal" name="goal" class="form-control" rows="15" cols="10" ></textarea>
+							<textarea id="goal" name="courseList[0].goal"  class="form-control" rows="15" cols="10" ></textarea>
+						</div>
+						
+						<div class="form-group">
+							<label for="content">教学内容</label> 
+							<textarea id="content" name="courseList[0].content" class="form-control" rows="15" cols="10" ></textarea>
 						</div>
 						
 						<div class="form-group">
 	                        <label for="mode">教学模式</label>
 	                        <div>
-		                        <input type="radio" name="mode" value="1" > 线上
-		                        <input type="radio" name="mode" value="0" > 线下
+		                        <input type="radio" name="courseList[0].mode" value="1" > 线上
+		                        <input type="radio" name="courseList[0].mode" value="0" > 线下
 	                        </div>
                         </div>
                         
                       	<div class="form-group">
 	                        <label for="isHomework">是否有作业</label>
 	                        <div>
-		                        <input type="radio" name="isHomework" value="1" > 是
-		                        <input type="radio" name="isHomework" value="0" > 否
+		                        <input type="radio" name="courseList[0].isHomework" value="1" > 是
+		                        <input type="radio" name="courseList[0].isHomework" value="0" > 否
 	                        </div>
                         </div>                    					
 
 						<div class="form-group">
 							<label for="specificTime">具体上课时间</label> 
-							<input type="time" id="specificTime" name="specificTime" class="form-control"
+							<input type="date" id="specificTime" name="courseList[0].specificTime" class="form-control"
 								placeholder="请选择具体上课时间">
 						</div>
 					
@@ -195,7 +210,9 @@
 								data-dismiss="modal">关闭</button>
 							<button type="submit" class="btn btn-primary" >提交</button>
 						</div>
+						
 					</form>
+				 
 					
 					
 				</div>
